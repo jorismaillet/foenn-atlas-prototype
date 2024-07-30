@@ -6,6 +6,8 @@ namespace Assets.Resources.Weathers
 {
     public class WeatherDataset
     {
+        public static WeatherDataset Instance;
+
         private const string WEATHER_PATH = "Weathers/";
 
         public WeatherFieldKey[] keys;
@@ -26,6 +28,12 @@ namespace Assets.Resources.Weathers
                 _ => throw new Exception("Year not supported")
             };
             return $"H_{department}_{dateKey}";
+        }
+
+        public static WeatherDataset Load(int department, int year)
+        {
+            Instance = new WeatherDataset(department, year);
+            return Instance;
         }
 
         public WeatherDataset(int department, int year)
@@ -57,12 +65,17 @@ namespace Assets.Resources.Weathers
             return Records().Where(record => Get(record, WeatherFieldKey.NOM_USUEL).Equals(post));
         }
 
-        private string Get(WeatherRecord record, WeatherFieldKey key)
+        public float GetFloat(WeatherRecord record, WeatherFieldKey key)
+        {
+            return record.GetFloat(Array.IndexOf(keys, key));
+        }
+
+        public string Get(WeatherRecord record, WeatherFieldKey key)
         {
             return record.Get(Array.IndexOf(keys, key));
         }
 
-        private int GetInt(WeatherRecord record, WeatherFieldKey key)
+        public int GetInt(WeatherRecord record, WeatherFieldKey key)
         {
             return record.GetInt(Array.IndexOf(keys, key));
         }
