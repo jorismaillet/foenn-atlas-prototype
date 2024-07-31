@@ -11,8 +11,8 @@ public class Hello : MonoBehaviour
 {
     void Start()
     {
-        var city = "Plomelin";
-        var department = 29;
+        var city = "Montpellier";
+        var department = 34;
         var year = 2023;
 
         //Debug.Log($"Loading file {WeatherDataset.WeatherFileName(department, year)}");
@@ -32,16 +32,28 @@ public class Hello : MonoBehaviour
         var postWeather = new WeatherPostDataset(weather, post);
         //Debug.Log($"The post {post} has {postWeather.records.Count()} entries and the average temperature recorded in {year} is {postWeather.AverageTemperature()}");
 
+        Debug.Log($"Total rain in {city} in {year}: {postWeather.records.Sum(record => weather.GetFloat(record, WeatherFieldKey.RR1))}mm");
+
+
+        // Certaines valeurs ne sont pas disponibles dans les posts
         //TODO FF et FF2 sont des valeurs similaires, il faudrait pouvoir les regrouper pour étendre les villes compatibles
         //TODO Ajouter ses heures d'activité
-        var activity = new Activity("Kayak", 10, new TimeCondition(15, 19), new List<WeatherFieldCondition>()
+        /*var activity = new Activity("Kayak", 10, new TimeCondition(15, 19), new List<WeatherFieldCondition>()
         {
             new WeatherFieldCondition(WeatherFieldKey.T, 24, 30),
             new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
             new WeatherFieldCondition(WeatherFieldKey.FF2, 0, 5) // Certaines valeurs ne sont pas disponibles dans les posts
+        }); // TODO RecordType with default range*/
+        var activity = new Activity("Tennis", 0, 3, new TimeCondition(9, 20), new List<WeatherFieldCondition>()
+        {
+            new WeatherFieldCondition(WeatherFieldKey.T, 5, 30),
+            new WeatherFieldCondition(WeatherFieldKey.FF, 0, 2) 
+        }, new List<WeatherFieldCondition>()
+        {
+            new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0)
         }); // TODO RecordType with default range
 
-        if(activity.conditions.Any(condition =>
+        if (activity.hourlyConditions.Union(activity.cumulatedHourConditions).Any(condition =>
         {
             var record = postWeather.records.First();
             var value = weather.Get(record, condition.key);
@@ -60,8 +72,26 @@ public class Hello : MonoBehaviour
             return;
         }
 
-        var suitHours = postWeather.records.Where(records => activity.Suits(records));
-        var suitDays = suitHours.GroupBy(record => Day(WeatherDataset.Instance.Get(record, WeatherFieldKey.AAAAMMJJHH)));
+        var suitHours = postWeather.records.Where(records => activity.SuitsHour(records)).ToList();
+        var suitDays = suitHours.GroupBy(record => Day(WeatherDataset.Instance.Get(record, WeatherFieldKey.AAAAMMJJHH))).ToList().Where(group =>
+        {
+            var hoursForDay = group.ToList();
+            var suit = activity.SuitsDay(hoursForDay);
+            if(suit)
+            {
+                //Check continous hours
+                var maxConsecutiveHours = MaxConsecutiveHours(hoursForDay.Select(record => Hour(WeatherDataset.Instance.Get(record, WeatherFieldKey.AAAAMMJJHH))).ToList());
+                if (maxConsecutiveHours < activity.minContinousHours)
+                {
+                    suit = false;
+                }
+            }
+            if(!suit)
+            {
+                suitHours = suitHours.Except(hoursForDay).ToList();
+            }
+            return suit;
+        });
         var suitWeeks = suitHours.GroupBy(record => WeekOfYear(WeatherDataset.Instance.Get(record, WeatherFieldKey.AAAAMMJJHH)));
         var suitMonths = suitHours.GroupBy(record => Month(WeatherDataset.Instance.Get(record, WeatherFieldKey.AAAAMMJJHH)));
         var match = suitHours.Count();
@@ -84,6 +114,13 @@ public class Hello : MonoBehaviour
         {
             Debug.Log($"Activity does not suit in {city}");
         }
+    }
+
+    private int Hour(string AAAAMMJJHH)
+    {
+        string format = "yyyyMMddHH";
+        DateTime dateTime = DateTime.ParseExact(AAAAMMJJHH, format, CultureInfo.InvariantCulture);
+        return dateTime.Hour;
     }
 
     private string Day(string AAAAMMJJHH)
@@ -122,5 +159,35 @@ public class Hello : MonoBehaviour
 
         // Return the week of our adjusted day
         return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+    }
+
+    public static int MaxConsecutiveHours(List<int> hours)
+    {
+        if (hours == null || hours.Count == 0)
+        {
+            return 0;
+        }
+
+        hours.Sort();
+        int maxConsecutive = 1;
+        int currentStreak = 1;
+
+        for (int i = 1; i < hours.Count; i++)
+        {
+            if (hours[i] == hours[i - 1] + 1)
+            {
+                currentStreak++;
+            }
+            else
+            {
+                if (currentStreak > maxConsecutive)
+                {
+                    maxConsecutive = currentStreak;
+                }
+                currentStreak = 1;
+            }
+        }
+
+        return Math.Max(maxConsecutive, currentStreak);
     }
 }
