@@ -12,6 +12,7 @@ namespace Assets.Resources.Weathers
 
         public WeatherFieldKey[] keys;
         public string[] posts;
+        public Dictionary<string, List<WeatherFieldKey>> fieldsByPost = new Dictionary<string, List<WeatherFieldKey>>();
 
         public int year;
         public int department;
@@ -36,13 +37,30 @@ namespace Assets.Resources.Weathers
             return Instance;
         }
 
+        public string Post(string city)
+        {
+            return posts.FirstOrDefault(post => post.IndexOf(city, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+
         public WeatherDataset(int department, int year)
         {
             this.year = year;
             this.department = department;
             var csv = new CSVLoader(WeatherFileName(department, year));
             keys = csv.header.Select(rawKey => Enum.Parse<WeatherFieldKey>(rawKey)).ToArray();
-            posts = Records(csv).GroupBy(record => Get(record, WeatherFieldKey.NOM_USUEL)).Select(group => group.Key).ToArray();
+            posts = Records(csv).GroupBy(record => Get(record, WeatherFieldKey.NOM_USUEL)).Select(group => {
+                var availableKeys = new List<WeatherFieldKey>();
+                var firstRow = group.First();
+                for (int i = 0; i < firstRow.values.Count(); i++)
+                {
+                    if(firstRow.values[i] != null)
+                    {
+                        availableKeys.Add(keys[i]);
+                    }
+                }
+                fieldsByPost.Add(group.Key, availableKeys);
+                return group.Key;
+            }).ToArray();
         }
 
         public static string WeatherFileName(int department, int year)

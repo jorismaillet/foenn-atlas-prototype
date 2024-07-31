@@ -5,7 +5,7 @@ namespace Assets.Resources.Weathers
 {
     public class WeatherRecord
     {
-        private string[] values;
+        public string[] values;
 
         public WeatherRecord(string rawLine)
         {
