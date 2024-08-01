@@ -10,9 +10,8 @@ namespace Assets.Resources.Weathers
 
         private const string WEATHER_PATH = "Weathers/";
 
-        public WeatherFieldKey[] keys;
-        public string[] posts;
-        public Dictionary<string, List<WeatherFieldKey>> fieldsByPost = new Dictionary<string, List<WeatherFieldKey>>();
+        public WeatherFieldKey[] availableKeys;
+        public Dictionary<int, WeatherPostDataset> posts = new Dictionary<int, WeatherPostDataset>();
 
         public int year;
         public int department;
@@ -37,30 +36,31 @@ namespace Assets.Resources.Weathers
             return Instance;
         }
 
-        public string Post(string city)
+        public WeatherPostDataset Post(string city)
         {
-            return posts.FirstOrDefault(post => post.IndexOf(city, StringComparison.OrdinalIgnoreCase) >= 0);
+            return posts.Values.FirstOrDefault(post => post.post.IndexOf(city, StringComparison.OrdinalIgnoreCase) >= 0);
         }
 
         public WeatherDataset(int department, int year)
         {
             this.year = year;
             this.department = department;
+
             var csv = new CSVLoader(WeatherFileName(department, year));
-            keys = csv.header.Select(rawKey => Enum.Parse<WeatherFieldKey>(rawKey)).ToArray();
-            posts = Records(csv).GroupBy(record => Get(record, WeatherFieldKey.NOM_USUEL)).Select(group => {
-                var availableKeys = new List<WeatherFieldKey>();
+            availableKeys = csv.header.Select(rawKey => Enum.Parse<WeatherFieldKey>(rawKey)).ToArray();
+
+            foreach (var group in Records(csv).GroupBy(record => GetInt(record, WeatherFieldKey.NUM_POSTE))) {
                 var firstRow = group.First();
+                var availableKeys = new List<WeatherFieldKey>();
                 for (int i = 0; i < firstRow.values.Count(); i++)
                 {
-                    if(firstRow.values[i] != null)
+                    if(!string.IsNullOrEmpty(firstRow.values[i]))
                     {
-                        availableKeys.Add(keys[i]);
+                        availableKeys.Add(this.availableKeys[i]);
                     }
                 }
-                fieldsByPost.Add(group.Key, availableKeys);
-                return group.Key;
-            }).ToArray();
+                posts.Add(group.Key, new WeatherPostDataset(this, group.Key, Get(firstRow, WeatherFieldKey.NOM_USUEL), availableKeys));
+            };
         }
 
         public static string WeatherFileName(int department, int year)
@@ -78,24 +78,24 @@ namespace Assets.Resources.Weathers
             return Records(new CSVLoader(WeatherFileName(department, year)));
         }
 
-        public IEnumerable<WeatherRecord> Records(string post)
+        public IEnumerable<WeatherRecord> Records(int postID)
         {
-            return Records().Where(record => Get(record, WeatherFieldKey.NOM_USUEL).Equals(post));
+            return Records(new CSVLoader(WeatherFileName(department, year), postID));
         }
 
         public float GetFloat(WeatherRecord record, WeatherFieldKey key)
         {
-            return record.GetFloat(Array.IndexOf(keys, key));
+            return record.GetFloat(Array.IndexOf(availableKeys, key));
         }
 
         public string Get(WeatherRecord record, WeatherFieldKey key)
         {
-            return record.Get(Array.IndexOf(keys, key));
+            return record.Get(Array.IndexOf(availableKeys, key));
         }
 
         public int GetInt(WeatherRecord record, WeatherFieldKey key)
         {
-            return record.GetInt(Array.IndexOf(keys, key));
+            return record.GetInt(Array.IndexOf(availableKeys, key));
         }
 
         public int EntriesQuantity()

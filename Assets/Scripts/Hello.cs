@@ -5,79 +5,125 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Hello : MonoBehaviour
 {
-    void Start()
+    private int department = 29;
+    private int year = 2023;
+    private Activity activity;
+    private WeatherDataset weather;
+
+    private int cityIndex = 0;
+    private List<WeatherPostDataset> postsForActivity;
+    private List<Tuple<string, int>> result = new List<Tuple<string, int>>();
+
+    //https://openweathermap.org/city/2997943 Pour plus de données
+    private void Start()
     {
-        var city = "Montpellier";
-        var department = 34;
-        var year = 2023;
-
         //Debug.Log($"Loading file {WeatherDataset.WeatherFileName(department, year)}");
-        var weather = WeatherDataset.Load(department, year);
-        //Debug.Log($"There are {weather.EntriesQuantity()} entries for {weather.PostsQuantity()} posts in {year} for department {department}");
-
-        Debug.Log($"Finding post match for city {city}");
-        var post = weather.Post(city);
-        if(post == null)
-        {
-            Debug.Log("Didn't find any post for this city");
-            return;
-        }
-        Debug.Log($"Found {post}");
-
-        //Debug.Log($"Loading records for post {post}");
-        var postWeather = new WeatherPostDataset(weather, post);
-        //Debug.Log($"The post {post} has {postWeather.records.Count()} entries and the average temperature recorded in {year} is {postWeather.AverageTemperature()}");
-
-        Debug.Log($"Total rain in {city} in {year}: {postWeather.records.Sum(record => weather.GetFloat(record, WeatherFieldKey.RR1))}mm");
-
+        weather = WeatherDataset.Load(department, year); //TODO Load necessary columns only when doing stats on all posts + early skip posts without the info
+                                                         //Debug.Log($"There are {weather.EntriesQuantity()} entries for {weather.PostsQuantity()} posts in {year} for department {department}");
 
         // Certaines valeurs ne sont pas disponibles dans les posts
         //TODO FF et FF2 sont des valeurs similaires, il faudrait pouvoir les regrouper pour étendre les villes compatibles
         //TODO Ajouter ses heures d'activité
-        /*var activity = new Activity("Kayak", 10, new TimeCondition(15, 19), new List<WeatherFieldCondition>()
+        //TODO pour les jours non compatibles, indiquer les raisons (ex: trop de vent)
+        activity = new Activity("Kayak", 10, 3, new TimeCondition(14, 20), new List<WeatherFieldCondition>()
         {
             new WeatherFieldCondition(WeatherFieldKey.T, 24, 30),
             new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
-            new WeatherFieldCondition(WeatherFieldKey.FF2, 0, 5) // Certaines valeurs ne sont pas disponibles dans les posts
-        }); // TODO RecordType with default range*/
-        var activity = new Activity("Tennis", 0, 3, new TimeCondition(9, 20), new List<WeatherFieldCondition>()
+            new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2 }, 0, 5) // Certaines valeurs ne sont pas disponibles dans les posts
+        }, new List<WeatherFieldCondition>());
+        /*activity = new Activity("Tennis", 0, 3, new TimeCondition(9, 20), new List<WeatherFieldCondition>()
         {
-            new WeatherFieldCondition(WeatherFieldKey.T, 5, 30),
-            new WeatherFieldCondition(WeatherFieldKey.FF, 0, 2) 
+            new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 5, 30),
+            new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 2)
         }, new List<WeatherFieldCondition>()
         {
             new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0)
-        }); // TODO RecordType with default range
-
-        if (activity.hourlyConditions.Union(activity.cumulatedHourConditions).Any(condition =>
+        }); // TODO RecordType with default range*/
+        /*activity = new Activity("Piscine", 0, 2, new TimeCondition(9, 22), new List<WeatherFieldCondition>()
         {
-            var record = postWeather.records.First();
-            var value = weather.Get(record, condition.key);
-            if (value == null || value == "")
-            {
-                Debug.Log($"Error: {condition.key} is not available for post {post}");
-                return true;
-            }
-            if (!float.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out float result))
-            {
-                Debug.Log($"Error: {condition.key} expected float. value is {value}");
-                return true;
-            }
-            return false;
-        })) {
+            new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 25, 35),
+            new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 4)/*,
+            new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.N, WeatherFieldKey.N1, WeatherFieldKey.NBAS }, 0, 3)
+        }, new List<WeatherFieldCondition>()
+        {
+            new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0)
+        });*/
+
+
+        postsForActivity = weather.posts.Values.Where(post => post.HasRecordsFor(activity)).ToList();
+        Debug.Log($"{postsForActivity.Count}/{weather.posts.Count} has enough data to check this activity");
+
+        /*
+           Debug.Log($"Finding post match for city {city}");
+        var post = weather.Post(city);
+        if(post == null)
+        {
+            Debug.Log("Didn't find any post for this city");
+            return 0;
+        }
+        Debug.Log($"Found {post}");
+        */
+    }
+
+    void Update()
+    {
+        if (postsForActivity == null || cityIndex > postsForActivity.Count())
+        {
             return;
         }
+        else if (cityIndex == postsForActivity.Count())
+        {
+            var ranking = result.OrderByDescending(tuple => tuple.Item2);
+            Debug.Log($"Best place for {activity.name} in department {department} in {year} is {ranking.First().Item1} with {ranking.First().Item2} days of suitability");
+            cityIndex++;
+            return;
+        }
+        var post = postsForActivity[cityIndex];
+        Debug.Log($"Stats for {post.post}");
+        result.Add(Tuple.Create(post.post, StatsFor(post, activity)));
 
-        var suitHours = postWeather.records.Where(records => activity.SuitsHour(records)).ToList();
-        var suitDays = suitHours.GroupBy(record => Day(WeatherDataset.Instance.Get(record, WeatherFieldKey.AAAAMMJJHH))).ToList().Where(group =>
+        cityIndex++;
+    }
+
+    public int StatsFor(WeatherPostDataset weatherPost, Activity activity)
+    {
+        //Debug.Log($"Loading records for post {post}");
+        var records = weatherPost.Records();
+        //Debug.Log($"The post {post} has {postWeather.records.Count()} entries and the average temperature recorded in {year} is {postWeather.AverageTemperature()}");
+
+        /* if (activity.hourlyConditions.Union(activity.cumulatedHourConditions).Any(condition =>
+         {
+             var record = postWeather.records.First();
+             var value = weather.Get(record, condition.key);
+             if (value == null || value == "")
+             {
+                 Debug.Log($"Error: {condition.key} is not available for post {post}");
+                 return true;
+             }
+             if (!float.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out float result))
+             {
+                 Debug.Log($"Error: {condition.key} expected float. value is {value}");
+                 return true;
+             }
+             return false;
+         })) {
+             return 0;
+         }*/
+
+        List<WeatherRecord> suitHours = new List<WeatherRecord>();
+        List<string> suitDays = new List<string>();
+
+        suitHours = records.Where(records => activity.SuitsHour(records, weatherPost.availableKeys)).ToList();
+        suitDays = suitHours.GroupBy(record => Day(WeatherDataset.Instance.Get(record, WeatherFieldKey.AAAAMMJJHH))).ToList().Where(group =>
         {
             var hoursForDay = group.ToList();
-            var suit = activity.SuitsDay(hoursForDay);
-            if(suit)
+            var suit = activity.SuitsDay(hoursForDay, weatherPost.availableKeys);
+            if (suit)
             {
                 //Check continous hours
                 var maxConsecutiveHours = MaxConsecutiveHours(hoursForDay.Select(record => Hour(WeatherDataset.Instance.Get(record, WeatherFieldKey.AAAAMMJJHH))).ToList());
@@ -86,19 +132,27 @@ public class Hello : MonoBehaviour
                     suit = false;
                 }
             }
-            if(!suit)
+            if (!suit)
             {
                 suitHours = suitHours.Except(hoursForDay).ToList();
             }
             return suit;
-        });
-        var suitWeeks = suitHours.GroupBy(record => WeekOfYear(WeatherDataset.Instance.Get(record, WeatherFieldKey.AAAAMMJJHH)));
+        }).Select(g => g.Key).ToList();
+
+        var res = suitDays.Count();
+        Debug.Log($"{weatherPost.post}: {res}");
+        return res;
+
+        /*var suitWeeks = suitHours.GroupBy(record => WeekOfYear(WeatherDataset.Instance.Get(record, WeatherFieldKey.AAAAMMJJHH)));
         var suitMonths = suitHours.GroupBy(record => Month(WeatherDataset.Instance.Get(record, WeatherFieldKey.AAAAMMJJHH)));
         var match = suitHours.Count();
         var total = postWeather.records.Count;
-        Debug.Log($"Results for {activity.name} around {post} in {year}:");
-        Debug.Log($"Activity suits {((float)match / total) * 100.0F}% of the time ({match} hours of suitability, in {suitDays.Count()} days ({match / suitDays.Count()} hours per available day in average)");
-        Debug.Log($"Activity suits in {suitWeeks.Count()} weeks (expected at least {activity.minWeekFrequencyPerYear} weeks)");
+        Debug.Log($"Results for {activity.name} around {post}:");
+        Debug.Log($"Activity suits {((float)match / total) * 100.0F}% of the time ({match} hours of suitability, in {suitDays.Count()} days");
+        if (suitDays.Count > 0) {
+            Debug.Log($"{ match / suitDays.Count()} hours per available day in average)");
+        }*/
+        /*Debug.Log($"Activity suits in {suitWeeks.Count()} weeks (expected at least {activity.minWeekFrequencyPerYear} weeks)");
         Debug.Log($"Activity is available in months: {string.Join(", ", suitMonths.Select(m => m.Key))}");
         foreach (var monthGroup in suitMonths)
         {
@@ -108,12 +162,13 @@ public class Hello : MonoBehaviour
 
         if (suitWeeks.Count() >= activity.minWeekFrequencyPerYear)
         {
-            Debug.Log($"Activity suits in {city}");
+            Debug.Log($"Activity suits in {post}");
         }
         else
         {
-            Debug.Log($"Activity does not suit in {city}");
-        }
+            Debug.Log($"Activity does not suit in {post}");
+        }*/
+        return suitDays.Count();
     }
 
     private int Hour(string AAAAMMJJHH)
