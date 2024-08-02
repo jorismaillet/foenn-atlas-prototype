@@ -8,7 +8,7 @@ namespace Assets.Resources.Weathers
     {
         public static WeatherDataset Instance;
 
-        private const string WEATHER_PATH = "Weathers/";
+        public const string WEATHER_PATH = "Weathers/";
 
         public WeatherFieldKey[] availableKeys;
         public Dictionary<int, WeatherPostDataset> posts = new Dictionary<int, WeatherPostDataset>();
@@ -81,21 +81,6 @@ namespace Assets.Resources.Weathers
         public IEnumerable<WeatherRecord> Records(int postID)
         {
             return Records(new CSVLoader(WeatherFileName(department, year), postID));
-        }
-
-        public float GetFloat(WeatherRecord record, WeatherFieldKey key)
-        {
-            return record.GetFloat(Array.IndexOf(availableKeys, key));
-        }
-
-        public string Get(WeatherRecord record, WeatherFieldKey key)
-        {
-            return record.Get(Array.IndexOf(availableKeys, key));
-        }
-
-        public int GetInt(WeatherRecord record, WeatherFieldKey key)
-        {
-            return record.GetInt(Array.IndexOf(availableKeys, key));
         }
 
         public int EntriesQuantity()

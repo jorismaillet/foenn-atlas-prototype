@@ -13,19 +13,24 @@ namespace Assets.Resources.Weathers
             values = rawLine.Split(CSVLoader.STRING_SPLIT);
         }
 
-        public string Get(int index)
+        private string Get(int index)
         {
             return values[index];
         }
 
-        public int GetInt(int index)
+        public float GetFloat(WeatherFieldKey key)
         {
-            return int.Parse(Get(index));
+            return float.Parse(Get(Array.IndexOf(WeatherDataset.Instance.availableKeys, key)));
         }
 
-        public float GetFloat(int index)
+        public string Get(WeatherFieldKey key)
         {
-            return float.Parse(Get(index), CultureInfo.InvariantCulture);
+            return Get(Array.IndexOf(WeatherDataset.Instance.availableKeys, key));
+        }
+
+        public int GetInt(WeatherFieldKey key)
+        {
+            return int.Parse(Get(Array.IndexOf(WeatherDataset.Instance.availableKeys, key)));
         }
     }
 }

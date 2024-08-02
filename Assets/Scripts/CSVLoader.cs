@@ -1,7 +1,9 @@
 ﻿using Assets.Resources.Weathers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 // ex1. CSVReader.getData(csvFile)
@@ -34,6 +36,46 @@ public class CSVLoader
         {
             remainingLines = AllRemainingLines(reader);
         }
+    }
+
+    [MenuItem("Tools/List CSV Files in Resources")]
+    public static List<string> ListCsvFilesInResources(string folderPath)
+    {
+        string resourcesPath = Application.dataPath + "/Resources/" + folderPath; // Chemin relatif au dossier Resources
+        List<string> csvFiles = GetCsvFileNames(resourcesPath);
+
+        return csvFiles;
+    }
+
+    private static List<string> GetCsvFileNames(string folderPath)
+    {
+        List<string> csvFiles = new List<string>();
+
+        try
+        {
+            // Vérifier si le dossier existe
+            if (Directory.Exists(folderPath))
+            {
+                // Récupérer tous les fichiers CSV dans le dossier
+                string[] files = Directory.GetFiles(folderPath, "*.csv");
+
+                // Ajouter les noms de fichiers à la liste
+                foreach (string file in files)
+                {
+                    csvFiles.Add(Path.GetFileName(file));
+                }
+            }
+            else
+            {
+                Debug.LogError("Le dossier spécifié n'existe pas.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Une erreur s'est produite : " + ex.Message);
+        }
+
+        return csvFiles;
     }
 
     private IEnumerable<string> AllRemainingLines(StringReader reader)
