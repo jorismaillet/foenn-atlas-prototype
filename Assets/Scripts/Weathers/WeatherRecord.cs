@@ -1,36 +1,34 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Resources.Weathers
 {
     public class WeatherRecord
     {
-        public string[] values;
+        public Dictionary<WeatherFieldKey, string> values = new Dictionary<WeatherFieldKey, string>();
 
-        public WeatherRecord(string rawLine)
+        public WeatherRecord(List<WeatherFieldKey> keys, string rawLine)
         {
-            values = rawLine.Split(CSVLoader.STRING_SPLIT);
-        }
-
-        private string Get(int index)
-        {
-            return values[index];
+            var array = rawLine.Split(CSVLoader.STRING_SPLIT);
+            for(int i = 0; i < keys.Count; i++)
+            {
+                values.Add(keys[i], array[i]);
+            }
         }
 
         public float GetFloat(WeatherFieldKey key)
         {
-            return float.Parse(Get(Array.IndexOf(WeatherDataset.Instance.availableKeys, key)));
+            return float.Parse(values[key]);
         }
 
         public string Get(WeatherFieldKey key)
         {
-            return Get(Array.IndexOf(WeatherDataset.Instance.availableKeys, key));
+            return values[key];
         }
 
         public int GetInt(WeatherFieldKey key)
         {
-            return int.Parse(Get(Array.IndexOf(WeatherDataset.Instance.availableKeys, key)));
+            return int.Parse(values[key]);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace Assets.Resources.Activities
 
         public bool SuitsHour(WeatherRecord hourRecord, List<WeatherFieldKey> availableKeys)
         {
-            return SuitsHour(WeatherDataset.Instance.Get(hourRecord, WeatherFieldKey.AAAAMMJJHH)) && Suits(hourRecord, hourlyConditions, availableKeys);
+            return SuitsHour(hourRecord.Get(WeatherFieldKey.AAAAMMJJHH)) && Suits(hourRecord, hourlyConditions, availableKeys);
         }
 
         public bool SuitsDay(List<WeatherRecord> selectedHourRecordsForDay, List<WeatherFieldKey> availableKeys)

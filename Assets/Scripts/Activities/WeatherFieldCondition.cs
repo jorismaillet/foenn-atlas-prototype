@@ -32,7 +32,7 @@ namespace Assets.Resources.Activities
             {
                 try
                 {
-                    var value = WeatherDataset.Instance.GetFloat(record, key);
+                    var value = record.GetFloat(key);
                     return min <= value && max >= value;
                 }
                 catch(FormatException e)

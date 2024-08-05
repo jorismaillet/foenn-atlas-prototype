@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -15,6 +16,7 @@ namespace Assets.Resources.Weathers
         public int id;
         public string post;
         public List<WeatherFieldKey> availableKeys;
+        public List<WeatherRecord> records;
 
         public WeatherPostDataset(WeatherDataset dataset, int id, string post, List<WeatherFieldKey> availableKeys)
         {
@@ -22,11 +24,6 @@ namespace Assets.Resources.Weathers
             this.id = id;
             this.post = post;
             this.availableKeys = availableKeys;
-        }
-
-        public IEnumerable<WeatherRecord> Records()
-        {
-            return dataset.Records(id);
         }
 
         public bool HasRecordsFor(Activity activity)
@@ -40,14 +37,12 @@ namespace Assets.Resources.Weathers
             });
         }
 
-        public int AverageTemperature()
+        public async Task Load(int department, int year)
         {
-            return (int)(Records().Select(entry => GetFloat(entry, WeatherFieldKey.T)).Average());
-        }
-
-        private float GetFloat(WeatherRecord record, WeatherFieldKey key)
-        {
-            return record.GetFloat(Array.IndexOf(dataset.availableKeys, key));
+            var csv = new CSVLoader();
+            var remainingLiens = await csv.Load(WeatherDataset.WeatherFileName(department, year), id);
+            var rawRecords = remainingLiens.Select(line => new WeatherRecord(availableKeys, line));
+            records = rawRecords.Where(record => record.Get(WeatherFieldKey.AAAAMMJJHH).StartsWith(year.ToString())).ToList();
         }
     }
 }

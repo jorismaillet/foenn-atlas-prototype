@@ -1,69 +1,74 @@
-using Assets.Resources.Activities;
+ï»¿using Assets.Resources.Activities;
 using Assets.Resources.Weathers;
 using Assets.Scripts;
 using Assets.Scripts.Activities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using static UnityEngine.Networking.UnityWebRequest;
 
-public class Hello : MonoBehaviour
+public class WeatherProcessor
 {
     private int department = 29;
     private int year = 2023;
     private Activity activity;
     private WeatherDataset weather;
 
-    private int cityIndex = 0;
     private List<WeatherPostDataset> postsForActivity;
-    private List<DepartmentRanking> ranking = new List<DepartmentRanking>();
+    private DepartmentRanking ranking;
 
-    //https://openweathermap.org/city/2997943 Pour plus de données
-    private void Start()
+    public WeatherProcessor()
     {
-        departmentFiles = CSVLoader.ListCsvFilesInResources(WeatherDataset.WEATHER_PATH);
+        BuildActity();
     }
 
-    private void ProcessPostRanking()
+    public async Task Process()
     {
-        var post = postsForActivity[cityIndex];
-        Debug.Log($"Stats for {post.post}");
-        result.Add(Tuple.Create(post.post, StatsFor(post, activity)));
-
+        await InitializeDepartment();
+        InitializePostsForActivity();
+        await ProcessDepartmentRanking();
     }
 
-    private void ProcessDepartmentRanking()
+    private async Task<DepartmentRanking> ProcessDepartmentRanking()
     {
-        var ranking = result.OrderByDescending(tuple => tuple.Item2);
+        var allDepartmentRanking = new List<Tuple<string, int>>();
+        foreach (var post in postsForActivity)
+        {
+            var postRank = await ProcessPostRanking(post);
+            allDepartmentRanking.Add(postRank);
+        }
+        var ranking = allDepartmentRanking.OrderByDescending(tuple => tuple.Item2).Take(3);
         Debug.Log($"Best place for {activity.name} in department {department} in {year} is {ranking.First().Item1} with {ranking.First().Item2} days of suitability");
+        return new DepartmentRanking(department, ranking.ToList());
     }
 
-    private void InitializePostsForDepartment()
+    private async Task<Tuple<string, int>> ProcessPostRanking(WeatherPostDataset post)
+    {
+        Debug.Log($"Stats for {post.post}");
+        return Tuple.Create(post.post, await StatsFor(post, activity));
+    }
+
+    private void InitializePostsForActivity()
     {
         postsForActivity = weather.posts.Values.Where(post => post.HasRecordsFor(activity)).ToList();
-        Debug.Log($"{postsForActivity.Count}/{weather.posts.Count} has enough data to check this activity");
+        Debug.Log($"{postsForActivity.Count}/{weather.posts.Count} posts have enough data to check this activity");
     }
 
-    private void MoveToNextPost()
+    private async Task InitializeDepartment()
     {
-        cityIndex++;
-    }
-
-    private void InitializeDepartment()
-    {
-        //Debug.Log($"Loading file {WeatherDataset.WeatherFileName(department, year)}");
-        weather = WeatherDataset.Load(department, year); //TODO Load necessary columns only when doing stats on all posts + early skip posts without the info
+        Debug.Log($"Loading file {WeatherDataset.WeatherFileName(department, year)}");
+        weather = await WeatherDataset.Load(department, year); //TODO Load necessary columns only when doing stats on all posts + early skip posts without the info
                                                          //Debug.Log($"There are {weather.EntriesQuantity()} entries for {weather.PostsQuantity()} posts in {year} for department {department}");
     }
 
     private void BuildActity()
     {
         // Certaines valeurs ne sont pas disponibles dans les posts
-        //TODO FF et FF2 sont des valeurs similaires, il faudrait pouvoir les regrouper pour étendre les villes compatibles
-        //TODO Ajouter ses heures d'activité
+        //TODO FF et FF2 sont des valeurs similaires, il faudrait pouvoir les regrouper pour Ã©tendre les villes compatibles
+        //TODO Ajouter ses heures d'activitÃ©
         //TODO pour les jours non compatibles, indiquer les raisons (ex: trop de vent)
         activity = new Activity("Kayak", 10, 3, new TimeCondition(14, 20), new List<WeatherFieldCondition>()
         {
@@ -134,41 +139,23 @@ public class Hello : MonoBehaviour
         }*/
     }
 
-    void Update()
+    public async Task<int> StatsFor(WeatherPostDataset weatherPost, Activity activity)
     {
-        if (cityIndex == postsForActivity.Count() {
-           
-            return;
-
-            departmentIndex++;
-            return;
-        }
-        if()
-
-        if (postsForActivity == null || departmentIndex > departmentFiles.Count())
-        {
-            return;
-        }
-
-    }
-
-    public int StatsFor(WeatherPostDataset weatherPost, Activity activity)
-    {
-        //Debug.Log($"Loading records for post {post}");
-        var records = weatherPost.Records();
+        Debug.Log($"Loading records for post {weatherPost.post}");
+        await weatherPost.Load(department, year);
 
         List<WeatherRecord> suitHours = new List<WeatherRecord>();
         List<string> suitDays = new List<string>();
 
-        suitHours = records.Where(records => activity.SuitsHour(records, weatherPost.availableKeys)).ToList();
-        suitDays = suitHours.GroupBy(record => Day(WeatherDataset.Instance.Get(record, WeatherFieldKey.AAAAMMJJHH))).ToList().Where(group =>
+        suitHours = weatherPost.records.Where(records => activity.SuitsHour(records, weatherPost.availableKeys)).ToList();
+        suitDays = suitHours.GroupBy(record => TimeHelper.Day(record.Get(WeatherFieldKey.AAAAMMJJHH))).ToList().Where(group =>
         {
             var hoursForDay = group.ToList();
             var suit = activity.SuitsDay(hoursForDay, weatherPost.availableKeys);
             if (suit)
             {
                 //Check continous hours
-                var maxConsecutiveHours = MaxConsecutiveHours(hoursForDay.Select(record => Hour(WeatherDataset.Instance.Get(record, WeatherFieldKey.AAAAMMJJHH))).ToList());
+                var maxConsecutiveHours = TimeHelper.MaxConsecutiveHours(hoursForDay.Select(record => TimeHelper.Hour(record.Get(WeatherFieldKey.AAAAMMJJHH))).ToList());
                 if (maxConsecutiveHours < activity.minContinousHours)
                 {
                     suit = false;

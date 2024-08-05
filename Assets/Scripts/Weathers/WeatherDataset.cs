@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Resources.Weathers
 {
@@ -10,7 +12,7 @@ namespace Assets.Resources.Weathers
 
         public const string WEATHER_PATH = "Weathers/";
 
-        public WeatherFieldKey[] availableKeys;
+        public List<WeatherFieldKey> availableKeys;
         public Dictionary<int, WeatherPostDataset> posts = new Dictionary<int, WeatherPostDataset>();
 
         public int year;
@@ -30,9 +32,10 @@ namespace Assets.Resources.Weathers
             return $"H_{department}_{dateKey}";
         }
 
-        public static WeatherDataset Load(int department, int year)
+        public static async Task<WeatherDataset> Load(int department, int year)
         {
             Instance = new WeatherDataset(department, year);
+            await Instance.Load();
             return Instance;
         }
 
@@ -45,21 +48,23 @@ namespace Assets.Resources.Weathers
         {
             this.year = year;
             this.department = department;
+        }
 
-            var csv = new CSVLoader(WeatherFileName(department, year));
-            availableKeys = csv.header.Select(rawKey => Enum.Parse<WeatherFieldKey>(rawKey)).ToArray();
-
-            foreach (var group in Records(csv).GroupBy(record => GetInt(record, WeatherFieldKey.NUM_POSTE))) {
+        public async Task Load()
+        {
+            Debug.Log("Read CSV");
+            var csv = new CSVLoader();
+            var remainingLines = await csv.Load(WeatherFileName(department, year));
+            Debug.Log("0");
+            availableKeys = csv.header.Select(rawKey => Enum.Parse<WeatherFieldKey>(rawKey)).ToList();
+            Debug.Log("1");
+            var records = Records(remainingLines);
+            Debug.Log("2");
+            foreach (var group in records.GroupBy(record => record.GetInt(WeatherFieldKey.NUM_POSTE)))
+            {
                 var firstRow = group.First();
-                var availableKeys = new List<WeatherFieldKey>();
-                for (int i = 0; i < firstRow.values.Count(); i++)
-                {
-                    if(!string.IsNullOrEmpty(firstRow.values[i]))
-                    {
-                        availableKeys.Add(this.availableKeys[i]);
-                    }
-                }
-                posts.Add(group.Key, new WeatherPostDataset(this, group.Key, Get(firstRow, WeatherFieldKey.NOM_USUEL), availableKeys));
+                var availableKeys = firstRow.values.Where(g => !string.IsNullOrEmpty(g.Value)).Select(g => g.Key).ToList();
+                posts.Add(group.Key, new WeatherPostDataset(this, group.Key, firstRow.Get(WeatherFieldKey.NOM_USUEL), availableKeys));
             };
         }
 
@@ -68,29 +73,13 @@ namespace Assets.Resources.Weathers
             return $"{WEATHER_PATH}{FileName(department, year)}";
         }
 
-        private IEnumerable<WeatherRecord> Records(CSVLoader csv)
+        private IEnumerable<WeatherRecord> Records(IEnumerable<string> remainingLines)
         {
-            return csv.remainingLines.Select(line => new WeatherRecord(line)).Where(record => Get(record, WeatherFieldKey.AAAAMMJJHH).StartsWith(year.ToString()));
-        }
-
-        public IEnumerable<WeatherRecord> Records()
-        {
-            return Records(new CSVLoader(WeatherFileName(department, year)));
-        }
-
-        public IEnumerable<WeatherRecord> Records(int postID)
-        {
-            return Records(new CSVLoader(WeatherFileName(department, year), postID));
-        }
-
-        public int EntriesQuantity()
-        {
-            return Records().Count();
-        }
-
-        public int PostsQuantity()
-        {
-            return Records().GroupBy(entry => Get(entry, WeatherFieldKey.NUM_POSTE)).Count();
+            Debug.Log("3");
+            var records = remainingLines.Select(line => new WeatherRecord(availableKeys, line));
+            var filteredRecords = records.Where(record => record.Get(WeatherFieldKey.AAAAMMJJHH).StartsWith(year.ToString()));
+            Debug.Log("4");
+            return filteredRecords;
         }
     }
 }
