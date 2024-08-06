@@ -1,0 +1,151 @@
+diff a/Assets/Scripts/CSVLoader.cs b/Assets/Scripts/CSVLoader.cs	(rejected hunks)
+@@ -1,40 +1,85 @@
+ ﻿using Assets.Resources.Weathers;
++using CsvHelper.Configuration;
++using CsvHelper;
+ using System;
+ using System.Collections.Generic;
++using System.Globalization;
+ using System.IO;
+ using System.Linq;
++using System.Threading.Tasks;
+ using UnityEditor;
+ using UnityEngine;
++using Assets.Scripts;
+ 
+-// ex1. CSVReader.getData(csvFile)
+-// ex2. CSVReader.getData(csvFile, ",")
+-
+-public class CSVLoader
++public class CSVLoader : MonoBehaviour
+ {
+-    private const int MAX_LINES = int.MaxValue;
+     public static char[] STRING_SPLIT = { ';' };
+     private const string DECIMAL_SPLIT = ".";
+ 
+-    public string[] header;
+-    public IEnumerable<string> remainingLines;
++    private static CSVLoader Instance;
+ 
+-    public CSVLoader(string path, int postID = 0)
++    private void Start()
+     {
+-        var rawtext = Resources.Load<TextAsset>(path).text;
++        Instance = this;
++    }
++
++    public void Load(string path, int postId, Action<CSVResult> Call)
++    {
++        StartCoroutine();
++    }
++
++    private async Task<string> LoadResourceTextAsync(string path)
++    {
++        Debug.Log("A1");
++        // Appel à Resources.Load sur le thread principal
++        try
++        {
++            var textAsset = await Task.FromResult(Resources.Load<TextAsset>(path));
++            Debug.Log("A2");
++            if (textAsset == null)
++            {
++                Debug.LogError($"Resource at path {path} not found.");
++                return null;
++            }
++
++            Debug.Log("A3");
++            return textAsset.text;
++        }
++        catch (System.Exception ex)
++        {
++            Debug.LogError($"Exception in LoadResourceTextAsync: {ex.Message}");
++            throw;
++        }
++
++    }
++
++    public async Task<IEnumerable<string>> Load(string path, int postID = 0)
++    {
++        Debug.Log("A");
++        this.postId = postID;
++        Debug.Log("B");
++        var rawtext = await LoadResourceTextAsync(path);
++        Debug.Log("C");
+         if (rawtext == null)
+         {
++            Debug.Log("D");
+             throw new FileNotFoundException(path);
+         }
++        Debug.Log("E");
+         var reader = new StringReader(rawtext);
++        Debug.Log("F");
+         header = reader.ReadLine().Split(STRING_SPLIT);
+-
+-        if(postID > 0)
++        Debug.Log("G");
++        Debug.Log("6");
++        if (postId > 0)
+         {
+-            remainingLines = FilteredRemainingLines(reader, postID.ToString());
++            return await AllRemainingLines(reader);
+         }
+         else
+         {
+-            remainingLines = AllRemainingLines(reader);
++            var res = await AllRemainingLines(reader);
++            Debug.Log("1");
++            return res.Where(line => Equals(line[0], postId));
+         }
+     }
+ 
+@@ -78,42 +123,17 @@
+         return csvFiles;
+     }
+ 
+-    private IEnumerable<string> AllRemainingLines(StringReader reader)
+-    {
+-        var remainingLines = MAX_LINES;
+-        while (reader.Peek() != -1 && remainingLines > 0)
+-        {
+-            remainingLines--;
+-            yield return reader.ReadLine();
+-        }
+-        yield break;
+-    }
+-
+-    private IEnumerable<string> FilteredRemainingLines(StringReader reader, string postID)
++    public async Task<IEnumerable<string>> AllRemainingLines(StringReader reader)
+     {
+-        string line;
+-        bool startAdding = false;
+-
+-        while ((line = reader.ReadLine()) != null)
++        Debug.Log("7");
++        using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
+         {
+-            var columns = line.Split(STRING_SPLIT);
+-            var currentID = columns[0]; // Assumant que l'ID est dans la première colonne
+-
+-            if (currentID == postID)
+-            {
+-                startAdding = true;
+-
+-            }
+-            else if (startAdding && currentID != postID)
+-            {
+-                // Une fois que nous avons trouvé les lignes qui commencent par targetID, nous pouvons arrêter dès que l'ID change
+-                yield break;
+-            }
+-
+-            if (startAdding)
++            var records = new List<string>();
++            await foreach (var record in csv.GetRecordsAsync<string>())
+             {
+-                yield return line;
++                records.Add(record);
+             }
++            return records;
+         }
+     }
+ }
+\ No newline at end of file

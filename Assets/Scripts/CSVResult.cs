@@ -6,5 +6,11 @@ namespace Assets.Scripts
     {
         public string[] headers;
         public IEnumerable<string> lines;
+
+        public CSVResult(string[] headers, IEnumerable<string> lines)
+        {
+            this.headers = headers;
+            this.lines = lines;
+        }
     }
 }

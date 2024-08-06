@@ -26,19 +26,12 @@ namespace Assets.Resources.Activities
             this.max = max;
         }
 
-        public bool Match(WeatherRecord record, List<WeatherFieldKey> availableKeys)
+        public bool Match(WeatherRecord record)
         {
-            return keys.Intersect(availableKeys).Any(key =>
+            return keys.Intersect(record.values.Keys).Any(key =>
             {
-                try
-                {
-                    var value = record.GetFloat(key);
-                    return min <= value && max >= value;
-                }
-                catch(FormatException e)
-                {
-                    return false;
-                }
+                var value = record.GetFloat(key);
+                return min <= value && max >= value;
             });
         }
     }

@@ -1,43 +1,42 @@
 ﻿using Assets.Resources.Activities;
 using Assets.Resources.Weathers;
 using Assets.Scripts;
-using Assets.Scripts.Activities;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class WeatherProcessor
 {
-    private int department = 29;
-    private int year = 2023;
+    private int year;
+    private int department;
     private Activity activity;
-    private WeatherDataset weather;
+    private string fileText;
 
-    private List<WeatherPostDataset> postsForActivity;
-    private DepartmentRanking ranking;
-
-    public WeatherProcessor()
+    public WeatherProcessor(int year, int department, Activity activity, string fileText)
     {
-        BuildActity();
+        this.year = year;
+        this.department = department;
+        this.activity = activity;
+        this.fileText = fileText;
     }
 
-    public async Task Process()
+    public void Process()
     {
-        await InitializeDepartment();
-        InitializePostsForActivity();
-        await ProcessDepartmentRanking();
+        var dataset = WeatherDataset.Load(fileText, year, department);
+        var posts = InitializePostsForActivity(dataset);
+        ProcessDepartmentRanking(posts, dataset);
+
+        //Debug.Log($"There are {weather.EntriesQuantity()} entries for {weather.PostsQuantity()} posts in {year} for department {department}");
+        //TODO Load necessary columns only when doing stats on all posts + early skip posts without the info
     }
 
-    private async Task<DepartmentRanking> ProcessDepartmentRanking()
+    private DepartmentRanking ProcessDepartmentRanking(List<WeatherPostDataset> posts, WeatherDataset dataset)
     {
         var allDepartmentRanking = new List<Tuple<string, int>>();
-        foreach (var post in postsForActivity)
+        foreach (var post in posts)
         {
-            var postRank = await ProcessPostRanking(post);
+            var postRank = ProcessPostRanking(post, dataset);
             allDepartmentRanking.Add(postRank);
         }
         var ranking = allDepartmentRanking.OrderByDescending(tuple => tuple.Item2).Take(3);
@@ -45,54 +44,16 @@ public class WeatherProcessor
         return new DepartmentRanking(department, ranking.ToList());
     }
 
-    private async Task<Tuple<string, int>> ProcessPostRanking(WeatherPostDataset post)
+    private Tuple<string, int> ProcessPostRanking(WeatherPostDataset post, WeatherDataset dataset)
     {
-        Debug.Log($"Stats for {post.post}");
-        return Tuple.Create(post.post, await StatsFor(post, activity));
+        return Tuple.Create(post.post, StatsFor(dataset, post, activity));
     }
 
-    private void InitializePostsForActivity()
+    private List<WeatherPostDataset> InitializePostsForActivity(WeatherDataset dataset)
     {
-        postsForActivity = weather.posts.Values.Where(post => post.HasRecordsFor(activity)).ToList();
-        Debug.Log($"{postsForActivity.Count}/{weather.posts.Count} posts have enough data to check this activity");
-    }
-
-    private async Task InitializeDepartment()
-    {
-        Debug.Log($"Loading file {WeatherDataset.WeatherFileName(department, year)}");
-        weather = await WeatherDataset.Load(department, year); //TODO Load necessary columns only when doing stats on all posts + early skip posts without the info
-                                                         //Debug.Log($"There are {weather.EntriesQuantity()} entries for {weather.PostsQuantity()} posts in {year} for department {department}");
-    }
-
-    private void BuildActity()
-    {
-        // Certaines valeurs ne sont pas disponibles dans les posts
-        //TODO FF et FF2 sont des valeurs similaires, il faudrait pouvoir les regrouper pour étendre les villes compatibles
-        //TODO Ajouter ses heures d'activité
-        //TODO pour les jours non compatibles, indiquer les raisons (ex: trop de vent)
-        activity = new Activity("Kayak", 10, 3, new TimeCondition(14, 20), new List<WeatherFieldCondition>()
-        {
-            new WeatherFieldCondition(WeatherFieldKey.T, 24, 30),
-            new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
-            new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2 }, 0, 5) // Certaines valeurs ne sont pas disponibles dans les posts
-        }, new List<WeatherFieldCondition>());
-        /*activity = new Activity("Tennis", 0, 3, new TimeCondition(9, 20), new List<WeatherFieldCondition>()
-        {
-            new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 5, 30),
-            new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 2)
-        }, new List<WeatherFieldCondition>()
-        {
-            new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0)
-        }); // TODO RecordType with default range*/
-        /*activity = new Activity("Piscine", 0, 2, new TimeCondition(9, 22), new List<WeatherFieldCondition>()
-        {
-            new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 25, 35),
-            new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 4)/*,
-            new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.N, WeatherFieldKey.N1, WeatherFieldKey.NBAS }, 0, 3)
-        }, new List<WeatherFieldCondition>()
-        {
-            new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0)
-        });*/
+        var result = dataset.posts.Values.Where(post => post.HasRecordsFor(activity)).ToList();
+        Debug.Log($"{result.Count}/{dataset.posts.Count} posts have enough data to check this activity");
+        return result;
     }
 
     private void GetPostFromCity()
@@ -139,19 +100,18 @@ public class WeatherProcessor
         }*/
     }
 
-    public async Task<int> StatsFor(WeatherPostDataset weatherPost, Activity activity)
+    public int StatsFor(WeatherDataset dataset, WeatherPostDataset weatherPost, Activity activity)
     {
-        Debug.Log($"Loading records for post {weatherPost.post}");
-        await weatherPost.Load(department, year);
+        weatherPost.Load(year, fileText, dataset.datasetKeys);
 
         List<WeatherRecord> suitHours = new List<WeatherRecord>();
         List<string> suitDays = new List<string>();
 
-        suitHours = weatherPost.records.Where(records => activity.SuitsHour(records, weatherPost.availableKeys)).ToList();
+        suitHours = weatherPost.records.Where(records => activity.SuitsHour(records)).ToList();
         suitDays = suitHours.GroupBy(record => TimeHelper.Day(record.Get(WeatherFieldKey.AAAAMMJJHH))).ToList().Where(group =>
         {
             var hoursForDay = group.ToList();
-            var suit = activity.SuitsDay(hoursForDay, weatherPost.availableKeys);
+            var suit = activity.SuitsDay(hoursForDay);
             if (suit)
             {
                 //Check continous hours
