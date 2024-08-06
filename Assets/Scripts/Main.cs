@@ -42,6 +42,7 @@ public class Main : MonoBehaviour
         {
             Debug.Log($"Loading {department}");
             var fileText = Resources.Load<TextAsset>(WeatherDataset.WeatherFileName(department, year)).text;
+
             new Task(() =>
             {
                 var res = new WeatherProcessor(year, department, new List<Activity> { 

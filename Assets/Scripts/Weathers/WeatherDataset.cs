@@ -28,8 +28,7 @@ namespace Assets.Resources.Weathers
             {
                 var firstRow = group.First();
                 var availableKeys = firstRow.values.Where(g => !string.IsNullOrEmpty(g.Value)).Select(g => g.Key).ToList();
-                //var recordsForPost = group.ToList();
-                posts.Add(group.Key, new WeatherPostDataset(group.Key, firstRow.Get(WeatherFieldKey.NOM_USUEL), availableKeys));
+                posts.Add(group.Key, new WeatherPostDataset(group.Key, firstRow.Get(WeatherFieldKey.NOM_USUEL), group.ToList(), availableKeys));
             };
         }
 

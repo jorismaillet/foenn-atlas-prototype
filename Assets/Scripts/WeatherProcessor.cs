@@ -111,7 +111,6 @@ public class WeatherProcessor
     public int StatsFor(WeatherDataset dataset, WeatherPostDataset weatherPost)
     {
         Debug.Log($"{dataset.id} - {weatherPost.post}");
-        weatherPost.Load(year, fileText, dataset.datasetKeys);
 
         var suit = activities.Select(activity => new ActivitySuit(activity, weatherPost.records));
 

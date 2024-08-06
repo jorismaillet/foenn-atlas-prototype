@@ -71,6 +71,8 @@ public class CSVLoader
         return csvFiles;
     }
 
+
+    //TODO Filter remaining linges by year
     public IEnumerable<string> AllRemainingLines(StringReader reader)
     {
         while (reader.Peek() != -1)
