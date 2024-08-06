@@ -28,13 +28,14 @@ namespace Assets.Resources.Weathers
             {
                 var firstRow = group.First();
                 var availableKeys = firstRow.values.Where(g => !string.IsNullOrEmpty(g.Value)).Select(g => g.Key).ToList();
+                //var recordsForPost = group.ToList();
                 posts.Add(group.Key, new WeatherPostDataset(group.Key, firstRow.Get(WeatherFieldKey.NOM_USUEL), availableKeys));
             };
         }
 
         public static WeatherDataset Load(string fileText, int year, int department)
         {
-            var csv = new CSVLoader().LoadCSV(fileText);
+            var csv = new CSVLoader().LoadCSV(fileText); // Read all lines, add records in dataset posts
             var result = new WeatherDataset(year, department, csv);
             return result;
         }
@@ -67,7 +68,8 @@ namespace Assets.Resources.Weathers
                 2020 => "previous-2020-2022",
                 _ => throw new Exception("Year not supported")
             };
-            return $"H_{department}_{dateKey}";
+            var dptString = department < 10 ? "0" + department.ToString() : department.ToString();
+            return $"H_{dptString}_{dateKey}";
         }
     }
 }

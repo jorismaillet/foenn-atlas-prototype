@@ -33,7 +33,7 @@ namespace Assets.Resources.Weathers
 
         public void Load(int year, string textFile, List<WeatherFieldKey> datasetKeys)
         {
-            var csv = new CSVLoader(id).LoadCSV(textFile);
+            var csv = new CSVLoader(id).LoadCSV(textFile); //TODO Weather dataset should load all records and group them by post
             var rawRecords = csv.lines.Select(line => new WeatherRecord(datasetKeys, line));
             records = rawRecords.Where(record => record.Get(WeatherFieldKey.AAAAMMJJHH).StartsWith(year.ToString())).ToList();
         }

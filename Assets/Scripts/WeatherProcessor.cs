@@ -1,31 +1,34 @@
 ﻿using Assets.Resources.Activities;
 using Assets.Resources.Weathers;
 using Assets.Scripts;
+using Assets.Scripts.Activities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
+using static UnityEngine.Networking.UnityWebRequest;
 
 public class WeatherProcessor
 {
     private int year;
     private int department;
-    private Activity activity;
+    private List<Activity> activities;
     private string fileText;
 
-    public WeatherProcessor(int year, int department, Activity activity, string fileText)
+    public WeatherProcessor(int year, int department, List<Activity> activities, string fileText)
     {
         this.year = year;
         this.department = department;
-        this.activity = activity;
+        this.activities = activities;
         this.fileText = fileText;
     }
 
-    public void Process()
+    public DepartmentRanking Process()
     {
         var dataset = WeatherDataset.Load(fileText, year, department);
         var posts = InitializePostsForActivity(dataset);
-        ProcessDepartmentRanking(posts, dataset);
+        return ProcessDepartmentRanking(posts, dataset);
 
         //Debug.Log($"There are {weather.EntriesQuantity()} entries for {weather.PostsQuantity()} posts in {year} for department {department}");
         //TODO Load necessary columns only when doing stats on all posts + early skip posts without the info
@@ -40,19 +43,24 @@ public class WeatherProcessor
             allDepartmentRanking.Add(postRank);
         }
         var ranking = allDepartmentRanking.OrderByDescending(tuple => tuple.Item2).Take(3);
-        Debug.Log($"Best place for {activity.name} in department {department} in {year} is {ranking.First().Item1} with {ranking.First().Item2} days of suitability");
+
+        Debug.Log($"Ranking for {department}:");
+        foreach (var res in ranking)
+        {
+            Debug.Log($"{res.Item1}: {res.Item2} days");
+        }
         return new DepartmentRanking(department, ranking.ToList());
     }
 
     private Tuple<string, int> ProcessPostRanking(WeatherPostDataset post, WeatherDataset dataset)
     {
-        return Tuple.Create(post.post, StatsFor(dataset, post, activity));
+        return Tuple.Create(post.post, StatsFor(dataset, post));
     }
 
     private List<WeatherPostDataset> InitializePostsForActivity(WeatherDataset dataset)
     {
-        var result = dataset.posts.Values.Where(post => post.HasRecordsFor(activity)).ToList();
-        Debug.Log($"{result.Count}/{dataset.posts.Count} posts have enough data to check this activity");
+        var result = dataset.posts.Values.Where(post => activities.All(activity => post.HasRecordsFor(activity))).ToList();
+        Debug.Log($"Ready to process stats for {dataset.id} ({result.Count}/{dataset.posts.Count} posts will be checked)");
         return result;
     }
 
@@ -100,36 +108,16 @@ public class WeatherProcessor
         }*/
     }
 
-    public int StatsFor(WeatherDataset dataset, WeatherPostDataset weatherPost, Activity activity)
+    public int StatsFor(WeatherDataset dataset, WeatherPostDataset weatherPost)
     {
+        Debug.Log($"{dataset.id} - {weatherPost.post}");
         weatherPost.Load(year, fileText, dataset.datasetKeys);
 
-        List<WeatherRecord> suitHours = new List<WeatherRecord>();
-        List<string> suitDays = new List<string>();
+        var suit = activities.Select(activity => new ActivitySuit(activity, weatherPost.records));
 
-        suitHours = weatherPost.records.Where(records => activity.SuitsHour(records)).ToList();
-        suitDays = suitHours.GroupBy(record => TimeHelper.Day(record.Get(WeatherFieldKey.AAAAMMJJHH))).ToList().Where(group =>
-        {
-            var hoursForDay = group.ToList();
-            var suit = activity.SuitsDay(hoursForDay);
-            if (suit)
-            {
-                //Check continous hours
-                var maxConsecutiveHours = TimeHelper.MaxConsecutiveHours(hoursForDay.Select(record => TimeHelper.Hour(record.Get(WeatherFieldKey.AAAAMMJJHH))).ToList());
-                if (maxConsecutiveHours < activity.minContinousHours)
-                {
-                    suit = false;
-                }
-            }
-            if (!suit)
-            {
-                suitHours = suitHours.Except(hoursForDay).ToList();
-            }
-            return suit;
-        }).Select(g => g.Key).ToList();
+        var res = suit.SelectMany(a => a.suitDays).Distinct().Count();
 
-        var res = suitDays.Count();
-        Debug.Log($"{weatherPost.post}: {res}");
+        //Debug.Log($"{weatherPost.post}: {res}");
         return res;
     }
 }

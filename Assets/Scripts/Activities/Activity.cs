@@ -15,36 +15,95 @@ namespace Assets.Resources.Activities
         public int minWeekFrequencyPerYear;
         public List<WeatherFieldCondition> hourlyConditions, cumulatedHourConditions;
 
-        public static Activity Kayak = new Activity("Kayak", 10, 3, new TimeCondition(14, 20), 
+
+
+        public static Activity Jardin = new Activity("Jardin", 0, 1, new TimeCondition(9, 22),
             new List<WeatherFieldCondition>() {
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 24, 30),
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 9, 30),
                 new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2}, 0, 5) // Certaines valeurs ne sont pas disponibles dans les posts
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S}, 0, 4)
             },
-            new List<WeatherFieldCondition>() { 
+            new List<WeatherFieldCondition>()
+            {
             }
         );
-
+        public static Activity Piscine = new Activity("Piscine", 0, 2, new TimeCondition(9, 22),
+            new List<WeatherFieldCondition>() {
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 25, 33),
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 2)/*,
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.N, WeatherFieldKey.N1, WeatherFieldKey.NBAS }, 0, 3)*/
+            },
+            new List<WeatherFieldCondition>() {
+                new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0)
+            }
+        );
+        public static Activity Kayak = new Activity("Kayak", 0, 3, new TimeCondition(14, 20),
+            new List<WeatherFieldCondition>() {
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 23, 31),
+                new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S}, 0, 2)
+            },
+            new List<WeatherFieldCondition>()
+            {
+            }
+        );
+        public static Activity Plage = new Activity("Plage", 0, 2, new TimeCondition(14, 19),
+            new List<WeatherFieldCondition>() {
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 23, 30),
+                new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 1)/*,
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.N, WeatherFieldKey.N1, WeatherFieldKey.NBAS }, 0, 3)*/
+            },
+            new List<WeatherFieldCondition>() {
+            }
+        );
+        public static Activity Velo = new Activity("Vélo", 10, 2, new TimeCondition(10, 19),
+            new List<WeatherFieldCondition>() {
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 17, 24),
+                new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S}, 0, 4) // Certaines valeurs ne sont pas disponibles dans les posts
+            },
+            new List<WeatherFieldCondition>()
+            {
+            }
+        );
         public static Activity Tennis = new Activity("Tennis", 0, 3, new TimeCondition(9, 20),
             new List<WeatherFieldCondition>() {
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 5, 30),
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 8, 29),
                 new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 2)
             },
             new List<WeatherFieldCondition>() {
                 new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0)
             }
-        ); // TODO RecordType with default range
-
-        public static Activity Piscine = new Activity("Piscine", 0, 2, new TimeCondition(9, 22),
+        );
+        public static Activity Ville = new Activity("Ville", 0, 1, new TimeCondition(9, 20),
             new List<WeatherFieldCondition>() {
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 25, 35),
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 4),
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.N, WeatherFieldKey.N1, WeatherFieldKey.NBAS }, 0, 3)
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 0, 30),
+                new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 3),
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 5)
             },
             new List<WeatherFieldCondition>() {
-                new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0)
             }
         );
+        public static Activity Randonnee = new Activity("Randonnée", 0, 2, new TimeCondition(13, 19),
+            new List<WeatherFieldCondition>() {
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 10, 24),
+                new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 1),
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 3)
+            },
+            new List<WeatherFieldCondition>() {
+            }
+        );
+        public static Activity DinerExterieur = new Activity("Diner en extérieur", 0, 2, new TimeCondition(18, 21),
+            new List<WeatherFieldCondition>() {
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 23, 28),
+                new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 2)
+            },
+            new List<WeatherFieldCondition>() {
+            }
+        );
+
 
         public Activity(string name, int minWeekFrequencyPerYear, int minContinuousHours, TimeCondition timeCondition, List<WeatherFieldCondition> hourlyConditions, List<WeatherFieldCondition> cumulatedHourConditions)
         {
