@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Resources.Weathers;
+using System.Collections.Generic;
 
 namespace Assets.Scripts
 {
     public class CSVResult
     {
-        public string[] headers;
-        public IEnumerable<string> lines;
+        public List<WeatherFieldKey> header;
+        public List<WeatherRecord> lines;
 
-        public CSVResult(string[] headers, IEnumerable<string> lines)
+        public CSVResult(List<WeatherFieldKey> header, List<WeatherRecord> lines)
         {
-            this.headers = headers;
+            this.header = header;
             this.lines = lines;
         }
     }

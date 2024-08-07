@@ -4,10 +4,11 @@ using Assets.Scripts;
 using Assets.Scripts.Activities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using static UnityEngine.Networking.UnityWebRequest;
 
 public class WeatherProcessor
 {
@@ -24,27 +25,22 @@ public class WeatherProcessor
         this.fileText = fileText;
     }
 
-    public DepartmentRanking Process()
+    public async Task Process(Action<DepartmentRanking> Callback)
     {
-        var dataset = WeatherDataset.Load(fileText, year, department);
-        var posts = InitializePostsForActivity(dataset);
-        return ProcessDepartmentRanking(posts, dataset);
-
-        //Debug.Log($"There are {weather.EntriesQuantity()} entries for {weather.PostsQuantity()} posts in {year} for department {department}");
-        //TODO Load necessary columns only when doing stats on all posts + early skip posts without the info
+        var keysToLoad = new List<WeatherFieldKey>() { WeatherFieldKey.NOM_USUEL, WeatherFieldKey.AAAAMMJJHH }.Union(activities.SelectMany(a => a.Keys())).Distinct().ToList();
+        var dataset = new WeatherDataset(year, department, fileText, activities, keysToLoad);
+        var res = await ProcessDepartmentRanking(dataset.posts, dataset);
+        Callback(res);
     }
 
-    private DepartmentRanking ProcessDepartmentRanking(List<WeatherPostDataset> posts, WeatherDataset dataset)
+    private async Task<DepartmentRanking> ProcessDepartmentRanking(List<WeatherPostDataset> posts, WeatherDataset dataset)
     {
         var allDepartmentRanking = new List<Tuple<string, int>>();
-        foreach (var post in posts)
-        {
-            var postRank = ProcessPostRanking(post, dataset);
-            allDepartmentRanking.Add(postRank);
-        }
-        var ranking = allDepartmentRanking.OrderByDescending(tuple => tuple.Item2).Take(3);
-
+        await Task.WhenAll(posts.Select(post => Task.Run(() =>
+                allDepartmentRanking.Add(ProcessPostRanking(post, dataset))
+        )).ToArray());
         Debug.Log($"Ranking for {department}:");
+        var ranking = allDepartmentRanking.OrderByDescending(tuple => tuple.Item2).Take(3);
         foreach (var res in ranking)
         {
             Debug.Log($"{res.Item1}: {res.Item2} days");
@@ -52,16 +48,10 @@ public class WeatherProcessor
         return new DepartmentRanking(department, ranking.ToList());
     }
 
+
     private Tuple<string, int> ProcessPostRanking(WeatherPostDataset post, WeatherDataset dataset)
     {
         return Tuple.Create(post.post, StatsFor(dataset, post));
-    }
-
-    private List<WeatherPostDataset> InitializePostsForActivity(WeatherDataset dataset)
-    {
-        var result = dataset.posts.Values.Where(post => activities.All(activity => post.HasRecordsFor(activity))).ToList();
-        Debug.Log($"Ready to process stats for {dataset.id} ({result.Count}/{dataset.posts.Count} posts will be checked)");
-        return result;
     }
 
     private void GetPostFromCity()

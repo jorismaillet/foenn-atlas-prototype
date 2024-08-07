@@ -1,7 +1,9 @@
-﻿using Assets.Scripts;
+﻿using Assets.Resources.Weathers;
+using Assets.Scripts;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,25 +12,18 @@ public class CSVLoader
     public static char[] STRING_SPLIT = { ';' };
     private const string DECIMAL_SPLIT = ".";
 
-    private int postID;
 
-    public CSVLoader(int postID = 0)
+    public CSVLoader()
     {
-        this.postID = postID;
     }
 
-    public CSVResult LoadCSV(string text)
+    public CSVResult LoadCSV(string text, int year, List<WeatherFieldKey> keysToLoad)
     {
         var reader = new StringReader(text);
-        var header = reader.ReadLine().Split(STRING_SPLIT);
-        if (postID > 0)
-        {
-            return new CSVResult(header, FilteredRemainingLines(reader, postID.ToString()));
-        }
-        else
-        {
-            return new CSVResult(header, AllRemainingLines(reader));
-        }
+        var header = reader.ReadLine().Split(STRING_SPLIT).Select(rawKey => Enum.Parse<WeatherFieldKey>(rawKey)).ToList();
+        var result = new CSVResult(header, FilteredRemainingLines(reader, header, year, keysToLoad));
+        reader.Close();
+        return result;
     }
 
     [MenuItem("Tools/List CSV Files in Resources")]
@@ -71,38 +66,31 @@ public class CSVLoader
         return csvFiles;
     }
 
-
-    //TODO Filter remaining linges by year
-    public IEnumerable<string> AllRemainingLines(StringReader reader)
+    private List<WeatherRecord> FilteredRemainingLines(StringReader reader, List<WeatherFieldKey> header, int year, List<WeatherFieldKey> keysToLoad)
     {
-        while (reader.Peek() != -1)
-        {
-            yield return reader.ReadLine();
-        }
-        yield break;
-    }
-
-    private IEnumerable<string> FilteredRemainingLines(StringReader reader, string postID)
-    {
+        List<WeatherRecord> result = new List<WeatherRecord>();
+        int dateIndex = header.IndexOf(WeatherFieldKey.AAAAMMJJHH);
+        var valueIndexes = keysToLoad.Select(key => header.IndexOf(key)).ToList();
+        string comparison = year.ToString();
         string line;
-        bool startAdding = false;
         while ((line = reader.ReadLine()) != null)
         {
             var columns = line.Split(STRING_SPLIT);
-            var currentID = columns[0]; // Assumant que l'ID est dans la première colonne
-            if (currentID == postID)
+            var currentDate = columns[dateIndex];
+            if (currentDate.StartsWith(comparison))
             {
-                startAdding = true;
-            }
-            else if (startAdding && currentID != postID)
-            {
-                // Une fois que nous avons trouvé les lignes qui commencent par targetID, nous pouvons arrêter dès que l'ID change
-                yield break;
-            }
-            if (startAdding)
-            {
-                yield return line;
+                var record = new WeatherRecord();
+                foreach (var index in valueIndexes)
+                {
+                    var value = columns[index];
+                    if (!string.IsNullOrEmpty(value)) // Else skip the post ?
+                    {
+                        record.values.Add(header[index], value);
+                    }
+                }
+                result.Add(record);
             }
         }
+        return result;
     }
 }

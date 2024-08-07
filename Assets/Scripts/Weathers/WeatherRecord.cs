@@ -8,16 +8,9 @@ namespace Assets.Resources.Weathers
     {
         public Dictionary<WeatherFieldKey, string> values = new Dictionary<WeatherFieldKey, string>();
 
-        public WeatherRecord(List<WeatherFieldKey> datasetKeys, string rawLine)
+        public WeatherRecord()
         {
-            var array = rawLine.Split(CSVLoader.STRING_SPLIT);
-            for(int i = 0; i < array.Length; i++)
-            {
-                if(!string.IsNullOrEmpty(array[i]))
-                {
-                    values.Add(datasetKeys[i], array[i]);
-                }
-            }
+
         }
 
         public float GetFloat(WeatherFieldKey key)

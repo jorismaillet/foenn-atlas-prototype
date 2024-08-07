@@ -33,12 +33,12 @@ public class Main : MonoBehaviour
         }
         else
         {
-            todo.AddRange(new List<int>() { 29, 34 });
+            todo.AddRange(new List<int>() { 29 });
         }
 
         Debug.Log($"{departmentFiles.Count()} departments");
 
-        foreach (var department in todo)
+        /*foreach (var department in todo)
         {
             Debug.Log($"Loading {department}");
             var fileText = Resources.Load<TextAsset>(WeatherDataset.WeatherFileName(department, year)).text;
@@ -46,13 +46,13 @@ public class Main : MonoBehaviour
             new Task(() =>
             {
                 var res = new WeatherProcessor(year, department, new List<Activity> { 
-                /*Activity.Jardin, */Activity.Piscine, Activity.Kayak, Activity.Plage, Activity.Velo,
-                Activity.Tennis, /*Activity.Ville, Activity.Randonnee,*/ Activity.DinerExterieur,
+                Activity.Jardin, Activity.Piscine, Activity.Kayak, Activity.Plage, Activity.Velo,
+                Activity.Tennis, Activity.Ville, Activity.Randonnee, Activity.DinerExterieur,
             }, fileText).Process();
                 result.Add(department, res);
                 inprogress.Clear();
             }).Start();
-        }
+        }*/
     }
 
     public static string ExtractValue(string input)
@@ -76,12 +76,12 @@ public class Main : MonoBehaviour
     private void Update()
     {
         if (finished) return;
-        if(result.Count.Equals(todo.Count))
+        /*if(result.Count.Equals(todo.Count))
         {
             FinalRanking();
-        }
+        }*/
 
-        /*
+        
         if (inprogress.Count == 0)
         {
             if (todo.Count == 0)
@@ -95,7 +95,7 @@ public class Main : MonoBehaviour
                 inprogress.Add(next);
                 StatsFor(next);
             }
-        }*/
+        }
     }
 
     private void FinalRanking()
@@ -114,12 +114,10 @@ public class Main : MonoBehaviour
         Debug.Log($"Stats for {department}");
         new Task(() =>
         {
-            var res = new WeatherProcessor(year, department, new List<Activity> { 
-                /*Activity.Jardin, */Activity.Piscine, Activity.Kayak, Activity.Plage, Activity.Velo,
+            _ = new WeatherProcessor(year, department, new List<Activity> { 
+                /*Activity.Jardin,*/ Activity.Piscine, Activity.Kayak, Activity.Plage, Activity.Velo,
                 Activity.Tennis, /*Activity.Ville, Activity.Randonnee,*/ Activity.DinerExterieur,
-            }, fileText).Process();
-            result.Add(department, res);
-            inprogress.Clear();
+            }, fileText).Process((res) => { result.Add(department, res); inprogress.Clear(); });
         }).Start();
     }
 }

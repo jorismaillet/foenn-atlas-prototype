@@ -1,8 +1,10 @@
-﻿using Assets.Scripts;
+﻿using Assets.Resources.Activities;
+using Assets.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace Assets.Resources.Weathers
@@ -13,35 +15,41 @@ namespace Assets.Resources.Weathers
 
         public const string WEATHER_PATH = "Weathers/";
 
-        public List<WeatherFieldKey> datasetKeys;
-        public Dictionary<int, WeatherPostDataset> posts = new Dictionary<int, WeatherPostDataset>();
+        public List<WeatherPostDataset> posts = new List<WeatherPostDataset>();
 
         public int year;
 
-        public WeatherDataset(int year, int department, CSVResult csv)
+        public WeatherDataset(int year, int department, string fileText, List<Activity> activities, List<WeatherFieldKey> keysToLoad)
         {
+            Debug.Log("A");
             this.year = year;
             this.id = department;
-            datasetKeys = csv.headers.Select(rawKey => Enum.Parse<WeatherFieldKey>(rawKey)).ToList();
-            var records = Records(csv.lines);
-            foreach (var group in records.GroupBy(record => record.GetInt(WeatherFieldKey.NUM_POSTE)))
+            var csv = new CSVLoader().LoadCSV(fileText, year, keysToLoad);
+            foreach (var group in csv.lines.GroupBy(record => record.Get(WeatherFieldKey.NOM_USUEL)))
             {
-                var firstRow = group.First();
-                var availableKeys = firstRow.values.Where(g => !string.IsNullOrEmpty(g.Value)).Select(g => g.Key).ToList();
-                posts.Add(group.Key, new WeatherPostDataset(group.Key, firstRow.Get(WeatherFieldKey.NOM_USUEL), group.ToList(), availableKeys));
+                var availableKeys = group.First().values.Keys.ToList();
+                Debug.Log(group.Key);
+                if(activities.All(activity => HasRecordsFor(availableKeys, activity))) {
+                    posts.Add(new WeatherPostDataset(group.Key, group.ToList()));
+                }
             };
+            Debug.Log("B");
         }
 
-        public static WeatherDataset Load(string fileText, int year, int department)
+        public bool HasRecordsFor(List<WeatherFieldKey> availableKeys, Activity activity)
         {
-            var csv = new CSVLoader().LoadCSV(fileText); // Read all lines, add records in dataset posts
-            var result = new WeatherDataset(year, department, csv);
-            return result;
+            return activity.hourlyConditions.Union(activity.cumulatedHourConditions).All(condition =>
+            {
+                return condition.keys.Any(key =>
+                {
+                    return availableKeys.Contains(key);
+                });
+            });
         }
 
         public WeatherPostDataset Post(string city)
         {
-            return posts.Values.FirstOrDefault(post => post.post.IndexOf(city, StringComparison.OrdinalIgnoreCase) >= 0);
+            return posts.FirstOrDefault(post => post.post.IndexOf(city, StringComparison.OrdinalIgnoreCase) >= 0);
         }
 
         public static string WeatherFileName(int department, int year)
@@ -49,12 +57,6 @@ namespace Assets.Resources.Weathers
             return $"{WEATHER_PATH}{FileName(department, year)}";
         }
 
-        private IEnumerable<WeatherRecord> Records(IEnumerable<string> remainingLines)
-        {
-            var records = remainingLines.Select(line => new WeatherRecord(datasetKeys, line));
-            var filteredRecords = records.Where(record => record.Get(WeatherFieldKey.AAAAMMJJHH).StartsWith(year.ToString()));
-            return filteredRecords;
-        }
 
         private static string FileName(int department, int year)
         {

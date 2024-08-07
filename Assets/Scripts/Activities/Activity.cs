@@ -140,5 +140,10 @@ namespace Assets.Resources.Activities
         {
             return selectedHourRecordsForDay.All(record => Suits(record, cumulatedHourConditions));
         }
+
+        public List<WeatherFieldKey> Keys()
+        {
+            return hourlyConditions.SelectMany(c => c.keys).Union(cumulatedHourConditions.SelectMany(c => c.keys)).Distinct().ToList();
+        }
     }
 }
