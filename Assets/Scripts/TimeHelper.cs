@@ -3,6 +3,7 @@ using System.Globalization;
 using System;
 using UnityEditor;
 using UnityEngine;
+using System.Linq;
 
 namespace Assets.Scripts
 {
@@ -36,6 +37,13 @@ namespace Assets.Scripts
             return dateTime.ToString("MMMM", new CultureInfo("fr-FR"));
         }
 
+        public static DateTime Date(string AAAAMMJJHH)
+        {
+            string format = "yyyyMMddHH";
+            DateTime dateTime = DateTime.ParseExact(AAAAMMJJHH, format, CultureInfo.InvariantCulture);
+            return dateTime;
+        }
+
         // This presumes that weeks start with Monday.
         // Week 1 is the 1st week of the year with a Thursday in it.
         public static int GetIso8601WeekOfYear(DateTime time)
@@ -55,12 +63,11 @@ namespace Assets.Scripts
 
         public static int MaxConsecutiveHours(List<int> hours)
         {
-            if (hours == null || hours.Count == 0)
+            if (hours == null || !hours.Any())
             {
                 return 0;
             }
 
-            hours.Sort();
             int maxConsecutive = 1;
             int currentStreak = 1;
 

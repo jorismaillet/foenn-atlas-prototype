@@ -9,16 +9,14 @@ namespace Assets.Scripts.Activities
     public class ActivitySuit
     {
         public Activity activity;
-        public List<WeatherRecord> suitHours;
         public List<string> suitDays;
 
-        public ActivitySuit(Activity activity, List<WeatherRecord> records)
+        public ActivitySuit(Activity activity, IEnumerable<WeatherRecord> records)
         {
             this.activity = activity;
-            suitHours = records.Where(record => activity.SuitsHour(record)).ToList();
-            suitDays = suitHours.GroupBy(record => TimeHelper.Day(record.Get(WeatherFieldKey.AAAAMMJJHH))).ToList().Where(group =>
+            var suitHours = records.Where(record => activity.SuitsHour(record));
+            suitDays = suitHours.GroupBy(record => TimeHelper.Day(record.Get(WeatherFieldKey.AAAAMMJJHH))).Where(hoursForDay =>
             {
-                var hoursForDay = group.ToList();
                 var suit = activity.SuitsDay(hoursForDay);
                 if (suit)
                 {
@@ -28,10 +26,6 @@ namespace Assets.Scripts.Activities
                     {
                         suit = false;
                     }
-                }
-                if (!suit)
-                {
-                    suitHours = suitHours.Except(hoursForDay).ToList();
                 }
                 return suit;
             }).Select(g => g.Key).ToList();

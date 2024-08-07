@@ -35,37 +35,23 @@ public class WeatherProcessor
 
     private async Task<DepartmentRanking> ProcessDepartmentRanking(List<WeatherPostDataset> posts, WeatherDataset dataset)
     {
-        var allDepartmentRanking = new List<Tuple<string, int>>();
+        var allDepartmentRanking = new List<PostRanking>();
         await Task.WhenAll(posts.Select(post => Task.Run(() =>
                 allDepartmentRanking.Add(ProcessPostRanking(post, dataset))
         )).ToArray());
         Debug.Log($"Ranking for {department}:");
-        var ranking = allDepartmentRanking.OrderByDescending(tuple => tuple.Item2).Take(3);
+        var ranking = allDepartmentRanking.OrderByDescending(tuple => tuple.rank).Take(3).ToList();
         foreach (var res in ranking)
         {
-            Debug.Log($"{res.Item1}: {res.Item2} days");
+            Debug.Log($"{res.post.post}: {res.rank} points");
         }
-        return new DepartmentRanking(department, ranking.ToList());
+        return new DepartmentRanking(department, ranking);
     }
 
 
-    private Tuple<string, int> ProcessPostRanking(WeatherPostDataset post, WeatherDataset dataset)
+    private PostRanking ProcessPostRanking(WeatherPostDataset post, WeatherDataset dataset)
     {
-        return Tuple.Create(post.post, StatsFor(dataset, post));
-    }
-
-    private void GetPostFromCity()
-    {
-        /*
-           Debug.Log($"Finding post match for city {city}");
-        var post = weather.Post(city);
-        if(post == null)
-        {
-            Debug.Log("Didn't find any post for this city");
-            return 0;
-        }
-        Debug.Log($"Found {post}");
-        */
+        return new PostRanking(post, StatsFor(dataset, post));
     }
 
     private void ProcessDetailedCityStatistics()
@@ -102,11 +88,8 @@ public class WeatherProcessor
     {
         Debug.Log($"{dataset.id} - {weatherPost.post}");
 
-        var suit = activities.Select(activity => new ActivitySuit(activity, weatherPost.records));
+        //TODO Only select day when finding a first matching activity
 
-        var res = suit.SelectMany(a => a.suitDays).Distinct().Count();
-
-        //Debug.Log($"{weatherPost.post}: {res}");
-        return res;
+        return activities.Sum(activity => weatherPost.records.Sum(r => activity.SuitsHour(r) ? activity.weight : 0));
     }
 }

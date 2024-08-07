@@ -8,9 +8,9 @@ namespace Assets.Scripts
     public class DepartmentRanking
     {
         public int department;
-        public List<Tuple<string, int>> ranking;
+        public List<PostRanking> ranking;
 
-        public DepartmentRanking(int department, List<Tuple<string, int>> ranking)
+        public DepartmentRanking(int department, List<PostRanking> ranking)
         {
             this.department = department;
             this.ranking = ranking;

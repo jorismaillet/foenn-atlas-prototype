@@ -21,22 +21,19 @@ namespace Assets.Resources.Weathers
 
         public WeatherDataset(int year, int department, string fileText, List<Activity> activities, List<WeatherFieldKey> keysToLoad)
         {
-            Debug.Log("A");
             this.year = year;
             this.id = department;
             var csv = new CSVLoader().LoadCSV(fileText, year, keysToLoad);
             foreach (var group in csv.lines.GroupBy(record => record.Get(WeatherFieldKey.NOM_USUEL)))
             {
-                var availableKeys = group.First().values.Keys.ToList();
-                Debug.Log(group.Key);
+                var availableKeys = group.First().values.Keys;
                 if(activities.All(activity => HasRecordsFor(availableKeys, activity))) {
-                    posts.Add(new WeatherPostDataset(group.Key, group.ToList()));
+                    posts.Add(new WeatherPostDataset(group.Key, department, group));
                 }
             };
-            Debug.Log("B");
         }
 
-        public bool HasRecordsFor(List<WeatherFieldKey> availableKeys, Activity activity)
+        public bool HasRecordsFor(IEnumerable<WeatherFieldKey> availableKeys, Activity activity)
         {
             return activity.hourlyConditions.Union(activity.cumulatedHourConditions).All(condition =>
             {
