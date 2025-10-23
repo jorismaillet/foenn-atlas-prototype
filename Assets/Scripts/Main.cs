@@ -2,12 +2,15 @@ using Assets.Resources.Activities;
 using Assets.Resources.Weathers;
 using Assets.Scripts;
 using Assets.Scripts.Activities;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using Unity.Jobs;
 using UnityEditor.Search;
 using UnityEngine;
 
@@ -19,21 +22,25 @@ public class Main : MonoBehaviour
     private bool finished = false;
 
     private List<Activity> activities = new List<Activity> {
-        Activity.Moustiques1, Activity.Moustiques2, Activity.TropDePluie, Activity.Tempete, Activity.TropChaud, 
-        Activity.Plage, Activity.DinerExterieur, Activity.Piscine, Activity.Kayak, Activity.Velo /*Activity.Jardin, Activity.Randonnee, Activity.Tennis, Activity.Ville*/
+        //Activity.Moustiques1, Activity.Moustiques2, Activity.TropDePluie, Activity.Tempete, Activity.TropChaud,  Activity.TropDeVent,
+        //Activity.Plage, Activity.DinerExterieur, Activity.Piscine, Activity.Kayak, Activity.Velo, Activity.Jardin, Activity.Randonnee, Activity.Tennis, Activity.Ville,
+        Activity.JusteBien
             };
-    public int year = 2023;
+    private int year = 2023;
 
     private Dictionary<int, DepartmentRanking> result = new Dictionary<int, DepartmentRanking>();
 
     //TODO indiquer une ville spécifique et savoir son rang parmis tout le ranking
 
-    bool all = true;
+    private bool all = false;
 
     //https://openweathermap.org/city/2997943 Pour plus de données
     private void Start()
     {
-        var departmentFiles = CSVLoader.ListCsvFilesInResources(WeatherDataset.WEATHER_PATH).Select(f => ExtractValue(f)).Where(f => f != null).Select(f => int.Parse(f)).ToList();
+        var departmentFiles = 
+            CSVLoader.ListCsvFilesInResources(WeatherDataset.WEATHER_PATH)
+            .Select(f => ExtractValue(f)).Where(f => f != null)
+            .Select(f => int.Parse(f)).OrderBy(i => i).ToList();
         
         if(all)
         {
@@ -41,19 +48,30 @@ public class Main : MonoBehaviour
         }
         else
         {
-            todo.AddRange(new List<int>() { 29 });
+            todo.AddRange(new List<int>() { 75, 12, 48, 07 });
         }
 
         /*finished = true;
-        Heatmap("Plomelin", 29);*/
+        Heatmap("Quimper", 29);*/
 
-        Debug.Log($"{departmentFiles.Count()} departments");
+        //Debug.Log($"{departmentFiles.Count()} departments");
+    }
+
+    private void DataFor(int weekOfYear, WeatherPostDataset post)
+    {
+        var records = post.records;
+        foreach (var record in records.Where(r => TimeHelper.WeekOfYear(r.Get(WeatherFieldKey.AAAAMMJJHH)) == weekOfYear))
+        {
+            Debug.Log(string.Join(" - ", record.values.Select(keyvalue => $"{keyvalue.Key}: {keyvalue.Value}").ToArray()));
+        }
     }
 
     private void Heatmap(string city, int department)
     {
         var post = GetPostFromCity(city, department, activities);
         var records = post.records.ToList();
+        //DataFor(32, post);
+
         var points = activities.Sum(activity => post.records.Sum(r => activity.SuitsHour(r) ? activity.weight : 0));
         Debug.Log(points);
         var heatmap = records.Select(record => {
@@ -129,12 +147,10 @@ public class Main : MonoBehaviour
                 int next = todo[0];
                 todo.RemoveAt(0);
                 inprogress.Add(next);
-                StatsFor(next);
+                StatsFor(next).Start();
             }
         }
     }
-
-
 
     private WeatherPostDataset GetPostFromCity(string city, int department, List<Activity> activities)
     {
@@ -163,14 +179,25 @@ public class Main : MonoBehaviour
         Heatmap(bestcity, bestdep);
     }
 
-    private void StatsFor(int department)
+    private Task StatsFor(int department)
     {
-        var textAsset = Resources.Load<TextAsset>(WeatherDataset.WeatherFileName(department, year));
+        var fileName = WeatherDataset.WeatherFileName(department, year);
+        //Debug.Log($"Load resource {fileName}");
+        var textAsset = Resources.Load<TextAsset>(fileName);
         var fileText = textAsset.text;
-        Debug.Log($"Stats for {department}");
-        new Task(() =>
+        Debug.Log($"Start departement {department}");
+        /*_ = new WeatherProcessor(fileName, year, department, activities, fileText).Process((res) =>
         {
-            _ = new WeatherProcessor(year, department, activities, fileText).Process((res) => { result.Add(department, res); inprogress.Clear(); Resources.UnloadAsset(textAsset); });
-        }).Start();
+            result.Add(department, res);
+            inprogress.Clear(); Resources.UnloadAsset(textAsset);
+        });*/
+        return new Task(() =>
+        {
+            _ = new WeatherProcessor(fileName, year, department, activities, fileText).Process((res) =>
+            {
+                result.Add(department, res);
+                inprogress.Clear(); Resources.UnloadAsset(textAsset);
+            });
+        });
     }
 }

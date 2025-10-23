@@ -9,16 +9,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class WeatherProcessor
 {
     private int year;
     private int department;
     private List<Activity> activities;
-    private string fileText;
+    private string fileText, fileName;
 
-    public WeatherProcessor(int year, int department, List<Activity> activities, string fileText)
+    public WeatherProcessor(string fileName, int year, int department, List<Activity> activities, string fileText)
     {
+        this.fileName = fileName;
         this.year = year;
         this.department = department;
         this.activities = activities;
@@ -28,7 +30,7 @@ public class WeatherProcessor
     public async Task Process(Action<DepartmentRanking> Callback)
     {
         var keysToLoad = new List<WeatherFieldKey>() { WeatherFieldKey.NOM_USUEL, WeatherFieldKey.AAAAMMJJHH }.Union(activities.SelectMany(a => a.Keys())).Distinct().ToList();
-        var dataset = new WeatherDataset(year, department, fileText, activities, keysToLoad);
+        var dataset = new WeatherDataset(fileName, year, department, fileText, activities, keysToLoad);
         var res = await ProcessDepartmentRanking(dataset.posts, dataset);
         Callback(res);
     }
@@ -37,14 +39,32 @@ public class WeatherProcessor
     {
         var allDepartmentRanking = new List<PostRanking>();
         await Task.WhenAll(posts.Select(post => Task.Run(() =>
-                allDepartmentRanking.Add(ProcessPostRanking(post, dataset))
+        {
+            var ranking = ProcessPostRanking(post, dataset);
+            allDepartmentRanking.Add(ranking);
+        }
         )).ToArray());
-        Debug.Log($"Ranking for {department}:");
-        var ranking = allDepartmentRanking.OrderByDescending(tuple => tuple.rank).Take(3).ToList();
-        foreach (var res in ranking)
+
+        Debug.Log($"Top 3 for {department}:");
+        allDepartmentRanking = allDepartmentRanking.OrderByDescending(tuple => tuple.rank).ToList();
+        foreach (var item in allDepartmentRanking.Take(3))
+        {
+            Debug.Log($"{item.post.post}: {item.rank}");
+        }
+
+        Debug.Log($"Worst 3 for {department}:");
+        allDepartmentRanking = allDepartmentRanking.OrderBy(tuple => tuple.rank).ToList();
+        foreach (var item in allDepartmentRanking.Take(3))
+        {
+            Debug.Log($"{item.post.post}: {item.rank}");
+        }
+
+
+        var ranking = allDepartmentRanking.Take(3).ToList();
+        /*foreach (var res in ranking)
         {
             Debug.Log($"{res.post.post}: {res.rank} points");
-        }
+        }*/
         return new DepartmentRanking(department, ranking);
     }
 
@@ -86,8 +106,6 @@ public class WeatherProcessor
 
     public int StatsFor(WeatherDataset dataset, WeatherPostDataset weatherPost)
     {
-        Debug.Log($"{dataset.id} - {weatherPost.post}");
-
         //TODO Only select day when finding a first matching activity
 
         return activities.Sum(activity => weatherPost.records.Sum(r => activity.SuitsHour(r) ? activity.weight : 0));

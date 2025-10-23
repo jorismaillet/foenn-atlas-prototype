@@ -31,22 +31,35 @@ namespace Assets.Resources.Activities
             crepuscule = ColorHelper.Get(255, 183, 0),
             rouge = ColorHelper.Get(255, 0, 0);
 
-        public static Activity Moustiques1 = new Activity("Moustiques tigres (Matin)", -10, rouge, 0, 1, new TimeCondition(0, 8),
+
+        public static Activity JusteBien = new Activity("Juste bien", 1, UnityEngine.Color.white, 0, 1, new TimeCondition(9, 21),
             new List<WeatherFieldCondition>() {
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 18, 50),
-            },
-            new List<WeatherFieldCondition>()
-            {
-            }
-        ); public static Activity Moustiques2 = new Activity("Moustiques tigres (Soir)", -10, rouge, 0, 1, new TimeCondition(21, 23),
-            new List<WeatherFieldCondition>() {
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 18, 50),
+                //new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 5, 28),
+                new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0)
+                //new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FXI, WeatherFieldKey.FXI2, WeatherFieldKey.FXI3S}, 0, 4),
+                //new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2}, 0, 2)
             },
             new List<WeatherFieldCondition>()
             {
             }
         );
-        public static Activity TropChaud = new Activity("Trop chaud", -15, rouge, 0, 1, new TimeCondition(9, 20),
+
+        public static Activity Moustiques1 = new Activity("Moustiques tigres (Matin)", -15, rouge, 0, 1, new TimeCondition(0, 7),
+            new List<WeatherFieldCondition>() {
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 20, 50),
+            },
+            new List<WeatherFieldCondition>()
+            {
+            }
+        ); public static Activity Moustiques2 = new Activity("Moustiques tigres (Soir)", -15, rouge, 0, 1, new TimeCondition(21, 23),
+            new List<WeatherFieldCondition>() {
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 20, 50),
+            },
+            new List<WeatherFieldCondition>()
+            {
+            }
+        );
+        public static Activity TropChaud = new Activity("Trop chaud", -15, rouge, 0, 1, new TimeCondition(8, 20),
             new List<WeatherFieldCondition>() {
                 new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 30, 50),
             },
@@ -54,33 +67,31 @@ namespace Assets.Resources.Activities
             {
             }
         );
-        public static Activity TropDePluie = new Activity("Trop de pluie", -5, rouge, 0, 1, new TimeCondition(0, 23),
+        public static Activity TropDePluie = new Activity("Trop de pluie", -4, ColorHelper.Get(0, 0, 200), 0, 1, new TimeCondition(0, 23),
             new List<WeatherFieldCondition>() {
-                new WeatherFieldCondition(WeatherFieldKey.RR1, 5, 1000),
+                new WeatherFieldCondition(WeatherFieldKey.RR1, 2, 1000),
             },
             new List<WeatherFieldCondition>()
             {
             }
         );
-        public static Activity Tempete = new Activity("Tempête", -5, rouge, 0, 1, new TimeCondition(0, 23),
+        public static Activity TropDeVent = new Activity("Trop de vent", -2, ColorHelper.Get(0, 255, 0), 0, 1, new TimeCondition(0, 23),
             new List<WeatherFieldCondition>() {
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S}, 4, 100)
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2}, 6, 1000)
             },
             new List<WeatherFieldCondition>()
             {
             }
         );
-        public static Activity Jardin = new Activity("Jardin", 1, VertJardin, 0, 1, new TimeCondition(10, 20),
+        public static Activity Tempete = new Activity("Tempête", -8, ColorHelper.Get(0, 255, 0), 0, 1, new TimeCondition(0, 23),
             new List<WeatherFieldCondition>() {
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 16, 30),
-                new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S}, 0, 3)
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FXI, WeatherFieldKey.FXI2, WeatherFieldKey.FXI3S}, 17, 1000)
             },
             new List<WeatherFieldCondition>()
             {
             }
         );
-        public static Activity Piscine = new Activity("Piscine", 4, bleuCiel, 0, 2, new TimeCondition(9, 22),
+        public static Activity Piscine = new Activity("Piscine", 6, bleuCiel, 0, 2, new TimeCondition(9, 22),
             new List<WeatherFieldCondition>() {
                 new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 25, 33),
                 new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 2)/*,
@@ -100,7 +111,7 @@ namespace Assets.Resources.Activities
             {
             }
         );
-        public static Activity Plage = new Activity("Plage", 3, sable, 0, 2, new TimeCondition(11, 19),
+        public static Activity Plage = new Activity("Plage", 6, sable, 0, 2, new TimeCondition(11, 19),
             new List<WeatherFieldCondition>() {
                 new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 23, 30),
                 new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
@@ -114,7 +125,18 @@ namespace Assets.Resources.Activities
             new List<WeatherFieldCondition>() {
                 new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 17, 24),
                 new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S}, 0, 3) // Certaines valeurs ne sont pas disponibles dans les posts
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S}, 0, 2) // Certaines valeurs ne sont pas disponibles dans les posts
+            },
+            new List<WeatherFieldCondition>()
+            {
+            }
+        );
+        //-----------------------------------//
+        public static Activity Jardin = new Activity("Jardin", 1, VertJardin, 0, 1, new TimeCondition(10, 20),
+            new List<WeatherFieldCondition>() {
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 16, 30),
+                new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S}, 0, 2)
             },
             new List<WeatherFieldCondition>()
             {
@@ -123,7 +145,7 @@ namespace Assets.Resources.Activities
         public static Activity Tennis = new Activity("Tennis", 1, balleTennis, 0, 3, new TimeCondition(9, 20),
             new List<WeatherFieldCondition>() {
                 new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 10, 27),
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 2)
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 1)
             },
             new List<WeatherFieldCondition>() {
                 new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0)
@@ -132,8 +154,8 @@ namespace Assets.Resources.Activities
         public static Activity Ville = new Activity("Ville", 1, murs, 0, 1, new TimeCondition(11, 20),
             new List<WeatherFieldCondition>() {
                 new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 0, 30),
-                new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 1),
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 4)
+                new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 3)
             },
             new List<WeatherFieldCondition>() {
             }
@@ -142,16 +164,16 @@ namespace Assets.Resources.Activities
             new List<WeatherFieldCondition>() {
                 new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 10, 24),
                 new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 2)
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 1)
             },
             new List<WeatherFieldCondition>() {
             }
         );
-        public static Activity DinerExterieur = new Activity("Diner en extérieur", 4, crepuscule, 0, 2, new TimeCondition(18, 21),
+        public static Activity DinerExterieur = new Activity("Diner en extérieur", 5, crepuscule, 0, 2, new TimeCondition(18, 21),
             new List<WeatherFieldCondition>() {
                 new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.T, WeatherFieldKey.T10, WeatherFieldKey.T20, WeatherFieldKey.T50, WeatherFieldKey.T100,  }, 23, 28),
                 new WeatherFieldCondition(WeatherFieldKey.RR1, 0, 0),
-                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 1)
+                new WeatherFieldCondition(new List<WeatherFieldKey>() { WeatherFieldKey.FF, WeatherFieldKey.FF2, WeatherFieldKey.FXI3S }, 0, 0)
             },
             new List<WeatherFieldCondition>() {
             }

@@ -2,6 +2,7 @@
 {
     public enum WeatherFieldKey
     {
+        UNSUPPORTED,
         NUM_POSTE,
         NOM_USUEL,
         LAT,

@@ -104,3 +104,11 @@ $RECYCLE.BIN/
 
 # Large files will be stored in Assets/Store - Tracked/*
 Assets/Store/
+
+# Dataset files
+Assets/Resources/Descriptions
+Assets/Resources/Populations
+Assets/Resources/Weathers
+Assets/Resources/Descriptions.meta
+Assets/Resources/Populations.meta
+Assets/Resources/Weathers.meta

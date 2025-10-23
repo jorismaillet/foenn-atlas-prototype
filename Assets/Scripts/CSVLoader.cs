@@ -20,7 +20,28 @@ public class CSVLoader
     public CSVResult LoadCSV(string text, int year, List<WeatherFieldKey> keysToLoad)
     {
         var reader = new StringReader(text);
-        var header = reader.ReadLine().Split(STRING_SPLIT).Select(rawKey => Enum.Parse<WeatherFieldKey>(rawKey)).ToList();
+
+
+        var line = reader.ReadLine();
+        //Debug.Log(line);
+        var header = line
+            .Split(STRING_SPLIT)
+            .Select(rawKey => {
+                if (Enum.TryParse<WeatherFieldKey>(rawKey, out var key))
+                {
+                    return key;
+                }
+                else
+                {
+                    //Debug.LogWarning($"[CSV] Clé invalide détectée : '{rawKey}'");
+                    return WeatherFieldKey.UNSUPPORTED;
+                }
+                return Enum.Parse<WeatherFieldKey>(rawKey);
+            })
+            .ToList();
+        //Debug.Log("OK");
+
+
         var result = new CSVResult(header, FilteredRemainingLines(reader, header, year, keysToLoad));
         reader.Close();
         return result;
