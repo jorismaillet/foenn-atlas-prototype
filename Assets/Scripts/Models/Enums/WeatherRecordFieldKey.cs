@@ -1,6 +1,6 @@
 ﻿namespace Assets.Resources.Weathers
 {
-    public enum WeatherFieldKey
+    public enum WeatherRecordFieldKey
     {
         UNSUPPORTED,
         NUM_POSTE,

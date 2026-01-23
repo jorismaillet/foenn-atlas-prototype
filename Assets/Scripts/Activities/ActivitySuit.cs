@@ -15,13 +15,13 @@ namespace Assets.Scripts.Activities
         {
             this.activity = activity;
             var suitHours = records.Where(record => activity.SuitsHour(record));
-            suitDays = suitHours.GroupBy(record => TimeHelper.Day(record.Get(WeatherFieldKey.AAAAMMJJHH))).Where(hoursForDay =>
+            suitDays = suitHours.GroupBy(record => TimeHelper.Day(record.Get(WeatherRecordFieldKey.AAAAMMJJHH))).Where(hoursForDay =>
             {
                 var suit = activity.SuitsDay(hoursForDay);
                 if (suit)
                 {
                     //Check continous hours
-                    var maxConsecutiveHours = TimeHelper.MaxConsecutiveHours(hoursForDay.Select(record => TimeHelper.Hour(record.Get(WeatherFieldKey.AAAAMMJJHH))).ToList());
+                    var maxConsecutiveHours = TimeHelper.MaxConsecutiveHours(hoursForDay.Select(record => TimeHelper.Hour(record.Get(WeatherRecordFieldKey.AAAAMMJJHH))).ToList());
                     if (maxConsecutiveHours < activity.minContinousHours)
                     {
                         suit = false;

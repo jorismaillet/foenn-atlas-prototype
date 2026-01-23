@@ -12,7 +12,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Unity.Jobs;
 using UnityEditor.Search;
+using System.Data.SQLite;
 using UnityEngine;
+using System.IO;
 
 public class Main : MonoBehaviour
 {
@@ -51,6 +53,18 @@ public class Main : MonoBehaviour
             todo.AddRange(new List<int>() { 75, 12, 48, 07 });
         }
 
+        // Seed DB from CSV files (creates SQLite DB if needed)
+        try
+        {
+            var dbPath = Path.Combine(Application.persistentDataPath, "departments.db");
+            Debug.Log($"Seeding departments DB at: {dbPath}");
+            DbSeeder.SeedDepartments(dbPath);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Failed to seed departments DB: {ex}");
+        }
+
         /*finished = true;
         Heatmap("Quimper", 29);*/
 
@@ -60,7 +74,7 @@ public class Main : MonoBehaviour
     private void DataFor(int weekOfYear, WeatherPostDataset post)
     {
         var records = post.records;
-        foreach (var record in records.Where(r => TimeHelper.WeekOfYear(r.Get(WeatherFieldKey.AAAAMMJJHH)) == weekOfYear))
+        foreach (var record in records.Where(r => TimeHelper.WeekOfYear(r.Get(WeatherRecordFieldKey.AAAAMMJJHH)) == weekOfYear))
         {
             Debug.Log(string.Join(" - ", record.values.Select(keyvalue => $"{keyvalue.Key}: {keyvalue.Value}").ToArray()));
         }
@@ -75,7 +89,7 @@ public class Main : MonoBehaviour
         var points = activities.Sum(activity => post.records.Sum(r => activity.SuitsHour(r) ? activity.weight : 0));
         Debug.Log(points);
         var heatmap = records.Select(record => {
-            var date = TimeHelper.Date(record.Get(WeatherFieldKey.AAAAMMJJHH));
+            var date = TimeHelper.Date(record.Get(WeatherRecordFieldKey.AAAAMMJJHH));
 
             var activity = activities.FirstOrDefault(a => a.SuitsHour(record));
 
@@ -154,7 +168,7 @@ public class Main : MonoBehaviour
 
     private WeatherPostDataset GetPostFromCity(string city, int department, List<Activity> activities)
     {
-        var keysToLoad = new List<WeatherFieldKey>() { WeatherFieldKey.NOM_USUEL, WeatherFieldKey.AAAAMMJJHH }.Union(activities.SelectMany(a => a.Keys())).Distinct().ToList();
+        var keysToLoad = new List<WeatherRecordFieldKey>() { WeatherRecordFieldKey.NOM_USUEL, WeatherRecordFieldKey.AAAAMMJJHH }.Union(activities.SelectMany(a => a.Keys())).Distinct().ToList();
         var textAsset = Resources.Load<TextAsset>(WeatherDataset.WeatherFileName(department, year));
         var fileText = textAsset.text;
         return new WeatherPostDataset(city, year, fileText, keysToLoad);

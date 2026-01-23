@@ -29,7 +29,7 @@ public class WeatherProcessor
 
     public async Task Process(Action<DepartmentRanking> Callback)
     {
-        var keysToLoad = new List<WeatherFieldKey>() { WeatherFieldKey.NOM_USUEL, WeatherFieldKey.AAAAMMJJHH }.Union(activities.SelectMany(a => a.Keys())).Distinct().ToList();
+        var keysToLoad = new List<WeatherRecordFieldKey>() { WeatherRecordFieldKey.NOM_USUEL, WeatherRecordFieldKey.AAAAMMJJHH }.Union(activities.SelectMany(a => a.Keys())).Distinct().ToList();
         var dataset = new WeatherDataset(fileName, year, department, fileText, activities, keysToLoad);
         var res = await ProcessDepartmentRanking(dataset.posts, dataset);
         Callback(res);

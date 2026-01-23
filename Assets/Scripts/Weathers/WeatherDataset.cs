@@ -19,14 +19,14 @@ namespace Assets.Resources.Weathers
 
         public int year;
 
-        public WeatherDataset(string fileName, int year, int department, string fileText, List<Activity> activities, List<WeatherFieldKey> keysToLoad)
+        public WeatherDataset(string fileName, int year, int department, string fileText, List<Activity> activities, List<WeatherRecordFieldKey> keysToLoad)
         {
             this.year = year;
             this.id = department;
             //Debug.Log($"Load CSV {fileName}");
             var csv = new CSVLoader().LoadCSV(fileText, year, keysToLoad);
             //Debug.Log($"Done");
-            foreach (var group in csv.lines.GroupBy(record => record.Get(WeatherFieldKey.NOM_USUEL)))
+            foreach (var group in csv.lines.GroupBy(record => record.Get(WeatherRecordFieldKey.NOM_USUEL)))
             {
                 var availableKeys = group.First().values.Keys;
                 if(activities.All(activity => HasRecordsFor(availableKeys, activity)))
@@ -37,7 +37,7 @@ namespace Assets.Resources.Weathers
             };
         }
 
-        public bool HasRecordsFor(IEnumerable<WeatherFieldKey> availableKeys, Activity activity)
+        public bool HasRecordsFor(IEnumerable<WeatherRecordFieldKey> availableKeys, Activity activity)
         {
             return activity.hourlyConditions.Union(activity.cumulatedHourConditions).All(condition =>
             {

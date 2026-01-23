@@ -17,7 +17,7 @@ public class CSVLoader
     {
     }
 
-    public CSVResult LoadCSV(string text, int year, List<WeatherFieldKey> keysToLoad)
+    public CSVResult LoadCSV(string text, int year, List<WeatherRecordFieldKey> keysToLoad)
     {
         var reader = new StringReader(text);
 
@@ -27,16 +27,16 @@ public class CSVLoader
         var header = line
             .Split(STRING_SPLIT)
             .Select(rawKey => {
-                if (Enum.TryParse<WeatherFieldKey>(rawKey, out var key))
+                if (Enum.TryParse<WeatherRecordFieldKey>(rawKey, out var key))
                 {
                     return key;
                 }
                 else
                 {
                     //Debug.LogWarning($"[CSV] Clé invalide détectée : '{rawKey}'");
-                    return WeatherFieldKey.UNSUPPORTED;
+                    return WeatherRecordFieldKey.UNSUPPORTED;
                 }
-                return Enum.Parse<WeatherFieldKey>(rawKey);
+                return Enum.Parse<WeatherRecordFieldKey>(rawKey);
             })
             .ToList();
         //Debug.Log("OK");
@@ -87,10 +87,10 @@ public class CSVLoader
         return csvFiles;
     }
 
-    private List<WeatherRecord> FilteredRemainingLines(StringReader reader, List<WeatherFieldKey> header, int year, List<WeatherFieldKey> keysToLoad)
+    private List<WeatherRecord> FilteredRemainingLines(StringReader reader, List<WeatherRecordFieldKey> header, int year, List<WeatherRecordFieldKey> keysToLoad)
     {
         List<WeatherRecord> result = new List<WeatherRecord>();
-        int dateIndex = header.IndexOf(WeatherFieldKey.AAAAMMJJHH);
+        int dateIndex = header.IndexOf(WeatherRecordFieldKey.AAAAMMJJHH);
         var valueIndexes = keysToLoad.Select(key => header.IndexOf(key)).ToList();
         string comparison = year.ToString();
         string line;
