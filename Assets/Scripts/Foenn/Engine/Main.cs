@@ -1,16 +1,21 @@
+using Assets.Scripts.Foenn.Atlas.Models.Activities;
+using Assets.Scripts.Foenn.Atlas.Visualisations;
+using Assets.Scripts.Foenn.Engine.Execution;
+using Assets.Scripts.Foenn.Engine.Filters;
+using Assets.Scripts.Foenn.Engine.Metrics;
+using Assets.Scripts.Foenn.Engine.Processors;
+using Assets.Scripts.Foenn.Engine.Requests;
+using Assets.Scripts.Foenn.Engine.Results;
+using Assets.Scripts.Foenn.Engine.Weathers;
+using Assets.Scripts.Foenn.ETL;
+using Assets.Scripts.Foenn.Utils;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using TreeEditor;
 using UnityEngine;
-using System.IO;
-using Assets.Scripts.Foenn.Atlas.Models.Activities;
-using Assets.Scripts.Foenn.Engine.Results;
-using Assets.Scripts.Foenn.Engine.Weathers;
-using Assets.Scripts.Foenn.Utils;
-using Assets.Scripts.Foenn.ETL;
-using Assets.Scripts.Foenn.Atlas.Visualisations;
-using Assets.Scripts.Foenn.Engine.Processors;
 
 namespace Assets.Scripts.Foenn.Engine
 {
@@ -72,7 +77,7 @@ public class Main : MonoBehaviour
     private void DataFor(int weekOfYear, WeatherPostDataset post)
     {
         var records = post.records;
-        foreach (var record in records.Where(r => TimeUtils.WeekOfYear(r.Get(WeatherRecordFieldKey.AAAAMMJJHH)) == weekOfYear))
+        foreach (var record in records.Where(r => TimeUtils.WeekOfYear(r.Get(AttributeKey.AAAAMMJJHH)) == weekOfYear))
         {
             Debug.Log(string.Join(" - ", record.values.Select(keyvalue => $"{keyvalue.Key}: {keyvalue.Value}").ToArray()));
         }
@@ -87,7 +92,7 @@ public class Main : MonoBehaviour
         var points = activities.Sum(activity => post.records.Sum(r => activity.SuitsHour(r) ? activity.weight : 0));
         Debug.Log(points);
         var heatmap = records.Select(record => {
-            var date = TimeUtils.Date(record.Get(WeatherRecordFieldKey.AAAAMMJJHH));
+            var date = TimeUtils.Date(record.Get(AttributeKey.AAAAMMJJHH));
 
             var activity = activities.FirstOrDefault(a => a.SuitsHour(record));
 
@@ -166,7 +171,7 @@ public class Main : MonoBehaviour
 
     private WeatherPostDataset GetPostFromCity(string city, int department, List<Activity> activities)
     {
-        var keysToLoad = new List<WeatherRecordFieldKey>() { WeatherRecordFieldKey.NOM_USUEL, WeatherRecordFieldKey.AAAAMMJJHH }.Union(activities.SelectMany(a => a.Keys())).Distinct().ToList();
+        var keysToLoad = new List<AttributeKey>() { AttributeKey.NOM_USUEL, AttributeKey.AAAAMMJJHH }.Union(activities.SelectMany(a => a.Keys())).Distinct().ToList();
         var textAsset = Resources.Load<TextAsset>(WeatherDataset.WeatherFileName(department, year));
         var fileText = textAsset.text;
         return new WeatherPostDataset(city, year, fileText, keysToLoad);
@@ -193,6 +198,9 @@ public class Main : MonoBehaviour
 
     private Task StatsFor(int department)
     {
+
+
+
         var fileName = WeatherDataset.WeatherFileName(department, year);
         //Debug.Log($"Load resource {fileName}");
         var textAsset = Resources.Load<TextAsset>(fileName);
@@ -205,12 +213,41 @@ public class Main : MonoBehaviour
         });*/
         return new Task(() =>
         {
-            _ = new WeatherProcessor(fileName, year, department, activities, fileText).Process((res) =>
+            _ = RunQuery(department, year);
+            /*_ = new WeatherProcessor(fileName, year, department, activities, fileText).Process((res) =>
             {
                 result.Add(department, res);
                 inprogress.Clear(); Resources.UnloadAsset(textAsset);
-            });
+            });*/
         });
     }
-}
+
+        private IInputProvider inputProvider; // À initialiser selon tes données
+
+        private QueryResult RunQuery(int department, int year)
+        {
+            // Prépare les métriques à calculer
+            var metrics = new List<Metric> { new Metric() };
+
+            // Prépare les attributs (ex: temps, géo)
+            var attributes = new List<Attribute>
+            {
+                new TimeAttribute(year), // ou autre selon ton modèle
+                new GeoAttribute(city, department)
+            };
+
+            // Optionnel: filtres
+            var filters = new List<IFilter>();
+
+            var request = new QueryRequest
+            {
+                Metrics = metrics,
+                Attributes = attributes,
+                Filters = filters
+            };
+
+            var executor = new SimpleQueryExecutor(inputProvider);
+            return executor.Execute(request);
+        }
+    }
 }

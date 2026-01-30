@@ -1,0 +1,6 @@
+namespace #ROOTNAMESPACE#
+{
+    public class #SCRIPTNAME#
+    {
+    }
+}
