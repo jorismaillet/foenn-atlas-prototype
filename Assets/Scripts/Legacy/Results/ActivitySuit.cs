@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 
-namespace Assets.Scripts.Foenn.Engine.Results
+namespace Assets.Scripts.Legacy.Results
 {
     public class ActivitySuit
     {

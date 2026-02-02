@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.Engine.SQL
+﻿namespace Assets.Scripts.Foenn.Engine.Sql.Dialects
 {
     public interface ISqlDialect
     {

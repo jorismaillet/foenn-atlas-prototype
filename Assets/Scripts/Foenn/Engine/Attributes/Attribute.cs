@@ -1,12 +1,14 @@
-﻿using Assets.Scripts.Foenn.Engine.Weathers;
-using UnityEditor;
-using UnityEngine;
+﻿using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
 
 namespace Assets.Scripts.Foenn.Engine.Attributes
 {
     public class Attribute
     {
-        public string name;
-        public AttributeType keyType;
+        public AttributeKey key;
+
+        public Attribute(AttributeKey key)
+        {
+            this.key = key;
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.Engine.SQL.Filters
+﻿namespace Assets.Scripts.Foenn.Engine.Sql.Filters
 {
     public sealed class BetweenExpr : FilterExpr
     {

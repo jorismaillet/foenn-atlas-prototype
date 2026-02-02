@@ -1,26 +1,43 @@
-﻿using Assets.Scripts.Foenn.Engine.Requests;
+﻿using Assets.Scripts.Foenn.Engine.Execution;
+using Assets.Scripts.Foenn.Engine.Requests;
+using Assets.Scripts.Foenn.Engine.Sql.Dialects;
+using Unity.VisualScripting;
 
-namespace Assets.Scripts.Foenn.Engine.SQL
+namespace Assets.Scripts.Foenn.Engine.Sql
 {
-    public class SQLGenerator
+    public class SqlGenerator
     {
         private readonly ISqlDialect dialect;
-        public SQLGenerator(ISqlDialect dialect)
+        public SqlGenerator(ISqlDialect dialect)
         {
             this.dialect = dialect;
         }
 
         public CompiledQuery Generate(QueryRequest request)
         {
-            // TODO: Générer dynamiquement la requête SQL selon le QueryRequest et le dialecte
-            // Exemple simplifié pour une agrégation SUM sur une métrique
-            var emit = new SQL.SqlEmit();
-            var agg = request.MetricAggregations.First();
-            string aggFunc = agg.aggregationKey.ToString();
-            string metric = agg.aggregatedMetrics.ToString();
-            emit.Append($"SELECT {aggFunc}({dialect.QuoteIdent(metric)}) AS {metric} FROM weather_data");
-            // TODO: Ajouter WHERE, GROUP BY, etc. selon les attributs et filtres
-            return new SQL.CompiledQuery(emit.ToString(), emit.Parameters);
+            var emit = new SqlEmit();
+
+            // 1. SELECT
+            var selectClause = new Clauses.SqlSelect(request, dialect);
+            emit.Append(selectClause.ToString());
+
+            // 2. FROM
+            var fromClause = new Clauses.SqlFrom("weather_data", dialect);
+            emit.Append(fromClause.ToString());
+
+            // 3. WHERE
+            var whereClause = new Clauses.SqlWhere(request, dialect, emit);
+            var whereStr = whereClause.ToString();
+            if (!string.IsNullOrWhiteSpace(whereStr))
+                emit.Append(whereStr);
+
+            // 4. GROUP BY
+            var groupByClause = new Clauses.SqlGroupBy(request, dialect);
+            var groupByStr = groupByClause.ToString();
+            if (!string.IsNullOrWhiteSpace(groupByStr))
+                emit.Append(groupByStr);
+
+            return new CompiledQuery(emit.ToString(), emit.Parameters);
         }
     }
 }

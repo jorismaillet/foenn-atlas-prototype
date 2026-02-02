@@ -1,12 +1,6 @@
-﻿using Assets.Scripts.Foenn.Engine.Requests;
-using Assets.Scripts.Foenn.Engine.Results;
-using Assets.Scripts.Foenn.ETL;
-using System;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
+﻿using Assets.Scripts.Foenn.Engine.Execution;
 
-namespace Assets.Scripts.Foenn.Engine.Execution
+namespace Assets.Scripts.Foenn.Engine.Inputs
 {
     public interface IInputProvider
     {

@@ -1,7 +1,7 @@
 ﻿using Assets.Scripts.Foenn.Engine.Attributes;
 
 namespace Assets.Scripts.Foenn.Atlas.Models.Activities.Conditions {
-    public class TimeRangeCondition : IActivityCondition, TimeAttribute
+    public class TimeRangeCondition : IActivityCondition
     {
         public int minHour, maxHour;
 

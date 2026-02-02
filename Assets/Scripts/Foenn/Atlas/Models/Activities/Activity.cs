@@ -1,6 +1,6 @@
 ﻿using Assets.Scripts.Foenn.Atlas.Models.Activities.Conditions;
 using Assets.Scripts.Foenn.Atlas.Models.Locations;
-using Assets.Scripts.Foenn.Engine.Weathers;
+using Assets.Scripts.Foenn.Engine.Metrics;
 using System.Collections.Generic;
 
 namespace Assets.Scripts.Foenn.Atlas.Models.Activities {
@@ -11,12 +11,11 @@ namespace Assets.Scripts.Foenn.Atlas.Models.Activities {
         public int minWeekFrequencyPerYear;
         public List<IActivityCondition> conditions;
 
-        public List<WeatherMeasure> rankedWeathers;
+        public List<Dictionary<MetricKey, float>> rankedWeathers;
 
-        public Location location;
-
-        public Activity(string name) {
+        public Activity(string name, params IActivityCondition[] conditions) {
             this.name = name;
+            this.conditions = new List<IActivityCondition>(conditions);
         }
     }
 }

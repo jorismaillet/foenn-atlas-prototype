@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.Engine.Attributes
+﻿namespace Assets.Scripts.Foenn.Engine.Metrics
 {
     public enum AggregationKey
     {

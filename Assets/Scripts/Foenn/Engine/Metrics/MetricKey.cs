@@ -1,7 +1,4 @@
-﻿using UnityEditor;
-using UnityEngine;
-
-namespace Assets.Scripts.Foenn.Engine.Metrics
+﻿namespace Assets.Scripts.Foenn.Engine.Metrics
 {
     public enum MetricKey {
         ALTI,

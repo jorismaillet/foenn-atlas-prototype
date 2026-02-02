@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Scripts.Foenn.Engine.Results
+namespace Assets.Scripts.Legacy.Results
 {
     public class DepartmentRanking
     {

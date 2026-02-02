@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Assets.Scripts.Foenn.Engine.Metrics
+namespace Assets.Scripts.Foenn.Engine.Metrics.CustomMetrics
 {
     public class TemperatureRessentie : CustomMetric
     {

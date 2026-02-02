@@ -1,15 +1,12 @@
-﻿using UnityEditor;
-using UnityEngine;
-
-namespace Assets.Scripts.Foenn.Engine.Metrics
+﻿namespace Assets.Scripts.Foenn.Engine.Metrics
 {
     public class Metric : AbstractMetric
     {
-        public float value;
+        public MetricKey key;
 
-        public override float Value()
+        public Metric(MetricKey key, AggregationKey aggregation) : base(aggregation)
         {
-            return value;
+            this.key = key;
         }
     }
 }

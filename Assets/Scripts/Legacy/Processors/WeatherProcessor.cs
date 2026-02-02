@@ -11,7 +11,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using static UnityEditor.Progress;
 
-namespace Assets.Scripts.Foenn.Engine.Processors
+namespace Assets.Scripts.Legacy.Processors
 {
 public class WeatherProcessor
 {

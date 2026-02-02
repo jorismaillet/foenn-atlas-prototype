@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.Engine.SQL.Dialects
+﻿namespace Assets.Scripts.Foenn.Engine.Sql.Dialects
 {
     public sealed class PostgresDialect : ISqlDialect
     {

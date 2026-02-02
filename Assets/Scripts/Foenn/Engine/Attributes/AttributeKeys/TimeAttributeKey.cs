@@ -1,8 +1,4 @@
-﻿using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
-using UnityEditor;
-using UnityEngine;
-
-namespace Assets.Scripts.Foenn.Engine.Attributes
+﻿namespace Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys
 {
     public class TimeAttributeKey
     {

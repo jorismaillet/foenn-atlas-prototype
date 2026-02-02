@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 
-namespace Assets.Scripts.Foenn.Engine.SQL
+namespace Assets.Scripts.Foenn.Engine.Sql
 {
-    public sealed class CompiledQuery
+    public class CompiledQuery
     {
-        public CompiledQuery(string sql, IReadOnlyList<SqlParam> parameters)
-        {
-            Sql = sql;
-            Parameters = parameters;
-        }
+        public string sql;
+        public List<SqlParam> parameters;
 
-        public string Sql { get; }
-        public IReadOnlyList<SqlParam> Parameters { get; }
+        public CompiledQuery(string sql, List<SqlParam> parameters)
+        {
+            this.sql = sql;
+            this.parameters = parameters;
+        }
     }
 }

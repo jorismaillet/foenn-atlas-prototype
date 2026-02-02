@@ -1,10 +1,9 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using System;
 
 namespace Assets.Scripts.Foenn.Engine.Filters
 {
     public class TimeRangeFilter : TimeFilter
     {
-        public Time startTime, endTime;
+        public DateTime startTime, endTime;
     }
 }
