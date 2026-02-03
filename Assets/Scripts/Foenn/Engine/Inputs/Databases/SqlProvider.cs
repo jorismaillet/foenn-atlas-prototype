@@ -11,18 +11,20 @@ namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
         protected ISqlDialect dialect;
         protected IDbConnection connection;
         private CompiledQuery compiledQuery;
+        private QueryRequest request;
 
         public abstract void OpenSession();
         public abstract void CloseSession();
 
-        public SqlProvider(IDbConnection connection, ISqlDialect dialect)
+        public SqlProvider(ISqlDialect dialect)
         {
-            this.connection = connection;
+            this.connection = null;
             this.dialect = dialect;
         }
 
         public void Initialize(QueryRequest request)
         {
+            this.request = request;
             this.compiledQuery = new Sql.SqlGenerator(dialect).Generate(request);
         }
 
@@ -30,8 +32,8 @@ namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
         {
             OpenSession();
             var command = connection.CreateCommand();
-            command.CommandText = compiledQuery.Sql;
-            foreach (var param in compiledQuery.Parameters)
+            command.CommandText = compiledQuery.sql;
+            foreach (var param in compiledQuery.parameters)
             {
                 var dbParam = command.CreateParameter();
                 dbParam.ParameterName = param.Name;
@@ -59,8 +61,7 @@ namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
                 }
             }
             CloseSession();
-            // Tu peux adapter QueryResult pour accepter columns et rows
-            return new QueryResult(columns, rows);
+            return new QueryResult(request, columns, rows);
         }
     }
 }

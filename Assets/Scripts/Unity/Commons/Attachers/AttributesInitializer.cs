@@ -1,10 +1,4 @@
-﻿using Assets.Scripts.Common.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.Unity.Commons.Attachers {

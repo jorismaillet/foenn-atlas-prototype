@@ -5,7 +5,9 @@ namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
 {
     public class SqLiteProvider : SqlProvider
     {
-        public SqLiteProvider(IDbConnection connection) : base(connection, new SqliteDialect())
+        public const string dbPath = "Resources/sqlite/weather.db";
+
+        public SqLiteProvider() : base(new SqliteDialect())
         {
         }
 

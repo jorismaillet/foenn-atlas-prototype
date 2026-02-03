@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Common.Utils;
+using Assets.Scripts.Unity.Commons.UIAnimations.Interpolations;
 using Assets.Scripts.Unity.Utils.UIAnimations.Interpolations;
 using System;
 using System.Collections.Generic;

@@ -1,8 +1,11 @@
 ﻿using Assets.Resources.Activities;
 using Assets.Scripts;
+using Assets.Scripts.Foenn.Atlas.Models.Activities;
+using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -19,38 +22,35 @@ namespace Assets.Scripts.Foenn.ETL.CSV
 
         public int year;
 
-        public WeatherHistoryLoader(string fileName, int year, int department, string fileText, List<Activity> activities, List<WeatherRecordFieldKey> keysToLoad)
+        public WeatherHistoryLoader(string fileName, int year, int department, string fileText, List<Activity> activities)
         {
             this.year = year;
             this.id = department;
             //Debug.Log($"Load CSV {fileName}");
-            var csv = new CSVLoader().LoadCSV(fileText, year, keysToLoad);
+            var csv = new CSVLoader().Extract(fileText, year);
             //Debug.Log($"Done");
-            foreach (var group in csv.lines.GroupBy(record => record.Get(WeatherRecordFieldKey.NOM_USUEL)))
+            foreach (var group in csv.lines.GroupBy(record => record.Get(AttributeKey.NOM_USUEL)))
             {
-                var availableKeys = group.First().values.Keys;
-                if(activities.All(activity => HasRecordsFor(availableKeys, activity)))
-                {
-                    //Debug.Log($"Add post {group.Key}");
-                    posts.Add(new WeatherPostDataset(group.Key, department, group));
-                }
-            };
+                posts.Add(new WeatherPostDataset(group.Key, department, group));
+            }
         }
 
-        public bool HasRecordsFor(IEnumerable<WeatherRecordFieldKey> availableKeys, Activity activity)
+        public static string ExtractValue(string input)
         {
-            return activity.hourlyConditions.Union(activity.cumulatedHourConditions).All(condition =>
-            {
-                return condition.keys.Any(key =>
-                {
-                    return availableKeys.Contains(key);
-                });
-            });
-        }
+            // D�finir une expression r�guli�re pour trouver un nombre entre "H_" et "_latest"
+            string pattern = @"H_(\d+)_latest";
 
-        public WeatherPostDataset Post(string city)
-        {
-            return posts.FirstOrDefault(post => post.post.IndexOf(city, StringComparison.OrdinalIgnoreCase) >= 0);
+            // Utiliser Regex pour correspondre � l'expression r�guli�re dans la cha�ne d'entr�e
+            Match match = Regex.Match(input, pattern);
+
+            // Si une correspondance est trouv�e, retourner le groupe captur� (le nombre)
+            if (match.Success)
+            {
+                return match.Groups[1].Value;
+            }
+
+            // Si aucune correspondance n'est trouv�e, retourner null ou une valeur par d�faut
+            return null;
         }
 
         public static string WeatherFileName(int department, int year)

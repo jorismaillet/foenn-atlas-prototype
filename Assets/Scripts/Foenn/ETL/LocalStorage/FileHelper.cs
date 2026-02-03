@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using UnityEditor;
+using UnityEngine;
 
 namespace Assets.Scripts.Foenn.ETL.LocalStorage
 {
@@ -17,7 +18,7 @@ namespace Assets.Scripts.Foenn.ETL.LocalStorage
             return csvFiles;
         }
 
-        private static int? ExtractDepartmentFromFileName(string file)
+        public static int? ExtractDepartmentFromFileName(string file)
         {
             // Try patterns like H_75_latest... or H_07_latest etc.
             var m = Regex.Match(file, @"H_(\d+)_");
@@ -28,7 +29,7 @@ namespace Assets.Scripts.Foenn.ETL.LocalStorage
             return null;
         }
 
-        private static List<string> GetCsvFileNames(string folderPath)
+        public static List<string> GetCsvFileNames(string folderPath)
         {
             List<string> csvFiles = new List<string>();
 

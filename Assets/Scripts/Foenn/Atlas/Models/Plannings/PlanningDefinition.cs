@@ -5,10 +5,10 @@ using Unity.VisualScripting;
 namespace Assets.Scripts.Foenn.Atlas.Models.Plannings {
     public class PlanningDefinition {
         public List<PlannedActivity> plannedActivities = new List<PlannedActivity>();
-        public List<PlanningProposal> activityPlannings;
+        public PlanningProposal proposal;
 
         public PlanningDefinition(params PlannedActivity[] plannedActivities) {
-            this.activities.AddRange(plannedActivities);
+            this.plannedActivities.AddRange(plannedActivities);
         }
     }
 }

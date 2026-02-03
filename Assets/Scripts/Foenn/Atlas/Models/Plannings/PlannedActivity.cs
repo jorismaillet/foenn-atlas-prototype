@@ -1,16 +1,17 @@
 ﻿using Assets.Scripts.Foenn.Atlas.Models.Activities;
+using Assets.Scripts.Foenn.Atlas.Models.Locations;
 
 namespace Assets.Scripts.Foenn.Atlas.Models.Plannings
 {
     public class PlannedActivity
     {
-        public PlanningDefinition planning;
         public Activity activity;
+        public Location location;
 
-        public PlannedActivity(PlanningDefinition planning, Activity activity)
+        public PlannedActivity(Activity activity, Location location)
         {
-            this.planning = planning;
             this.activity = activity;
+            this.location = location;
         }
     }
 }

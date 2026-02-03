@@ -1,10 +1,6 @@
-﻿using Assets.Scripts.App;
-using Assets.Scripts.Unity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Assets.Scripts.Foenn.Atlas.Models.Activities;
+using Assets.Scripts.Unity.Commons.Behaviours;
+using Assets.Scripts.Unity.Commons.Mutables;
 
 namespace Assets.Scripts.Unity {
     public class Current : BaseBehaviour {

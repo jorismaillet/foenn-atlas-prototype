@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Foenn.Engine.Metrics;
+using Assets.Scripts.Foenn.Engine.OLAP;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,11 +19,11 @@ namespace Assets.Scripts.Foenn.Atlas.Models.Activities.Conditions
             this.importance = importance;
         }
 
-        public bool Match(Dictionary<MetricKey, float> record)
+        public bool SuitsHour(Row row)
         {
-            return metrics.keys.Intersect(record.Keys).Any(key =>
+            return metrics.keys.Intersect(row.Keys).Any(key =>
             {
-                var value = record[key];
+                var value = row[key];
                 return min <= value && max >= value;
             });
         }
