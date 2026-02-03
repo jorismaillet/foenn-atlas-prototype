@@ -1,49 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿namespace Assets.Scripts.Unity.Commons.Mutables
+{
 
-namespace Assets.Scripts.Unity.Commons.Mutables {
-
-    public class Mutable<T> {
+    public class Mutable<T>
+    {
 
         private T value;
         public GameEvent<T> onChange { get; } = new GameEvent<T>();
 
-        public Mutable(T t = default(T)) {
+        public Mutable(T t = default(T))
+        {
             Value = t;
         }
 
-        public static implicit operator Mutable<T>(T value) {
+        public static implicit operator Mutable<T>(T value)
+        {
             Mutable<T> result = new Mutable<T>(value);
             return result;
         }
 
-        public T Value {
+        public T Value
+        {
             get { return value; }
-            set {
+            set
+            {
                 this.value = value;
                 onChange.Invoke(value);
             }
         }
 
-        public bool HasValue {
-            get {
+        public bool HasValue
+        {
+            get
+            {
                 return value != null;
             }
         }
 
-        public void Set(T element) {
+        public void Set(T element)
+        {
             Value = element;
         }
 
-        public T GetValueOrDefault(T defaultValue) {
-            if (!HasValue) {
+        public T GetValueOrDefault(T defaultValue)
+        {
+            if (!HasValue)
+            {
                 return defaultValue;
             }
             return Value;
         }
 
-        public void Clear() {
+        public void Clear()
+        {
             Value = default(T);
         }
 

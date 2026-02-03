@@ -1,5 +1,7 @@
-﻿namespace Assets.Scripts.Unity.Common.Utils.RadioButton {
-    public enum RadioButtonGroup {
+﻿namespace Assets.Scripts.Unity.Common.Utils.RadioButton
+{
+    public enum RadioButtonGroup
+    {
         NONE,
         EQUIPMENT_LEFT_PANEL,
         EQUIPMENT_RIGHT_PANEL,

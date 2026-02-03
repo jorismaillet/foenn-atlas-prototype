@@ -10,6 +10,7 @@ using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.Filters;
 using Assets.Scripts.Foenn.Engine.Inputs.Databases;
 using Assets.Scripts.Foenn.Engine.Metrics;
+using Assets.Scripts.Foenn.Engine.OLAP.Dimensions;
 using Assets.Scripts.Foenn.ETL.SqLite;
 
 namespace Assets.Scripts.Foenn.Atlas
@@ -37,9 +38,9 @@ namespace Assets.Scripts.Foenn.Atlas
             Location procheMaison = new CircleLocation("Proche Maison", maison, 5000);
             Location plageIleTudy = new PolygonLocation("Plage Ile Tudy", new GeoPoint(48.3904, -4.4861), new GeoPoint(48.3904, -4.4861), new GeoPoint(48.3904, -4.4861));
 
-        var piscine = new Activity("Piscine", new MetricGroupCondition(temp, 25, 33, ConditionImportanceKey.HIGH),
-                new MetricGroupCondition(wind, 0, 2, ConditionImportanceKey.HIGH),
-                new MetricGroupCondition(rain, 0, 0, ConditionImportanceKey.HIGH));
+            var piscine = new Activity("Piscine", new MetricGroupCondition(temp, 25, 33, ConditionImportanceKey.HIGH),
+                    new MetricGroupCondition(wind, 0, 2, ConditionImportanceKey.HIGH),
+                    new MetricGroupCondition(rain, 0, 0, ConditionImportanceKey.HIGH));
 
             var kayak = new Activity("Kayak",
     new MetricGroupCondition(temp, 23, 31, ConditionImportanceKey.HIGH),
@@ -75,21 +76,21 @@ namespace Assets.Scripts.Foenn.Atlas
                 new MetricGroupCondition(wind, 0, 0, ConditionImportanceKey.HIGH));
 
 
-        var planningSportif = new PlanningDefinition();
-        planningSportif.plannedActivities.Add(new PlannedActivity(randonee, procheMaison));
-        planningSportif.plannedActivities.Add(new PlannedActivity(piscine, maison));
-        planningSportif.plannedActivities.Add(new PlannedActivity(tennis, tcQuimper));
-        planningSportif.plannedActivities.Add(new PlannedActivity(tennis, tcPontLabbe));
-        planningSportif.plannedActivities.Add(new PlannedActivity(velo, procheMaison));
-        planningSportif.plannedActivities.Add(new PlannedActivity(kayak, plageIleTudy));
+            var planningSportif = new PlanningDefinition();
+            planningSportif.plannedActivities.Add(new PlannedActivity(randonee, procheMaison));
+            planningSportif.plannedActivities.Add(new PlannedActivity(piscine, maison));
+            planningSportif.plannedActivities.Add(new PlannedActivity(tennis, tcQuimper));
+            planningSportif.plannedActivities.Add(new PlannedActivity(tennis, tcPontLabbe));
+            planningSportif.plannedActivities.Add(new PlannedActivity(velo, procheMaison));
+            planningSportif.plannedActivities.Add(new PlannedActivity(kayak, plageIleTudy));
 
-        var ideesDeSorties = new PlanningDefinition();
-        ideesDeSorties.plannedActivities.Add(new PlannedActivity(plage, plageIleTudy));
-        ideesDeSorties.plannedActivities.Add(new PlannedActivity(jardin, maison));
-        ideesDeSorties.plannedActivities.Add(new PlannedActivity(ville, brest));
-        ideesDeSorties.plannedActivities.Add(new PlannedActivity(dinner, brest));
+            var ideesDeSorties = new PlanningDefinition();
+            ideesDeSorties.plannedActivities.Add(new PlannedActivity(plage, plageIleTudy));
+            ideesDeSorties.plannedActivities.Add(new PlannedActivity(jardin, maison));
+            ideesDeSorties.plannedActivities.Add(new PlannedActivity(ville, brest));
+            ideesDeSorties.plannedActivities.Add(new PlannedActivity(dinner, brest));
 
-        var map = new Map();
+            var map = new Map();
 
             // 2. Upsert SqLite from CSV
             string dbPath = "weather.db";
@@ -101,9 +102,9 @@ namespace Assets.Scripts.Foenn.Atlas
             // 3. Run SqLite query
             // Build a QueryRequest (example: AVG temperature)
             var request = new QueryRequest();
-            request.Filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.YEAR, "2019"));
-            request.Filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.DPT, "29"));
-            request.attributes.Add(new Attribute(AttributeKey.MONTH));
+            request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.YEAR, "2019"));
+            request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.DPT, "29"));
+            request.attributes.Add(new Attribute(AttributeKey.MONTH, "Mois"));
             request.metrics.Add(new Metric(MetricKey.T, AggregationKey.AVG));
 
             // Use a provider (example: SQLite)
@@ -111,12 +112,17 @@ namespace Assets.Scripts.Foenn.Atlas
             provider.Initialize(request);
             var result = provider.Execute();
 
-            foreach (var dim in result.dimensions)
+            foreach (var header in result.rawHeaders)
             {
-                foreach (var attr in dim.attributeValues)
-                    UnityEngine.Debug.Log($"Attr: {attr.value}");
-                foreach (var metric in dim.metricValues)
-                    UnityEngine.Debug.Log($"Metric: {metric.value}");
+                UnityEngine.Debug.Log($"Header: {header}");
+            }
+            foreach (var row in result.rows)
+            {
+                foreach (Dimension dim in row.dimensions)
+                    foreach (AttributeValue attr in dim.attributeValues)
+                        UnityEngine.Debug.Log($"Attribute: {attr.attribute.name} - {attr.value}");
+                foreach (var measure in row.measures)
+                    UnityEngine.Debug.Log($"Measure: ({measure.metric.aggregation}) {measure.metric.key} - {measure.value}");
             }
         }
     }

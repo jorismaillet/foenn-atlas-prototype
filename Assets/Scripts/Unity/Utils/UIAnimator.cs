@@ -1,41 +1,50 @@
 ﻿using Assets.Scripts.Unity.Commons.UIAnimations;
-using Assets.Scripts.Unity.Utils.UIAnimations;
 using System.Collections.Generic;
 
-namespace Assets.Scripts.Unity.Common.Utils {
-    public class UIAnimator : UnityEngine.MonoBehaviour {
+namespace Assets.Scripts.Unity.Common.Utils
+{
+    public class UIAnimator : UnityEngine.MonoBehaviour
+    {
         private static List<UIAnimation> animations = new List<UIAnimation>();
         private static List<UIAnimationList> animationsLists = new List<UIAnimationList>();
 
         //TODO Dictionary with target object as a key, to automatically cancel previous animation
-        public static UIAnimation Animate(UIAnimation newAnimation) {
+        public static UIAnimation Animate(UIAnimation newAnimation)
+        {
             animations.Add(newAnimation);
             return newAnimation;
         }
-        public static UIAnimationList Animate(UIAnimationList newAnimationsList) {
+        public static UIAnimationList Animate(UIAnimationList newAnimationsList)
+        {
             animationsLists.Add(newAnimationsList);
             return newAnimationsList;
         }
 
-        public static void CancelAnimation(UIAnimation animation) {
+        public static void CancelAnimation(UIAnimation animation)
+        {
             animations.Remove(animation);
         }
 
-        public static void CancelAnimation(UIAnimationList animationsList) {
+        public static void CancelAnimation(UIAnimationList animationsList)
+        {
             animationsLists.Remove(animationsList);
         }
 
-        public static void CancelAllAnimations() {
+        public static void CancelAllAnimations()
+        {
             animations.Clear();
             animationsLists.Clear();
         }
 
-        void FixedUpdate() {
-            animations.RemoveAll(animation => {
+        void FixedUpdate()
+        {
+            animations.RemoveAll(animation =>
+            {
                 animation.Animate(UnityEngine.Time.fixedDeltaTime);
                 return animation.Ended();
             });
-            animationsLists.RemoveAll(animationsList => {
+            animationsLists.RemoveAll(animationsList =>
+            {
                 animationsList.Animate(UnityEngine.Time.fixedDeltaTime);
                 return animationsList.Ended();
             });

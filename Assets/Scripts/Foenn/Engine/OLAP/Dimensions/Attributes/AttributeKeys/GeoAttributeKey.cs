@@ -1,6 +1,4 @@
-﻿using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
-
-namespace Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys
+﻿namespace Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys
 {
     public class GeoAttributeKey
     {

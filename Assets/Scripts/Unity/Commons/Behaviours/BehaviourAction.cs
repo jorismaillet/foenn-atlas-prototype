@@ -1,5 +1,7 @@
-﻿namespace Assets.Scripts.Unity.Commons.Behaviours {
-    public enum BehaviourAction {
+﻿namespace Assets.Scripts.Unity.Commons.Behaviours
+{
+    public enum BehaviourAction
+    {
         Nothing,
         Show,
         Hide,

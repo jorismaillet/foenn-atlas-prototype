@@ -1,32 +1,41 @@
 ﻿using Assets.Scripts.Unity.Sounds;
 
-namespace Assets.Scripts.Unity.Common.Utils.RadioButton {
-    public class RadioToggleSelector : RadioButtonSelector {
+namespace Assets.Scripts.Unity.Common.Utils.RadioButton
+{
+    public class RadioToggleSelector : RadioButtonSelector
+    {
         public bool isOn = false;
         public InterfaceSoundKey offSound;
 
-        public override void Select() {
-            if (isOn) {
+        public override void Select()
+        {
+            if (isOn)
+            {
                 InterfaceAudioSource.Play(offSound);
                 UnSelect();
             }
-            else {
+            else
+            {
                 base.Select();
                 isOn = true;
             }
         }
 
-        public override void UnSelect() {
+        public override void UnSelect()
+        {
             base.UnSelect();
             isOn = false;
         }
 
-        private void OnDisable() {
+        private void OnDisable()
+        {
             base.UnSelect();
         }
 
-        private void OnEnable() {
-            if (isOn) {
+        private void OnEnable()
+        {
+            if (isOn)
+            {
                 base.Select();
             }
         }

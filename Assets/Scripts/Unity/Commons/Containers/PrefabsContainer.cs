@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Assets.Scripts.Unity.Commons.Containers {
-    public class PrefabsContainer : AbstractPrefabsContainer {
+namespace Assets.Scripts.Unity.Commons.Containers
+{
+    public class PrefabsContainer : AbstractPrefabsContainer
+    {
         public GameObject prefab;
 
-        protected override GameObject ElementPrefab<Element>(Element element) {
+        protected override GameObject ElementPrefab<Element>(Element element)
+        {
             return prefab;
         }
     }

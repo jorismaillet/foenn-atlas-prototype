@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace Assets.Scripts.Foenn.Atlas.Models.Maps {
-    public class Map {
+namespace Assets.Scripts.Foenn.Atlas.Models.Maps
+{
+    public class Map
+    {
         public List<Activity> activities;
         public List<BackgroundLayer> selectedBackgrounds;
         public DateTime selectedTime;

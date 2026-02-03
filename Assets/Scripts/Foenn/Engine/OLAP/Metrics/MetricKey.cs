@@ -1,6 +1,7 @@
 ﻿namespace Assets.Scripts.Foenn.Engine.Metrics
 {
-    public enum MetricKey {
+    public enum MetricKey
+    {
         ALTI,
         RR1,
         QRR1,

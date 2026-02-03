@@ -1,6 +1,8 @@
-﻿namespace Assets.Scripts.App.Translations {
+﻿namespace Assets.Scripts.App.Translations
+{
 
-    public enum Language {
+    public enum Language
+    {
         ENGLISH,
         FRENCH
     }

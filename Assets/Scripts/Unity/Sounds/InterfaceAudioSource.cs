@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts.Unity.Sounds {
-    public class InterfaceAudioSource : MonoBehaviour {
+namespace Assets.Scripts.Unity.Sounds
+{
+    public class InterfaceAudioSource : MonoBehaviour
+    {
         private static AudioSource source;
         private static Dictionary<string, AudioClip> clips = new Dictionary<string, AudioClip>();
         private const string interfaceAudioClipsPrefix = "Sounds/Interface/{0}";
@@ -30,20 +32,24 @@ namespace Assets.Scripts.Unity.Sounds {
             { InterfaceSoundKey.MENU_CLOSE, "menu_close" },
         };
 
-        private void Awake() {
+        private void Awake()
+        {
             source = GetComponent<AudioSource>();
         }
 
-        private static AudioClip GetAudioClip(string fileName) {
+        private static AudioClip GetAudioClip(string fileName)
+        {
             string path = string.Format(interfaceAudioClipsPrefix, fileName);
-            if (!clips.ContainsKey(path)) {
+            if (!clips.ContainsKey(path))
+            {
                 AudioClip clip = Resources.Load<AudioClip>(path);
                 clips.Add(path, clip);
             }
             return clips[path];
         }
 
-        public static void Play(InterfaceSoundKey key) {
+        public static void Play(InterfaceSoundKey key)
+        {
             source.PlayOneShot(GetAudioClip(fileName[key]));
         }
     }

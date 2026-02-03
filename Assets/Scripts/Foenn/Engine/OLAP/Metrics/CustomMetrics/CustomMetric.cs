@@ -3,5 +3,8 @@
     public abstract class CustomMetric : AbstractMetric
     {
         // Formula -> Execution
+        protected CustomMetric(AggregationKey aggregation) : base(aggregation)
+        {
+        }
     }
 }

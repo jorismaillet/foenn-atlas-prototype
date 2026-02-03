@@ -1,5 +1,7 @@
-﻿namespace Assets.Scripts.Unity.Sounds {
-    public enum InterfaceSoundKey {
+﻿namespace Assets.Scripts.Unity.Sounds
+{
+    public enum InterfaceSoundKey
+    {
         BUTTON,
         BUTTON2,
         CHAT,

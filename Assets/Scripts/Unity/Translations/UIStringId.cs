@@ -1,6 +1,8 @@
-﻿namespace Assets.Scripts.App.Translations {
+﻿namespace Assets.Scripts.App.Translations
+{
 
-    public enum UIStringId {
+    public enum UIStringId
+    {
         HELLO
     }
 }

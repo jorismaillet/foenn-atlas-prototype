@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.ETL.CSV;
-using UnityEngine;
 
 namespace Assets.Scripts.Foenn.Engine.Inputs.InMemory
 {
@@ -9,20 +8,36 @@ namespace Assets.Scripts.Foenn.Engine.Inputs.InMemory
         private CSVLoader loader;
         private int year;
         private string csvText;
+        private int department;
+        private UnityEngine.TextAsset textAsset;
 
-        public CSVInputProvider(int department, int year) {
-            this.loader = new CSVLoader();
-
-            var fileName = WeatherHistoryLoader.WeatherFileName(department, year);
-            var textAsset = Resources.Load<TextAsset>(fileName);
-            this.csvText = textAsset.text;
+        public CSVInputProvider(int department, int year)
+        {
+            this.department = department;
             this.year = year;
-            Resources.UnloadAsset(textAsset);
         }
 
-        public void Initialize(QueryRequest request)
+        public override void OpenFile()
         {
-            return loader.Extract(csvText, year);
+            var fileName = WeatherHistoryDataLocator.WeatherFileName(department, year);
+            this.textAsset = UnityEngine.Resources.Load<UnityEngine.TextAsset>(fileName);
+        }
+
+        public override void Initialize(QueryRequest request)
+        {
+            this.loader = new CSVLoader();
+            this.csvText = textAsset.text;
+        }
+
+        public override QueryResult Execute()
+        {
+            var dateset = loader.Extract(csvText, year);
+            throw new System.NotImplementedException("CSV Engine not implemented yet");
+        }
+
+        public override void CloseFile()
+        {
+            UnityEngine.Resources.UnloadAsset(textAsset);
         }
     }
 }

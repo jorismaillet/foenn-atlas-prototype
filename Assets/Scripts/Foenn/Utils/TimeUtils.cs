@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System;
-using UnityEditor;
-using UnityEngine;
 using System.Linq;
 
 namespace Assets.Scripts.Foenn.Utils

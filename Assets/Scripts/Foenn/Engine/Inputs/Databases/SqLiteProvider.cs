@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts.Foenn.Engine.Sql.Dialects;
-using System.Data;
 
 namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
 {

@@ -2,7 +2,7 @@
 
 namespace Assets.Scripts.Foenn.Engine.Metrics.CustomMetrics
 {
-    public class TemperatureRessentie : CustomMetric
+    public class TemperatureRessentie
     {
         private double temperature;
         private double windSpeed;
@@ -15,7 +15,7 @@ namespace Assets.Scripts.Foenn.Engine.Metrics.CustomMetrics
             this.relativeHumidity = relativeHumidity;
         }
 
-        public override float Value()
+        public double Value()
         {
             if (temperature <= 10)
             {

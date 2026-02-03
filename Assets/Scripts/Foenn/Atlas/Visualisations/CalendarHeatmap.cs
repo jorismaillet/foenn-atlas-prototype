@@ -1,7 +1,16 @@
 ﻿using Assets.Scripts.Foenn.Atlas.Models.Activities;
+using Assets.Scripts.Foenn.Engine.Attributes;
+using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
+using Assets.Scripts.Foenn.Engine.Execution;
+using Assets.Scripts.Foenn.Engine.Filters;
+using Assets.Scripts.Foenn.Engine.Inputs.Databases;
+using Assets.Scripts.Foenn.ETL;
 using Assets.Scripts.Foenn.Utils;
 using Assets.Scripts.Unity.Commons.Behaviours;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Scripts.Foenn.Atlas.Visualisations
@@ -12,25 +21,32 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations
 
         private void Heatmap(string city, int department)
         {
-            var post = GetPostFromCity(city, department, activities);
-            var records = post.records.ToList();
-            //DataFor(32, post);
-
-            var points = activities.Sum(activity => post.records.Sum(r => activity.SuitsHour(r) ? activity.weight : 0));
+            var request = new QueryRequest();
+            request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.NOM_USUEL, city));
+            request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.DPT, department.ToString()));
+            var result = new QueryExecutor(new SqLiteProvider()).Execute(request);
+            var points = new List<int>();
+            foreach (var ac in activities)
+            {
+                var activity = ac.Key;
+                var color = ac.Value;
+                points.Add(result.rows.Sum(row => activity.SuitsHour(row) ? 1 : 0));
+            }
             Debug.Log(points);
-            var heatmap = records.Select(record => {
-                var date = TimeUtils.Date(record.Get(AttributeKey.AAAAMMJJHH));
+            var heatmap = result.rows.Select(row =>
+            {
+                var date = TimeUtils.Date(row.AttributeValue(AttributeKey.AAAAMMJJHH).value);
 
-                var activity = activities.FirstOrDefault(a => a.SuitsHour(record));
+                var activity = activities.FirstOrDefault(a => a.Key.SuitsHour(row));
 
-                var res = new HourPoint(date, activity);
+                var res = new HourPoint(date, activity.Value);
                 return res;
             }).ToList();
 
             var image = GetComponent<UnityEngine.UI.Image>();
             var width = (int)image.GetComponent<RectTransform>().sizeDelta.x;
             var height = (int)image.GetComponent<RectTransform>().sizeDelta.y;
-            texture = new Texture2D(width, height);
+            var texture = new Texture2D(width, height);
 
             Sprite sprite = Sprite.Create(texture, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f));
 

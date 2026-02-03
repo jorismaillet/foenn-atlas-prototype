@@ -1,7 +1,5 @@
 ﻿using Assets.Scripts.Foenn.Engine.Execution;
-using Assets.Scripts.Foenn.Engine.Requests;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
-using Unity.VisualScripting;
 
 namespace Assets.Scripts.Foenn.Engine.Sql
 {
@@ -37,7 +35,7 @@ namespace Assets.Scripts.Foenn.Engine.Sql
             if (!string.IsNullOrWhiteSpace(groupByStr))
                 emit.Append(groupByStr);
 
-            return new CompiledQuery(emit.ToString(), emit.Parameters);
+            return new CompiledQuery(emit.ToString(), emit.parameters);
         }
     }
 }

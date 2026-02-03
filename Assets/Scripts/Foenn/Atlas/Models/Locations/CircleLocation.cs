@@ -1,7 +1,7 @@
-﻿using Assets.Scripts.Foenn.Engine;
-
-namespace Assets.Scripts.Foenn.Atlas.Models.Locations {
-    public class CircleLocation : Location {
+﻿namespace Assets.Scripts.Foenn.Atlas.Models.Locations
+{
+    public class CircleLocation : Location
+    {
         public PointLocation center;
         public float radiusMeters;
 

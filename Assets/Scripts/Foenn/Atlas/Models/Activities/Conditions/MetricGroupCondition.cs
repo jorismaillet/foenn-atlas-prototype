@@ -1,11 +1,11 @@
 ﻿using Assets.Scripts.Foenn.Engine.Metrics;
 using Assets.Scripts.Foenn.Engine.OLAP;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Assets.Scripts.Foenn.Atlas.Models.Activities.Conditions
 {
-    public class MetricGroupCondition : IActivityCondition {
+    public class MetricGroupCondition : IActivityCondition
+    {
         public MetricGroup metrics;
         public float min;
         public float max;
@@ -21,10 +21,10 @@ namespace Assets.Scripts.Foenn.Atlas.Models.Activities.Conditions
 
         public bool SuitsHour(Row row)
         {
-            return metrics.keys.Intersect(row.Keys).Any(key =>
+            return metrics.keys.Any(key =>
             {
-                var value = row[key];
-                return min <= value && max >= value;
+                var measure = row.Measure(key);
+                return min <= measure.value && max >= measure.value;
             });
         }
     }

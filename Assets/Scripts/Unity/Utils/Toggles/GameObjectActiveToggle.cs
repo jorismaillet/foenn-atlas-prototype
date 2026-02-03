@@ -2,15 +2,19 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Scripts.Unity.Common.Utils.Toggles {
-    public class GameObjectActiveToggle : BaseBehaviour {
+namespace Assets.Scripts.Unity.Common.Utils.Toggles
+{
+    public class GameObjectActiveToggle : BaseBehaviour
+    {
         public GameObject targetGameObject;
 
-        private void Awake() {
+        private void Awake()
+        {
             AddListener(GetComponent<Toggle>().onValueChanged, OnClick);
         }
 
-        public void OnClick(bool isOn) {
+        public void OnClick(bool isOn)
+        {
             targetGameObject.SetActive(isOn);
         }
     }

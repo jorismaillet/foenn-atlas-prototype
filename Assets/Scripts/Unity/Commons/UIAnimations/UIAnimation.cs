@@ -1,12 +1,13 @@
 ﻿using Assets.Scripts.Common.Utils;
 using Assets.Scripts.Unity.Commons.UIAnimations.Interpolations;
-using Assets.Scripts.Unity.Utils.UIAnimations.Interpolations;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts.Unity.Commons.UIAnimations {
-    public class UIAnimation {
+namespace Assets.Scripts.Unity.Commons.UIAnimations
+{
+    public class UIAnimation
+    {
         private readonly List<Interpolation> interpolations;
 
         private GameObject from;
@@ -14,38 +15,46 @@ namespace Assets.Scripts.Unity.Commons.UIAnimations {
         private float elapsedTime = 0.0F;
         public Action callback;
 
-        public UIAnimation(GameObject from, Interpolation interpolation, int durationMillis, Action callback = null) {
+        public UIAnimation(GameObject from, Interpolation interpolation, int durationMillis, Action callback = null)
+        {
             this.from = from;
             this.interpolations = new List<Interpolation>() { interpolation };
             this.durationMillis = durationMillis;
             this.callback = callback;
         }
 
-        public UIAnimation(GameObject from, List<Interpolation> interpolations, int durationMillis, Action callback = null) {
+        public UIAnimation(GameObject from, List<Interpolation> interpolations, int durationMillis, Action callback = null)
+        {
             this.from = from;
             this.interpolations = interpolations;
             this.durationMillis = durationMillis;
             this.callback = callback;
         }
 
-        public void Animate(float deltaTime) {
+        public void Animate(float deltaTime)
+        {
             elapsedTime = Math.Min(elapsedTime + deltaTime * 1000.0F, durationMillis);
             float coef = MathUtil.Coef(0, durationMillis, elapsedTime);
-            try {
-                foreach (Interpolation interpolation in interpolations) {
+            try
+            {
+                foreach (Interpolation interpolation in interpolations)
+                {
                     interpolation.Process(coef);
                 }
             }
-            catch (MissingReferenceException e) {
+            catch (MissingReferenceException e)
+            {
                 Debug.LogWarning(e, from);
                 elapsedTime = durationMillis;
             }
-            if (Ended() && callback != null) {
+            if (Ended() && callback != null)
+            {
                 callback();
             }
         }
 
-        public bool Ended() {
+        public bool Ended()
+        {
             return elapsedTime >= durationMillis;
         }
     }

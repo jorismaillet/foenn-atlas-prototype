@@ -2,30 +2,38 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Scripts.Unity.Common.Utils.Toggles {
-    public class SelectedToggle : BaseBehaviour {
+namespace Assets.Scripts.Unity.Common.Utils.Toggles
+{
+    public class SelectedToggle : BaseBehaviour
+    {
         public Color selectedColor;
         private Toggle toggle;
         private Image toggleImage;
 
-        private void Awake() {
+        private void Awake()
+        {
             toggle = GetComponent<Toggle>();
             toggleImage = toggle.targetGraphic.GetComponent<Image>();
-            AddListener(toggle.onValueChanged, (selected) => {
-                if (selected) {
+            AddListener(toggle.onValueChanged, (selected) =>
+            {
+                if (selected)
+                {
                     Select();
                 }
-                else {
+                else
+                {
                     Unselect();
                 }
             });
         }
 
-        public void Select() {
+        public void Select()
+        {
             SwitchColor(toggleImage, toggle.colors.fadeDuration, selectedColor);
         }
 
-        public void Unselect() {
+        public void Unselect()
+        {
             SwitchColor(toggleImage, toggle.colors.fadeDuration, toggle.colors.normalColor);
         }
     }

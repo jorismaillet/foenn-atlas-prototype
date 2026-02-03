@@ -1,5 +1,7 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models {
-    public class GeoPoint {
+﻿namespace Assets.Scripts.Foenn.Atlas.Models
+{
+    public class GeoPoint
+    {
         public double lat, lon;
 
         public GeoPoint(double lat, double lon)
