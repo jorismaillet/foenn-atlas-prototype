@@ -1,32 +1,50 @@
 ﻿using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.Filters;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
+using Assets.Scripts.Foenn.Utils;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
 {
     public class SqlWhere
     {
-        private readonly string whereClause;
-
-        public SqlWhere(QueryRequest request, ISqlDialect dialect, SqlEmit emit)
+        public readonly string clause;
+        public SqlWhere(List<Filter> filters, ISqlDialect dialect)
         {
             var whereParts = new List<string>();
-            foreach (var filter in request.filters)
+            foreach (var filter in filters)
             {
-                // TODO: Adapter selon le type de filtre (ici exemple simple)
                 if (filter is DataFilter df)
                 {
-                    var paramName = emit.AddParam(string.Join(", ", df.selectedValues));
-                    whereParts.Add($"{dialect.QuoteIdent(df.filteredAttributeKey.ToString())} {df.mode} {paramName}");
+                    string filterOperator = null;
+                    string filteredAttributes = null;
+                    if (df.selectedValues.Count > 1)
+                    {
+                        filterOperator = df.mode.Equals(DataFilterMode.INCLUDE) ? " IN" : " NOT IN";
+                        filteredAttributes = $"({string.Join(", ", df.selectedValues.Select(v => dialect.QuoteIdent(v)))})";
+                    }
+                    else
+                    {
+                        filterOperator = df.mode.Equals(DataFilterMode.INCLUDE) ? dialect.Equals() : dialect.Different() + " ";
+                        filteredAttributes = dialect.QuoteIdent(df.selectedValues[0]);
+                    }
+                    whereParts.Add($"{dialect.QuoteIdent(df.filteredAttributeKey.ToString())}{filterOperator}{filteredAttributes}");
                 }
-                // Ajouter d'autres types de filtres ici (TimeFilter, GeoFilter, etc.)
+                else if(filter is TimeRangeFilter tf)
+                {
+                    whereParts.Add($"AAAAMMJJHH >= {TimeUtils.ToString(tf.startTime)} AND AAAAMMJJHH <= {TimeUtils.ToString(tf.endTime)}");
+                }
+                // TODO GeoFilter
+                else
+                {
+                    throw new System.NotImplementedException($"Filter type {filter.GetType().Name} not supported in SQL generation yet.");
+                }
             }
             if (whereParts.Count > 0)
-                whereClause = " WHERE " + string.Join(" AND ", whereParts);
+                clause = " WHERE " + string.Join(" AND ", whereParts);
             else
-                whereClause = string.Empty;
+                clause = string.Empty;
         }
-        public override string ToString() => whereClause;
     }
 }

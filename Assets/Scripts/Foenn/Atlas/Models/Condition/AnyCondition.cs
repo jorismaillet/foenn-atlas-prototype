@@ -18,4 +18,4 @@ namespace Assets.Scripts.Foenn.Atlas.Models.Condition
             return conditions.Any(condition => condition.IsMatch(record));
         }
     }
-}}
+}

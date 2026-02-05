@@ -4,11 +4,10 @@ namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
 {
     public class SqlFrom
     {
-        private readonly string fromClause;
+        public readonly string clause;
         public SqlFrom(string table, ISqlDialect dialect)
         {
-            fromClause = $" FROM {dialect.QuoteIdent(table)}";
+            clause = $" FROM {dialect.QuoteIdent(table)}";
         }
-        public override string ToString() => fromClause;
     }
 }

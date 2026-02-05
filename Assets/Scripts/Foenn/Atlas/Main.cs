@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts.Foenn.Atlas.Models;
 using Assets.Scripts.Foenn.Atlas.Models.Activities;
-using Assets.Scripts.Foenn.Atlas.Models.Activities.Conditions;
 using Assets.Scripts.Foenn.Atlas.Models.Condition;
 using Assets.Scripts.Foenn.Atlas.Models.Locations;
 using Assets.Scripts.Foenn.Atlas.Models.Maps;
@@ -11,9 +10,7 @@ using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.Filters;
 using Assets.Scripts.Foenn.Engine.Inputs.Databases;
 using Assets.Scripts.Foenn.Engine.Metrics;
-using Assets.Scripts.Foenn.Engine.OLAP.Dimensions;
 using Assets.Scripts.Foenn.ETL.SqLite;
-using static Codice.Client.Commands.WkTree.WorkspaceTreeNode;
 
 namespace Assets.Scripts.Foenn.Atlas
 {
@@ -97,8 +94,8 @@ namespace Assets.Scripts.Foenn.Atlas
             var request = new QueryRequest();
             request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.YEAR, "2019"));
             request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.DPT, "29"));
-            request.attributes.Add(new Attribute(AttributeKey.MONTH, "Mois"));
-            request.metrics.Add(new Metric(MetricKey.T, AggregationKey.AVG));
+            request.groups.Add(AttributeKey.MONTH);
+            request.selectedMetrics.Add(new Metric(MetricKey.T, AggregationKey.AVG));
 
             // Use a provider (example: SQLite)
             var provider = new SqLiteProvider();

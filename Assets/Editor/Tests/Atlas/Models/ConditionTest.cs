@@ -80,7 +80,7 @@ namespace Assets.Editor.Tests.Atlas.Models
         public void TestEmptyAllCondition()
         {
             var c = new AllCondition();
-            Assert.IsFalse(c.IsMatch(new Row()));
+            Assert.IsTrue(c.IsMatch(new Row()));
         }
 
         //AnyCondition
@@ -106,7 +106,7 @@ namespace Assets.Editor.Tests.Atlas.Models
         public void TestEmptyAnyCondition()
         {
             var c = new AnyCondition();
-            Assert.IsTrue(c.IsMatch(new Row()));
+            Assert.IsFalse(c.IsMatch(new Row()));
         }
 
         //GroupAllCondition
@@ -117,7 +117,7 @@ namespace Assets.Editor.Tests.Atlas.Models
             var row = new Row();
             row.measures.Add(new Measure(new Metric(MetricKey.T, AggregationKey.AVG), 15));
             row.measures.Add(new Measure(new Metric(MetricKey.T10, AggregationKey.AVG), 15));
-            Assert.IsTrue(c.IsMatch(new Row()));
+            Assert.IsTrue(c.IsMatch(row));
         }
         [Test]
         public void TestNoMatchGroupAllCondition()
@@ -126,7 +126,7 @@ namespace Assets.Editor.Tests.Atlas.Models
             var row = new Row();
             row.measures.Add(new Measure(new Metric(MetricKey.T, AggregationKey.AVG), 15));
             row.measures.Add(new Measure(new Metric(MetricKey.T10, AggregationKey.AVG), 35));
-            Assert.IsFalse(c.IsMatch(new Row()));
+            Assert.IsFalse(c.IsMatch(row));
         }
 
         //GroupAnyCondition
@@ -137,7 +137,7 @@ namespace Assets.Editor.Tests.Atlas.Models
             var row = new Row();
             row.measures.Add(new Measure(new Metric(MetricKey.T, AggregationKey.AVG), 15));
             row.measures.Add(new Measure(new Metric(MetricKey.T10, AggregationKey.AVG), 15));
-            Assert.IsTrue(c.IsMatch(new Row()));
+            Assert.IsTrue(c.IsMatch(row));
         }
         [Test]
         public void TestNoMatchGroupAnyondition()
@@ -146,7 +146,7 @@ namespace Assets.Editor.Tests.Atlas.Models
             var row = new Row();
             row.measures.Add(new Measure(new Metric(MetricKey.T, AggregationKey.AVG), 15));
             row.measures.Add(new Measure(new Metric(MetricKey.T10, AggregationKey.AVG), 35));
-            Assert.IsTrue(c.IsMatch(new Row()));
+            Assert.IsTrue(c.IsMatch(row));
         }
     }
 }

@@ -42,6 +42,11 @@ namespace Assets.Scripts.Foenn.Utils
             return dateTime;
         }
 
+        public static string ToString(DateTime dateTime)
+        {
+            return dateTime.ToString("yyyyMMddHH");
+        }
+
         // This presumes that weeks start with Monday.
         // Week 1 is the 1st week of the year with a Thursday in it.
         public static int GetIso8601WeekOfYear(DateTime time)

@@ -3,6 +3,8 @@ using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
 using Assets.Scripts.Foenn.Engine.Metrics;
 using Assets.Scripts.Foenn.Engine.OLAP;
 using Assets.Scripts.Foenn.Engine.OLAP.Dimensions;
+using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Times;
+using Assets.Scripts.Foenn.Utils;
 using System.Collections.Generic;
 
 namespace Assets.Scripts.Foenn.Engine.Execution
@@ -15,7 +17,12 @@ namespace Assets.Scripts.Foenn.Engine.Execution
         public QueryResult(QueryRequest request, List<string> rawHeaders, List<List<string>> rawResult)
         {
             this.rawHeaders = rawHeaders;
-            rows = new List<Row>();
+            this.rows = Parse(request, rawHeaders, rawResult);
+        }
+
+        public static List<Row> Parse(QueryRequest request, List<string> rawHeaders, List<List<string>> rawResult)
+        {
+            var rows = new List<Row>();
             foreach (var rawRow in rawResult)
             {
                 var row = new Row();
@@ -23,18 +30,27 @@ namespace Assets.Scripts.Foenn.Engine.Execution
                 {
                     var header = rawHeaders[i];
                     string value = rawRow[i];
-                    // Heuristique : si le header est un MetricKey, c'est une métrique
                     if (System.Enum.TryParse<MetricKey>(header, out var metricKey))
                     {
                         if (float.TryParse(value, out var fval))
                         {
-                            var metrics = request.metrics.Find(m => m.key == metricKey);
+                            var metrics = request.selectedMetrics.Find(m => m.key == metricKey);
                             row.measures.Add(new Measure(metrics, fval));
                         }
                     }
+                    else if (System.Enum.TryParse<TimeAttributeKey>(header, out var timeKey))
+                    {
+                        row.time = new TimeDimension();
+                        row.time.start = TimeUtils.Date(value);
+                    }
+                    else if (System.Enum.TryParse<GeoAttributeKey>(header, out var geoKey))
+                    {
+                        row.geo = new GeoDimension();
+                        row.geo.numPost = value;
+                    }
                     else if (System.Enum.TryParse<AttributeKey>(header, out var attributeKey))
                     {
-                        row.dimensions.Add(new TextDimension(new AttributeValue(new Attribute(attributeKey, Attribute.Name(attributeKey)), value)));
+                        row.attributes.Add(new Attribute(attributeKey, value));
                     }
                     else
                     {
@@ -43,6 +59,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
                 }
                 rows.Add(row);
             }
+            return rows;
         }
     }
 }

@@ -4,5 +4,8 @@
     {
         string QuoteIdent(string ident);
         string RenderLimit(int limit);
+        string Equals();
+        string Different();
+        string EndOfLine();
     }
 }

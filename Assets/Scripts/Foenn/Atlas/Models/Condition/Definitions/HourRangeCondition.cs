@@ -14,7 +14,7 @@ namespace Assets.Scripts.Foenn.Atlas.Models.Condition
 
         public bool IsMatch(Row row)
         {
-            return row.time.start.Hour >= minHour && row.time.End().Hour < maxHour;
+            return row.time.start.Hour >= minHour && row.time.End().Hour <= maxHour;
         }
     }
 }

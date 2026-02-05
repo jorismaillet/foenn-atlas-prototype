@@ -27,16 +27,16 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations
             {
                 var activity = ac.Key;
                 var color = ac.Value;
-                points.Add(result.rows.Sum(row => activity.SuitsRow(row) ? 1 : 0));
+                points.Add(result.rows.Sum(row => activity.conditions.IsMatch(row) ? 1 : 0));
             }
             Debug.Log(points);
             var heatmap = result.rows.Select(row =>
             {
                 var date = TimeUtils.Date(row.Attribute(AttributeKey.AAAAMMJJHH).value);
 
-                var activity = activities.FirstOrDefault(a => a.Key.SuitsRow(row));
+                var activity = activities.FirstOrDefault(a => a.Key.conditions.IsMatch(row));
 
-                var res = new HourPoint(date, activity.Value);
+                var res = new ColoredPixel(date, activity.Value);
                 return res;
             }).ToList();
 

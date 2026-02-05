@@ -1,21 +1,22 @@
 ﻿using Assets.Scripts.Foenn.Engine.Execution;
+using Assets.Scripts.Foenn.Engine.Metrics;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
 {
     public class SqlSelect
     {
-        private readonly string selectClause;
-        public SqlSelect(QueryRequest request, ISqlDialect dialect)
+        public readonly string clause;
+        public SqlSelect(List<Metric> metrics, ISqlDialect dialect)
         {
-            var selectParts = request.metrics
+            var selectParts = metrics
                 .Select(metric =>
-                    $"{metric.aggregation}({dialect.QuoteIdent(metric.aggregation.ToString())}) AS {dialect.QuoteIdent(metric.aggregation.ToString() + "_" + metric.aggregation)}"
+                    $"{metric.aggregation}({dialect.QuoteIdent(metric.key.ToString())})"
                 ).ToList();
 
-            selectClause = "SELECT " + string.Join(", ", selectParts);
+            clause = "SELECT " + string.Join(", ", selectParts);
         }
-        public override string ToString() => selectClause;
     }
 }

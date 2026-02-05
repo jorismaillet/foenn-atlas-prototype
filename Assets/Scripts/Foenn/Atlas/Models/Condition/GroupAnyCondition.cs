@@ -4,7 +4,7 @@ namespace Assets.Scripts.Foenn.Atlas.Models.Condition
 {
     public class GroupAnyCondition : AnyCondition
     {
-        public GroupAnyCondition(MetricGroup group, float min, float max)
+        public GroupAnyCondition(MetricGroup group, float min, float max) : base()
         {
             group.keys.ForEach(key =>
             {

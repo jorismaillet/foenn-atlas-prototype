@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Foenn.Engine.Execution;
+﻿using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
+using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
 using System.Collections.Generic;
 
@@ -6,19 +7,17 @@ namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
 {
     public class SqlGroupBy
     {
-        private readonly string groupByClause;
-
-        public SqlGroupBy(QueryRequest request, ISqlDialect dialect)
+        public readonly string clause;
+        public SqlGroupBy(List<AttributeKey> groups, ISqlDialect dialect)
         {
             var groupByParts = new List<string>();
-            foreach (var attr in request.attributes)
+            foreach (var attr in groups)
             {
                 groupByParts.Add(dialect.QuoteIdent(attr.ToString()));
             }
-            groupByClause = groupByParts.Count > 0
+            clause = groupByParts.Count > 0
                 ? " GROUP BY " + string.Join(", ", groupByParts)
                 : string.Empty;
         }
-        public override string ToString() => groupByClause;
     }
 }

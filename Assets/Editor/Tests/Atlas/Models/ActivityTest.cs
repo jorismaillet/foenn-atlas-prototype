@@ -15,7 +15,7 @@ public class ActivityTest
         var tempCondition = new GroupAnyCondition(temp, 25, 30);
         var rainCondition = new MetricRangeCondition(MetricKey.RR1, 0, 0);
         var activity = new Activity("Beach", hourCondition, tempCondition, rainCondition);
-        var row = new Row() { time = TimeDimension.AAAAMMJJHH("2023091517") };
+        var row = new Row() { time = TimeDimension.AAAAMMJJHH("2023091515") };
         row.measures.Add(new Measure(new Metric(MetricKey.RR1, AggregationKey.MAX), 0));
         row.measures.Add(new Measure(new Metric(MetricKey.T, AggregationKey.AVG), 25));
         Assert.IsTrue(activity.conditions.IsMatch(row));

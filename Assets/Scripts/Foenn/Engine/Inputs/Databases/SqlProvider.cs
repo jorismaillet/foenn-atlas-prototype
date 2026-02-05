@@ -3,6 +3,7 @@ using Assets.Scripts.Foenn.Engine.Sql;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
 using System.Collections.Generic;
 using System.Data;
+using UnityEditor.PackageManager.Requests;
 
 namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
 {
@@ -10,7 +11,7 @@ namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
     {
         protected ISqlDialect dialect;
         protected IDbConnection connection;
-        private CompiledQuery compiledQuery;
+        private string sql;
         private QueryRequest request;
 
         public abstract void OpenSession();
@@ -25,22 +26,14 @@ namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
         public void Initialize(QueryRequest request)
         {
             this.request = request;
-            this.compiledQuery = new Sql.SqlGenerator(dialect).Generate(request);
+            this.sql = request.ToSql(dialect);
         }
 
         public QueryResult Execute()
         {
             OpenSession();
             var command = connection.CreateCommand();
-            command.CommandText = compiledQuery.sql;
-            foreach (var param in compiledQuery.parameters)
-            {
-                var dbParam = command.CreateParameter();
-                dbParam.ParameterName = param.Name;
-                dbParam.Value = param.Value;
-                command.Parameters.Add(dbParam);
-            }
-
+            command.CommandText = sql;
             var columns = new List<string>();
             var rows = new List<List<string>>();
             using (var reader = command.ExecuteReader())
