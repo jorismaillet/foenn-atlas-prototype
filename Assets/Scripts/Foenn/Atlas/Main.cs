@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Foenn.Atlas.Models;
 using Assets.Scripts.Foenn.Atlas.Models.Activities;
 using Assets.Scripts.Foenn.Atlas.Models.Activities.Conditions;
+using Assets.Scripts.Foenn.Atlas.Models.Condition;
 using Assets.Scripts.Foenn.Atlas.Models.Locations;
 using Assets.Scripts.Foenn.Atlas.Models.Maps;
 using Assets.Scripts.Foenn.Atlas.Models.Plannings;
@@ -12,6 +13,7 @@ using Assets.Scripts.Foenn.Engine.Inputs.Databases;
 using Assets.Scripts.Foenn.Engine.Metrics;
 using Assets.Scripts.Foenn.Engine.OLAP.Dimensions;
 using Assets.Scripts.Foenn.ETL.SqLite;
+using static Codice.Client.Commands.WkTree.WorkspaceTreeNode;
 
 namespace Assets.Scripts.Foenn.Atlas
 {
@@ -24,11 +26,11 @@ namespace Assets.Scripts.Foenn.Atlas
             var wind = new MetricGroup("Vent", MetricKey.FF, MetricKey.FF2);
             var gust = new MetricGroup("Rafales", MetricKey.FXI, MetricKey.FXI2, MetricKey.FXI3S);
 
-            var pasDePluie = new MetricGroupCondition(temp, 0, 0, ConditionImportanceKey.HIGH);
-            var peuDeVent = new MetricGroupCondition(wind, 0, 50, ConditionImportanceKey.HIGH);
-            var peuDeRafales = new MetricGroupCondition(gust, 0, 30, ConditionImportanceKey.LOW);
+            var pasDePluie = new GroupAllCondition(rain, 0, 0);
+            var peuDeVent = new GroupAnyCondition(wind, 0, 50);
+            var peuDeRafales = new GroupAnyCondition(gust, 0, 30);
 
-            var beauTemps = new WeatherCategory("Beau temps", pasDePluie, peuDeRafales, peuDeVent);
+            var beauTemps = new NamedCondition("Beau temps", new AllCondition(pasDePluie, peuDeRafales, peuDeVent));
 
             var brest = new PointLocation("Brest", new GeoPoint(48.3904, -4.4861));
 
@@ -38,57 +40,48 @@ namespace Assets.Scripts.Foenn.Atlas
             Location procheMaison = new CircleLocation("Proche Maison", maison, 5000);
             Location plageIleTudy = new PolygonLocation("Plage Ile Tudy", new GeoPoint(48.3904, -4.4861), new GeoPoint(48.3904, -4.4861), new GeoPoint(48.3904, -4.4861));
 
-            var piscine = new Activity("Piscine", new MetricGroupCondition(temp, 25, 33, ConditionImportanceKey.HIGH),
-                    new MetricGroupCondition(wind, 0, 2, ConditionImportanceKey.HIGH),
-                    new MetricGroupCondition(rain, 0, 0, ConditionImportanceKey.HIGH));
+            var piscine = new Activity("Piscine", beauTemps, new GroupAllCondition(temp, 25, 33));
 
-            var kayak = new Activity("Kayak",
-    new MetricGroupCondition(temp, 23, 31, ConditionImportanceKey.HIGH),
-    new MetricGroupCondition(rain, 0, 0, ConditionImportanceKey.HIGH),
-    new MetricGroupCondition(wind, 0, 2, ConditionImportanceKey.HIGH));
+            var kayak = new Activity("Kayak", beauTemps);
 
-            var plage = new Activity("Plage", new MetricGroupCondition(temp, 23, 30, ConditionImportanceKey.HIGH),
-    new MetricGroupCondition(rain, 0, 0, ConditionImportanceKey.HIGH),
-    new MetricGroupCondition(wind, 0, 1, ConditionImportanceKey.HIGH));
+            var plage = new Activity("Plage", beauTemps, new GroupAllCondition(temp, 25, 33), new HourRangeCondition(14, 18));
 
-            var velo = new Activity("Vélo", new MetricGroupCondition(temp, 17, 24, ConditionImportanceKey.HIGH),
-    new MetricGroupCondition(rain, 0, 0, ConditionImportanceKey.HIGH),
-    new MetricGroupCondition(wind, 0, 2, ConditionImportanceKey.HIGH));
+            var velo = new Activity("Vélo", new GroupAllCondition(temp, 17, 24),
+                new GroupAllCondition(rain, 0, 0),
+                new GroupAllCondition(wind, 0, 2));
 
-            var jardin = new Activity("Jardin", new MetricGroupCondition(temp, 16, 30, ConditionImportanceKey.HIGH),
-    new MetricGroupCondition(rain, 0, 0, ConditionImportanceKey.HIGH),
-    new MetricGroupCondition(wind, 0, 2, ConditionImportanceKey.HIGH));
+            var jardin = new Activity("Jardin", new GroupAllCondition(temp, 16, 30),
+                new GroupAllCondition(rain, 0, 0),
+                new GroupAllCondition(wind, 0, 2));
 
-            var tennis = new Activity("Tennis", new MetricGroupCondition(temp, 10, 27, ConditionImportanceKey.HIGH),
-    new MetricGroupCondition(wind, 0, 1, ConditionImportanceKey.HIGH),
-    new MetricGroupCondition(rain, 0, 0, ConditionImportanceKey.HIGH));
+            var tennis = new Activity("Tennis", new GroupAllCondition(temp, 10, 27),
+                new GroupAllCondition(wind, 0, 1),
+                new GroupAllCondition(rain, 0, 0));
 
-            var ville = new Activity("Ville", new MetricGroupCondition(temp, 0, 30, ConditionImportanceKey.HIGH),
-    new MetricGroupCondition(rain, 0, 0, ConditionImportanceKey.HIGH),
-    new MetricGroupCondition(wind, 0, 3, ConditionImportanceKey.HIGH));
+            var ville = new Activity("Ville", new GroupAllCondition(temp, 0, 30),
+                new GroupAllCondition(rain, 0, 0),
+                new GroupAllCondition(wind, 0, 3));
 
-            var randonee = new Activity("Randonnée", new MetricGroupCondition(temp, 10, 24, ConditionImportanceKey.HIGH),
-    new MetricGroupCondition(rain, 0, 0, ConditionImportanceKey.HIGH),
-    new MetricGroupCondition(wind, 0, 1, ConditionImportanceKey.HIGH));
+            var randonee = new Activity("Randonnée", new GroupAllCondition(temp, 10, 24),
+                new GroupAllCondition(rain, 0, 0),
+                new GroupAllCondition(wind, 0, 1));
 
-            var dinner = new Activity("Diner en extérieur", new MetricGroupCondition(temp, 23, 28, ConditionImportanceKey.HIGH),
-                new MetricGroupCondition(rain, 0, 0, ConditionImportanceKey.HIGH),
-                new MetricGroupCondition(wind, 0, 0, ConditionImportanceKey.HIGH));
+            var dinner = new Activity("Diner en extérieur", beauTemps, new HourRangeCondition(18, 22));
 
 
-            var planningSportif = new PlanningDefinition();
-            planningSportif.plannedActivities.Add(new PlannedActivity(randonee, procheMaison));
-            planningSportif.plannedActivities.Add(new PlannedActivity(piscine, maison));
-            planningSportif.plannedActivities.Add(new PlannedActivity(tennis, tcQuimper));
-            planningSportif.plannedActivities.Add(new PlannedActivity(tennis, tcPontLabbe));
-            planningSportif.plannedActivities.Add(new PlannedActivity(velo, procheMaison));
-            planningSportif.plannedActivities.Add(new PlannedActivity(kayak, plageIleTudy));
+            var planningSportif = new Planning();
+                planningSportif.plannedActivities.Add(new PlannedActivity(randonee, procheMaison));
+                planningSportif.plannedActivities.Add(new PlannedActivity(piscine, maison));
+                planningSportif.plannedActivities.Add(new PlannedActivity(tennis, tcQuimper));
+                planningSportif.plannedActivities.Add(new PlannedActivity(tennis, tcPontLabbe));
+                planningSportif.plannedActivities.Add(new PlannedActivity(velo, procheMaison));
+                planningSportif.plannedActivities.Add(new PlannedActivity(kayak, plageIleTudy));
 
-            var ideesDeSorties = new PlanningDefinition();
-            ideesDeSorties.plannedActivities.Add(new PlannedActivity(plage, plageIleTudy));
-            ideesDeSorties.plannedActivities.Add(new PlannedActivity(jardin, maison));
-            ideesDeSorties.plannedActivities.Add(new PlannedActivity(ville, brest));
-            ideesDeSorties.plannedActivities.Add(new PlannedActivity(dinner, brest));
+            var ideesDeSorties = new Planning();
+                ideesDeSorties.plannedActivities.Add(new PlannedActivity(plage, plageIleTudy));
+                ideesDeSorties.plannedActivities.Add(new PlannedActivity(jardin, maison));
+                ideesDeSorties.plannedActivities.Add(new PlannedActivity(ville, brest));
+                ideesDeSorties.plannedActivities.Add(new PlannedActivity(dinner, brest));
 
             var map = new Map();
 
@@ -118,9 +111,10 @@ namespace Assets.Scripts.Foenn.Atlas
             }
             foreach (var row in result.rows)
             {
-                foreach (Dimension dim in row.dimensions)
-                    foreach (AttributeValue attr in dim.attributeValues)
-                        UnityEngine.Debug.Log($"Attribute: {attr.attribute.name} - {attr.value}");
+                UnityEngine.Debug.Log($"Time: {row.time.start}");
+                UnityEngine.Debug.Log($"Location: {row.geo.numPost}");
+                foreach (Attribute attr in row.attributes)
+                    UnityEngine.Debug.Log($"Attribute: {attr.key} - {attr.value}");
                 foreach (var measure in row.measures)
                     UnityEngine.Debug.Log($"Measure: ({measure.metric.aggregation}) {measure.metric.key} - {measure.value}");
             }

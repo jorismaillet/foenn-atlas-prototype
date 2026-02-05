@@ -1,13 +1,10 @@
 ﻿using Assets.Scripts.Foenn.Atlas.Models.Activities;
-using Assets.Scripts.Foenn.Engine.Attributes;
 using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
 using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.Filters;
 using Assets.Scripts.Foenn.Engine.Inputs.Databases;
-using Assets.Scripts.Foenn.ETL;
 using Assets.Scripts.Foenn.Utils;
 using Assets.Scripts.Unity.Commons.Behaviours;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -30,14 +27,14 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations
             {
                 var activity = ac.Key;
                 var color = ac.Value;
-                points.Add(result.rows.Sum(row => activity.SuitsHour(row) ? 1 : 0));
+                points.Add(result.rows.Sum(row => activity.SuitsRow(row) ? 1 : 0));
             }
             Debug.Log(points);
             var heatmap = result.rows.Select(row =>
             {
-                var date = TimeUtils.Date(row.AttributeValue(AttributeKey.AAAAMMJJHH).value);
+                var date = TimeUtils.Date(row.Attribute(AttributeKey.AAAAMMJJHH).value);
 
-                var activity = activities.FirstOrDefault(a => a.Key.SuitsHour(row));
+                var activity = activities.FirstOrDefault(a => a.Key.SuitsRow(row));
 
                 var res = new HourPoint(date, activity.Value);
                 return res;

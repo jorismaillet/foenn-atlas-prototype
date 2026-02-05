@@ -2,15 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Assets.Scripts.Common.Utils {
-    public static class ListUtil {
-        public static List<T> IntersectAll<T>(IEnumerable<IEnumerable<T>> lists) {
-            if (!lists.Any()) {
+namespace Assets.Scripts.Common.Utils
+{
+    public static class ListUtil
+    {
+        public static List<T> IntersectAll<T>(IEnumerable<IEnumerable<T>> lists)
+        {
+            if (!lists.Any())
+            {
                 return new List<T>();
             }
             HashSet<T> hashSet = new HashSet<T>(lists.First());
-            foreach (var list in lists.Skip(1)) {
-                if (!hashSet.Any() || !list.Any()) {
+            foreach (var list in lists.Skip(1))
+            {
+                if (!hashSet.Any() || !list.Any())
+                {
                     return new List<T>();
                 }
                 hashSet.IntersectWith(list);
@@ -18,15 +24,19 @@ namespace Assets.Scripts.Common.Utils {
             return hashSet.ToList();
         }
 
-        public static void Replace<T>(List<T> originalList, List<T> elementsToReplace, Predicate<T> match) {
-            elementsToReplace.ForEach(elementToReplace => {
+        public static void Replace<T>(List<T> originalList, List<T> elementsToReplace, Predicate<T> match)
+        {
+            elementsToReplace.ForEach(elementToReplace =>
+            {
                 Replace(originalList, elementToReplace, match);
             });
         }
 
-        public static void Replace<T>(List<T> originalList, T elementToReplace, Predicate<T> match) {
+        public static void Replace<T>(List<T> originalList, T elementToReplace, Predicate<T> match)
+        {
             T result = originalList.Find(match);
-            if (result == null || result.Equals(default(T))) {
+            if (result == null || result.Equals(default(T)))
+            {
                 return;
             }
             int index = originalList.IndexOf(result);
@@ -34,16 +44,20 @@ namespace Assets.Scripts.Common.Utils {
             originalList.Insert(index, elementToReplace);
         }
 
-        public static IEnumerable<T> TakeEven<T>(this List<T> scope, int startIndex) {
+        public static IEnumerable<T> TakeEven<T>(this List<T> scope, int startIndex)
+        {
             int maxIndex = scope.Count - 1;
             int iterations = Math.Max(startIndex + 1, maxIndex - startIndex);
-            for(int iteration = 0; iteration < iterations; iteration++) {
+            for (int iteration = 0; iteration < iterations; iteration++)
+            {
                 int index = startIndex - iteration;
-                if (index >= 0) {
+                if (index >= 0)
+                {
                     yield return scope[index];
                 }
                 index = startIndex + iteration + 1;
-                if (index <= maxIndex) {
+                if (index <= maxIndex)
+                {
                     yield return scope[index];
                 }
             }

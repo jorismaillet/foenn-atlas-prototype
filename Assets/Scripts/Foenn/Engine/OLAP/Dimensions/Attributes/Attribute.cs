@@ -20,13 +20,13 @@ namespace Assets.Scripts.Foenn.Engine.Attributes
             { AttributeKey.DPT, "Département" }
         };
 
-        public string name;
         public AttributeKey key;
+        public string value;
 
-        public Attribute(AttributeKey key, string name)
+        public Attribute(AttributeKey key, string value)
         {
-            this.name = name;
             this.key = key;
+            this.value = value;
         }
 
         public static string Name(AttributeKey key)

@@ -2,7 +2,6 @@
 using Assets.Scripts.Foenn.Engine.Filters;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
 {

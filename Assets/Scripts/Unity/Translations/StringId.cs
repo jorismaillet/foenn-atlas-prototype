@@ -1,6 +1,8 @@
-﻿namespace Assets.Scripts.App.Translations {
+﻿namespace Assets.Scripts.App.Translations
+{
 
-    public enum StringId {
+    public enum StringId
+    {
         DECIMAL_SEPARATOR,
         THOUSANDS_SEPARATOR
     }
