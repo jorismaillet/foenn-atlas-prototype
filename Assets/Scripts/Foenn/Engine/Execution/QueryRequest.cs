@@ -4,9 +4,12 @@ using Assets.Scripts.Foenn.Engine.Filters;
 using Assets.Scripts.Foenn.Engine.Metrics;
 using Assets.Scripts.Foenn.Engine.Sql.Clauses;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
+using Assets.Scripts.Foenn.ETL.CSV;
+using Assets.Scripts.Foenn.ETL.WeatherHistory;
 using System.Collections.Generic;
 using System.Text;
 using UnityEditor.PackageManager.Requests;
+using UnityEngine.Profiling.Memory.Experimental;
 
 namespace Assets.Scripts.Foenn.Engine.Execution
 {
@@ -38,7 +41,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
         {
             StringBuilder sql = new StringBuilder();
             sql.Append(new SqlSelect(selectedMetrics, dialect).clause);
-            sql.Append(new SqlFrom("weather_data", dialect).clause);
+            sql.Append(new SqlFrom(WeatherHistoryMetaData.table_name, dialect).clause);
             sql.Append(new SqlWhere(filters, dialect).clause);
             sql.Append(new SqlGroupBy(groups, dialect).clause);
             sql.Append(dialect.EndOfLine());

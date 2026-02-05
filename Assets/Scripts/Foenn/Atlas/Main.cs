@@ -98,7 +98,7 @@ namespace Assets.Scripts.Foenn.Atlas
             request.selectedMetrics.Add(new Metric(MetricKey.T, AggregationKey.AVG));
 
             // Use a provider (example: SQLite)
-            var provider = new SqLiteProvider();
+            var provider = new SqLiteConnector();
             provider.Initialize(request);
             var result = provider.Execute();
 

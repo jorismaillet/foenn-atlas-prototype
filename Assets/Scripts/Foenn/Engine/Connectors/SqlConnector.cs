@@ -7,30 +7,29 @@ using UnityEditor.PackageManager.Requests;
 
 namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
 {
-    public abstract class SqlProvider : IInputProvider
+    public abstract class SqlConnector
     {
-        protected ISqlDialect dialect;
         protected IDbConnection connection;
-        private string sql;
-        private QueryRequest request;
+        public ISqlDialect dialect;
 
         public abstract void OpenSession();
         public abstract void CloseSession();
 
-        public SqlProvider(ISqlDialect dialect)
+        public SqlConnector(ISqlDialect dialect)
         {
             this.connection = null;
-            this.dialect = dialect;
         }
 
-        public void Initialize(QueryRequest request)
+        public void ExecuteOperation(string sql)
         {
-            this.request = request;
-            this.sql = request.ToSql(dialect);
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = sql;
+            cmd.ExecuteNonQuery();
         }
 
-        public QueryResult Execute()
+        public QueryResult Execute(QueryRequest request)
         {
+            var sql = request.ToSql(dialect);
             OpenSession();
             var command = connection.CreateCommand();
             command.CommandText = sql;

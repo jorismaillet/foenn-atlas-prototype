@@ -21,7 +21,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations
             var request = new QueryRequest();
             request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.NOM_USUEL, city));
             request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.DPT, department.ToString()));
-            var result = new QueryExecutor(new SqLiteProvider()).Execute(request);
+            var result = new QueryExecutor(new SqLiteConnector()).Execute(request);
             var points = new List<int>();
             foreach (var ac in activities)
             {

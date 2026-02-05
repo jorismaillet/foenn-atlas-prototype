@@ -4,9 +4,9 @@ namespace Assets.Scripts.Foenn.Engine.Execution
 {
     public class QueryExecutor
     {
-        private readonly IInputProvider inputProvider;
+        private readonly IConnector inputProvider;
 
-        public QueryExecutor(IInputProvider inputProvider)
+        public QueryExecutor(IConnector inputProvider)
         {
             this.inputProvider = inputProvider;
         }

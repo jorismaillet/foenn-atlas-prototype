@@ -2,9 +2,9 @@
 
 namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
 {
-    public class PostgreSQLProvider : SqlProvider
+    public class PostgreConnector : SqlConnector
     {
-        public PostgreSQLProvider() : base(new PostgresDialect())
+        public PostgreConnector() : base(new PostgresDialect())
         {
         }
 
