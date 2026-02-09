@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.Sql;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
+using Assets.Scripts.Foenn.ETL;
 using System.Collections.Generic;
 using System.Data;
 using UnityEditor.PackageManager.Requests;
@@ -17,24 +18,28 @@ namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
 
         public SqlConnector(ISqlDialect dialect)
         {
-            this.connection = null;
+            this.dialect = dialect;
         }
 
         public void ExecuteOperation(string sql)
         {
             var cmd = connection.CreateCommand();
             cmd.CommandText = sql;
+            UnityEngine.Debug.Log(sql);
             cmd.ExecuteNonQuery();
         }
 
-        public QueryResult Execute(QueryRequest request)
+        public abstract bool Exists(string table, string column, string value);
+        public abstract string typeToSql(Datatype type);
+
+        public QueryResult ExecuteQuery(QueryRequest request)
         {
             var sql = request.ToSql(dialect);
-            OpenSession();
             var command = connection.CreateCommand();
             command.CommandText = sql;
             var columns = new List<string>();
             var rows = new List<List<string>>();
+            UnityEngine.Debug.Log(sql);
             using (var reader = command.ExecuteReader())
             {
                 for (int i = 0; i < reader.FieldCount; i++)
@@ -52,7 +57,6 @@ namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
                     rows.Add(row);
                 }
             }
-            CloseSession();
             return new QueryResult(request, columns, rows);
         }
     }

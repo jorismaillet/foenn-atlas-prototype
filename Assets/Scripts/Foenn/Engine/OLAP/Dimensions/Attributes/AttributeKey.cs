@@ -2,6 +2,8 @@
 {
     public enum AttributeKey
     {
+        ID,
+        INSERT_ID,
         NOM_USUEL,
         LAT,
         LON,

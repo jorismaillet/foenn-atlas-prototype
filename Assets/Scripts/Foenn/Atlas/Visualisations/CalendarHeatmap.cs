@@ -3,6 +3,7 @@ using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
 using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.Filters;
 using Assets.Scripts.Foenn.Engine.Inputs.Databases;
+using Assets.Scripts.Foenn.ETL.CSV;
 using Assets.Scripts.Foenn.Utils;
 using Assets.Scripts.Unity.Commons.Behaviours;
 using System.Collections.Generic;
@@ -18,10 +19,10 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations
 
         private void Heatmap(string city, int department)
         {
-            var request = new QueryRequest();
+            var request = new QueryRequest(WeatherHistoryDatasource.tableName);
             request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.NOM_USUEL, city));
             request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.DPT, department.ToString()));
-            var result = new QueryExecutor(new SqLiteConnector()).Execute(request);
+            var result = request.ExecuteOnce(new SqliteConnector());
             var points = new List<int>();
             foreach (var ac in activities)
             {

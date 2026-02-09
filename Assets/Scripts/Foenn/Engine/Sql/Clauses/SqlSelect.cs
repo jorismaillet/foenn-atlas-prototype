@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Foenn.Engine.Execution;
+﻿using Assets.Scripts.Common.Extensions;
+using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.Metrics;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
                     $"{metric.aggregation}({dialect.QuoteIdent(metric.key.ToString())})"
                 ).ToList();
 
-            clause = "SELECT " + string.Join(", ", selectParts);
+            clause = "SELECT " + (selectParts.Any() ? string.Join(", ", selectParts) : "*");
         }
     }
 }

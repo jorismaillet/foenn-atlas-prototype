@@ -1,15 +1,12 @@
-﻿using Assets.Scripts.Foenn.Engine.Attributes;
-using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
+﻿using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
 using Assets.Scripts.Foenn.Engine.Filters;
+using Assets.Scripts.Foenn.Engine.Inputs.Databases;
 using Assets.Scripts.Foenn.Engine.Metrics;
 using Assets.Scripts.Foenn.Engine.Sql.Clauses;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
-using Assets.Scripts.Foenn.ETL.CSV;
-using Assets.Scripts.Foenn.ETL.WeatherHistory;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using UnityEditor.PackageManager.Requests;
-using UnityEngine.Profiling.Memory.Experimental;
 
 namespace Assets.Scripts.Foenn.Engine.Execution
 {
@@ -18,6 +15,11 @@ namespace Assets.Scripts.Foenn.Engine.Execution
         public List<Metric> selectedMetrics = new List<Metric>();
         public List<AttributeKey> groups = new List<AttributeKey>();
         public List<Filter> filters = new List<Filter>();
+        public string from;
+
+        public QueryRequest(string tableName) {
+            this.from = tableName;
+        }
 
         public QueryRequest Select(params Metric[] metrics)
         {
@@ -41,11 +43,19 @@ namespace Assets.Scripts.Foenn.Engine.Execution
         {
             StringBuilder sql = new StringBuilder();
             sql.Append(new SqlSelect(selectedMetrics, dialect).clause);
-            sql.Append(new SqlFrom(WeatherHistoryMetaData.table_name, dialect).clause);
+            sql.Append(new SqlFrom(from, dialect).clause);
             sql.Append(new SqlWhere(filters, dialect).clause);
             sql.Append(new SqlGroupBy(groups, dialect).clause);
             sql.Append(dialect.EndOfLine());
             return sql.ToString();
+        }
+
+        public QueryResult ExecuteOnce(SqlConnector connector)
+        {
+            connector.OpenSession();
+            var res = connector.ExecuteQuery(this);
+            connector.CloseSession();
+            return res;
         }
     }
 }

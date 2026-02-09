@@ -2,20 +2,8 @@
 
 namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
 {
-    public class PostgreConnector : SqlConnector
+    public class PostgreConnector
     {
-        public PostgreConnector() : base(new PostgresDialect())
-        {
-        }
-
-        public override void CloseSession()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override void OpenSession()
-        {
-            throw new System.NotImplementedException();
-        }
+        //TODO
     }
 }

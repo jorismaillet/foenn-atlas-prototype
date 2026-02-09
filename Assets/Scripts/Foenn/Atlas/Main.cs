@@ -10,7 +10,8 @@ using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.Filters;
 using Assets.Scripts.Foenn.Engine.Inputs.Databases;
 using Assets.Scripts.Foenn.Engine.Metrics;
-using Assets.Scripts.Foenn.ETL.SqLite;
+using Assets.Scripts.Foenn.ETL.CSV;
+using Assets.Scripts.Foenn.ETL.Loaders;
 
 namespace Assets.Scripts.Foenn.Atlas
 {
@@ -83,24 +84,20 @@ namespace Assets.Scripts.Foenn.Atlas
             var map = new Map();
 
             // 2. Upsert SqLite from CSV
-            string dbPath = "weather.db";
-            string csvPath = "Assets/Resources/Weathers/H_29_latest.csv";
-            string tableName = "HourlyWeatherData";
-            SqLiteDataLoader.CreateTableFromCsvHeader(dbPath, tableName, csvPath);
-            SqLiteDataLoader.PopulateTableFromCsvContent(dbPath, tableName, csvPath);
+            new ETLProcessor(
+                new WeatherHistoryDatasource(),
+                new CSVExtractor("Weathers/H_29_latest-2023-2024"),
+                new SqliteLoader(new WeatherHistoryDatasource())
+            ).ProcessETL();
 
             // 3. Run SqLite query
             // Build a QueryRequest (example: AVG temperature)
-            var request = new QueryRequest();
-            request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.YEAR, "2019"));
-            request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.DPT, "29"));
-            request.groups.Add(AttributeKey.MONTH);
-            request.selectedMetrics.Add(new Metric(MetricKey.T, AggregationKey.AVG));
-
-            // Use a provider (example: SQLite)
-            var provider = new SqLiteConnector();
-            provider.Initialize(request);
-            var result = provider.Execute();
+            var result = new QueryRequest(WeatherHistoryDatasource.tableName)
+                .Select(new Metric(MetricKey.T, AggregationKey.AVG))
+                .Where(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.YEAR, "2019"))
+                .Where(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.DPT, "29"))
+                .GroupBy(AttributeKey.MONTH)
+                .ExecuteOnce(new SqliteConnector());
 
             foreach (var header in result.rawHeaders)
             {
