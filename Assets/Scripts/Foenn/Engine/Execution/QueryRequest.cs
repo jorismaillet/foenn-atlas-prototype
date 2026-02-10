@@ -1,10 +1,9 @@
-﻿using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
-using Assets.Scripts.Foenn.Engine.Filters;
-using Assets.Scripts.Foenn.Engine.Inputs.Databases;
-using Assets.Scripts.Foenn.Engine.Metrics;
+﻿using Assets.Scripts.Foenn.Engine.Connectors;
+using Assets.Scripts.Foenn.Engine.OLAP.Filters;
+using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
 using Assets.Scripts.Foenn.Engine.Sql.Clauses;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
-using System;
+using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,7 +16,8 @@ namespace Assets.Scripts.Foenn.Engine.Execution
         public List<Filter> filters = new List<Filter>();
         public string from;
 
-        public QueryRequest(string tableName) {
+        public QueryRequest(string tableName)
+        {
             this.from = tableName;
         }
 

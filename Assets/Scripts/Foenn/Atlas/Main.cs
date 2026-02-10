@@ -1,17 +1,18 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models;
-using Assets.Scripts.Foenn.Atlas.Models.Activities;
+﻿using Assets.Scripts.Foenn.Atlas.Models.Activities;
 using Assets.Scripts.Foenn.Atlas.Models.Condition;
+using Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions;
+using Assets.Scripts.Foenn.Atlas.Models.Geo;
 using Assets.Scripts.Foenn.Atlas.Models.Locations;
 using Assets.Scripts.Foenn.Atlas.Models.Maps;
 using Assets.Scripts.Foenn.Atlas.Models.Plannings;
-using Assets.Scripts.Foenn.Engine.Attributes;
-using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
+using Assets.Scripts.Foenn.Engine.Connectors;
 using Assets.Scripts.Foenn.Engine.Execution;
-using Assets.Scripts.Foenn.Engine.Filters;
-using Assets.Scripts.Foenn.Engine.Inputs.Databases;
-using Assets.Scripts.Foenn.Engine.Metrics;
-using Assets.Scripts.Foenn.ETL.CSV;
+using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
+using Assets.Scripts.Foenn.Engine.OLAP.Filters;
+using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
+using Assets.Scripts.Foenn.ETL;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+using Assets.Scripts.Foenn.ETL.Extractors;
 using Assets.Scripts.Foenn.ETL.Loaders;
 using Assets.Scripts.Foenn.ETL.Transformers;
 
@@ -70,18 +71,18 @@ namespace Assets.Scripts.Foenn.Atlas
 
 
             var planningSportif = new Planning();
-                planningSportif.plannedActivities.Add(new PlannedActivity(randonee, procheMaison));
-                planningSportif.plannedActivities.Add(new PlannedActivity(piscine, maison));
-                planningSportif.plannedActivities.Add(new PlannedActivity(tennis, tcQuimper));
-                planningSportif.plannedActivities.Add(new PlannedActivity(tennis, tcPontLabbe));
-                planningSportif.plannedActivities.Add(new PlannedActivity(velo, procheMaison));
-                planningSportif.plannedActivities.Add(new PlannedActivity(kayak, plageIleTudy));
+            planningSportif.plannedActivities.Add(new PlannedActivity(randonee, procheMaison));
+            planningSportif.plannedActivities.Add(new PlannedActivity(piscine, maison));
+            planningSportif.plannedActivities.Add(new PlannedActivity(tennis, tcQuimper));
+            planningSportif.plannedActivities.Add(new PlannedActivity(tennis, tcPontLabbe));
+            planningSportif.plannedActivities.Add(new PlannedActivity(velo, procheMaison));
+            planningSportif.plannedActivities.Add(new PlannedActivity(kayak, plageIleTudy));
 
             var ideesDeSorties = new Planning();
-                ideesDeSorties.plannedActivities.Add(new PlannedActivity(plage, plageIleTudy));
-                ideesDeSorties.plannedActivities.Add(new PlannedActivity(jardin, maison));
-                ideesDeSorties.plannedActivities.Add(new PlannedActivity(ville, brest));
-                ideesDeSorties.plannedActivities.Add(new PlannedActivity(dinner, brest));
+            ideesDeSorties.plannedActivities.Add(new PlannedActivity(plage, plageIleTudy));
+            ideesDeSorties.plannedActivities.Add(new PlannedActivity(jardin, maison));
+            ideesDeSorties.plannedActivities.Add(new PlannedActivity(ville, brest));
+            ideesDeSorties.plannedActivities.Add(new PlannedActivity(dinner, brest));
 
             var map = new Map();
 

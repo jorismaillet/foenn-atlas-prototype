@@ -1,15 +1,13 @@
 ﻿using Assets.Scripts.Foenn.Engine.Sql.Dialects;
-using Assets.Scripts.Foenn.ETL;
-using Assets.Scripts.Foenn.ETL.Datasources;
+using Assets.Scripts.Foenn.ETL.Models;
 using Mono.Data.Sqlite;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
-namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
+namespace Assets.Scripts.Foenn.Engine.Connectors
 {
     public class SqliteConnector : SqlConnector
     {

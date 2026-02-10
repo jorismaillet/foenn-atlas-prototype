@@ -1,12 +1,10 @@
 ﻿using Assets.Scripts.Foenn.Engine.Execution;
-using Assets.Scripts.Foenn.Engine.Sql;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
-using Assets.Scripts.Foenn.ETL;
+using Assets.Scripts.Foenn.ETL.Models;
 using System.Collections.Generic;
 using System.Data;
-using UnityEditor.PackageManager.Requests;
 
-namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
+namespace Assets.Scripts.Foenn.Engine.Connectors
 {
     public abstract class SqlConnector
     {

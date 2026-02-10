@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Assets.Scripts.Foenn.Engine.Sql.Filters
+namespace Assets.Scripts.Foenn.Engine.Sql.Operators
 {
 
     public sealed class InExpr : FilterExpr

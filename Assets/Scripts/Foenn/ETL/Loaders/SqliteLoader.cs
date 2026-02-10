@@ -1,6 +1,6 @@
-﻿using Assets.Scripts.Foenn.Engine.Inputs.Databases;
+﻿using Assets.Scripts.Foenn.Engine.Connectors;
 using Assets.Scripts.Foenn.ETL.Datasources;
-using System.Collections.Generic;
+using Assets.Scripts.Foenn.ETL.Models;
 using System.Linq;
 
 namespace Assets.Scripts.Foenn.ETL.Loaders

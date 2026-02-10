@@ -1,6 +1,4 @@
-﻿using Assets.Scripts.Foenn.Engine.Sql.Dialects;
-
-namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
+﻿namespace Assets.Scripts.Foenn.Engine.Connectors
 {
     public class PostgreConnector
     {

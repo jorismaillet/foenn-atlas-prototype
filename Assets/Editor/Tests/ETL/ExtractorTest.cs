@@ -1,6 +1,5 @@
-﻿using Assets.Scripts.Foenn.ETL;
-using Assets.Scripts.Foenn.ETL.CSV;
-using Assets.Scripts.Foenn.ETL.Extractors;
+﻿using Assets.Scripts.Foenn.ETL.Extractors;
+using Assets.Scripts.Foenn.ETL.Models;
 using NUnit.Framework;
 
 namespace Assets.Editor.Tests.ETL

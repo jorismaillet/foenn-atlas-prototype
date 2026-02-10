@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.Foenn.Engine.Execution;
-using Assets.Scripts.Foenn.Engine.Filters;
+﻿using Assets.Scripts.Foenn.Engine.OLAP.Filters;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
 using Assets.Scripts.Foenn.Utils;
 using System.Collections.Generic;
@@ -31,7 +30,7 @@ namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
                     }
                     whereParts.Add($"{dialect.QuoteIdent(df.filteredAttributeKey.ToString())}{filterOperator}{filteredAttributes}");
                 }
-                else if(filter is TimeRangeFilter tf)
+                else if (filter is TimeRangeFilter tf)
                 {
                     whereParts.Add($"AAAAMMJJHH >= {TimeUtils.ToString(tf.startTime)} AND AAAAMMJJHH <= {TimeUtils.ToString(tf.endTime)}");
                 }

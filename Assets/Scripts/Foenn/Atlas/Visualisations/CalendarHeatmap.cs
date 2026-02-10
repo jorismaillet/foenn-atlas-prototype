@@ -1,9 +1,7 @@
 ﻿using Assets.Scripts.Foenn.Atlas.Models.Activities;
-using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
+using Assets.Scripts.Foenn.Engine.Connectors;
 using Assets.Scripts.Foenn.Engine.Execution;
-using Assets.Scripts.Foenn.Engine.Filters;
-using Assets.Scripts.Foenn.Engine.Inputs.Databases;
-using Assets.Scripts.Foenn.ETL.CSV;
+using Assets.Scripts.Foenn.Engine.OLAP.Filters;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using Assets.Scripts.Foenn.Utils;
 using Assets.Scripts.Unity.Commons.Behaviours;

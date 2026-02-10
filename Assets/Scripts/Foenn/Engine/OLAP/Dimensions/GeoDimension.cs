@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models;
+﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
 
 namespace Assets.Scripts.Foenn.Engine.OLAP.Dimensions
 {

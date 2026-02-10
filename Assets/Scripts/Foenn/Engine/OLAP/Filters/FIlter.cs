@@ -1,6 +1,6 @@
-﻿using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
+﻿using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 
-namespace Assets.Scripts.Foenn.Engine.Filters
+namespace Assets.Scripts.Foenn.Engine.OLAP.Filters
 {
     public abstract class Filter
     {

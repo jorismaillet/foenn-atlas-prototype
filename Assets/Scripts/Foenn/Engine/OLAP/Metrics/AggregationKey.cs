@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.Engine.Metrics
+﻿namespace Assets.Scripts.Foenn.Engine.OLAP.Metrics
 {
     public enum AggregationKey
     {

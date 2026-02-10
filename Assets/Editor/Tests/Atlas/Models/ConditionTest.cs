@@ -1,7 +1,9 @@
 ﻿using Assets.Scripts.Foenn.Atlas.Models.Condition;
-using Assets.Scripts.Foenn.Engine.Metrics;
-using Assets.Scripts.Foenn.Engine.OLAP;
-using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Times;
+using Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions;
+using Assets.Scripts.Foenn.Engine.Execution;
+using Assets.Scripts.Foenn.Engine.OLAP.Dimensions;
+using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
+using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using NUnit.Framework;
 
 namespace Assets.Editor.Tests.Atlas.Models

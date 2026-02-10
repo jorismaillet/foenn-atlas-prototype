@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Assets.Scripts.Foenn.Atlas.Models.Locations

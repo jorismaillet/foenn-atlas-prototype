@@ -1,7 +1,7 @@
-﻿using Assets.Scripts.Foenn.Engine.Metrics;
-using Assets.Scripts.Foenn.Engine.OLAP;
+﻿using Assets.Scripts.Foenn.Engine.Execution;
+using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 
-namespace Assets.Scripts.Foenn.Atlas.Models.Condition
+namespace Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions
 {
     public class MetricRangeCondition : ICondition
     {

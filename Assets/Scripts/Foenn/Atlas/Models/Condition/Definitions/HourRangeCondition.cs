@@ -1,6 +1,6 @@
-﻿using Assets.Scripts.Foenn.Engine.OLAP;
+﻿using Assets.Scripts.Foenn.Engine.Execution;
 
-namespace Assets.Scripts.Foenn.Atlas.Models.Condition
+namespace Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions
 {
     public class HourRangeCondition : ICondition
     {

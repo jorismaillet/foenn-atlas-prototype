@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models
+﻿namespace Assets.Scripts.Foenn.Atlas.Models.Geo
 {
     public class GeoPoint
     {

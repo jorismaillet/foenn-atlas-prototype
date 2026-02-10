@@ -1,7 +1,7 @@
-﻿using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
+﻿using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using System.Collections.Generic;
 
-namespace Assets.Scripts.Foenn.Engine.Attributes
+namespace Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes
 {
     public class Attribute
     {

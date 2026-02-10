@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.Engine.Filters
+﻿namespace Assets.Scripts.Foenn.Engine.OLAP.Filters
 {
     public enum DataFilterMode
     {

@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace Assets.Scripts.Foenn.Engine.Metrics
+namespace Assets.Scripts.Foenn.Engine.OLAP.Metrics
 {
     public class MetricGroup
     {

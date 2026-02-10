@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Foenn.Engine.Attributes;
+﻿using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;

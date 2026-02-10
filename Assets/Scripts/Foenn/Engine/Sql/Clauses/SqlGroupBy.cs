@@ -1,6 +1,5 @@
-﻿using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
-using Assets.Scripts.Foenn.Engine.Execution;
-using Assets.Scripts.Foenn.Engine.Sql.Dialects;
+﻿using Assets.Scripts.Foenn.Engine.Sql.Dialects;
+using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using System.Collections.Generic;
 
 namespace Assets.Scripts.Foenn.Engine.Sql.Clauses

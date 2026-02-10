@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Locations
+﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
+
+namespace Assets.Scripts.Foenn.Atlas.Models.Locations
 {
     public class RectangleLocation : Location
     {

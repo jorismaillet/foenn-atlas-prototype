@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.Foenn.Engine.Metrics
+﻿using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+
+namespace Assets.Scripts.Foenn.Engine.OLAP.Metrics
 {
     public class Metric
     {

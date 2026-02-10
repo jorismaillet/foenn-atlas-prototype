@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Foenn.ETL.Datasources;
+using Assets.Scripts.Foenn.ETL.Models;
 using System.Data;
 using System.Linq;
 

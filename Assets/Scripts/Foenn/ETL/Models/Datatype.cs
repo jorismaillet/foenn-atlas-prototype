@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.ETL
+﻿namespace Assets.Scripts.Foenn.ETL.Models
 {
     public enum Datatype
     {

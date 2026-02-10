@@ -1,6 +1,4 @@
 ﻿using Assets.Scripts.Foenn.ETL.Transformers;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory
 {

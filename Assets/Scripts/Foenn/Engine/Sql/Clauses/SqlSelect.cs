@@ -1,6 +1,4 @@
-﻿using Assets.Scripts.Common.Extensions;
-using Assets.Scripts.Foenn.Engine.Execution;
-using Assets.Scripts.Foenn.Engine.Metrics;
+﻿using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
 using System.Collections.Generic;
 using System.Linq;

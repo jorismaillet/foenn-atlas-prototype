@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 
-namespace Assets.Scripts.Foenn.ETL
+namespace Assets.Scripts.Foenn.ETL.Models
 {
     public class Dataset
     {

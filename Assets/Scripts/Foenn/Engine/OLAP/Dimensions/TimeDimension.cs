@@ -1,7 +1,6 @@
-﻿using Assets.Scripts.Foenn.Engine.Attributes;
-using System;
+﻿using System;
 
-namespace Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Times
+namespace Assets.Scripts.Foenn.Engine.OLAP.Dimensions
 {
     public class TimeDimension
     {
@@ -10,13 +9,15 @@ namespace Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Times
 
         public static TimeDimension AAAAMMJJHH(string AAAAMMJJHH)
         {
-            return new TimeDimension() {
+            return new TimeDimension()
+            {
                 start = DateTime.ParseExact(AAAAMMJJHH, "yyyyMMddHH", null),
                 durationHours = 1
             };
         }
 
-        public DateTime End() {
+        public DateTime End()
+        {
             return start.AddHours(durationHours);
         }
     }

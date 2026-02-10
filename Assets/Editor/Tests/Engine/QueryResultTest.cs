@@ -1,14 +1,11 @@
-﻿using Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys;
-using Assets.Scripts.Foenn.Engine.Execution;
-using Assets.Scripts.Foenn.Engine.Filters;
-using Assets.Scripts.Foenn.Engine.Metrics;
-using Assets.Scripts.Foenn.ETL.CSV;
+﻿using Assets.Scripts.Foenn.Engine.Execution;
+using Assets.Scripts.Foenn.Engine.OLAP.Filters;
+using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace Assets.Editor.Tests.Atlas.Engine
+namespace Assets.Editor.Tests.Engine
 {
     public class QueryResultTest
     {

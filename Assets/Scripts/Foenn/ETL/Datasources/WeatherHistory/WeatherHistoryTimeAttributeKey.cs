@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys
+﻿namespace Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory
 {
     public enum WeatherHistoryTimeAttributeKey
     {

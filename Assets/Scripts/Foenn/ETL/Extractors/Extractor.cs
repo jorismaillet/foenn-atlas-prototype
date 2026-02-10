@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.Foenn.ETL.Extractors
+﻿using Assets.Scripts.Foenn.ETL.Models;
+
+namespace Assets.Scripts.Foenn.ETL.Extractors
 {
     public abstract class Extractor
     {

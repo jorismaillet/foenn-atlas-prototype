@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.Engine.Sql.Filters
+﻿namespace Assets.Scripts.Foenn.Engine.Sql.Operators
 {
     public sealed class CompareExpr : FilterExpr
     {

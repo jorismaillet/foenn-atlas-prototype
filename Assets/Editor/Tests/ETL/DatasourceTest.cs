@@ -1,9 +1,5 @@
-﻿using Assets.Scripts.Foenn.Engine.Execution;
-using Assets.Scripts.Foenn.Engine.Inputs.Databases;
-using Assets.Scripts.Foenn.Engine.Metrics;
-using Assets.Scripts.Foenn.ETL;
-using Assets.Scripts.Foenn.ETL.CSV;
-using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+﻿using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+using Assets.Scripts.Foenn.ETL.Models;
 using Assets.Scripts.Foenn.ETL.Transformers;
 using NUnit.Framework;
 using System.Collections.Generic;

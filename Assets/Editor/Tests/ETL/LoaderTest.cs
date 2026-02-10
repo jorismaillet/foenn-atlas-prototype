@@ -1,15 +1,11 @@
 ﻿using Assets.Scripts.Foenn.Engine.Execution;
-using Assets.Scripts.Foenn.ETL;
-using Assets.Scripts.Foenn.ETL.CSV;
-using Assets.Scripts.Foenn.ETL.Datasources;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using Assets.Scripts.Foenn.ETL.Loaders;
+using Assets.Scripts.Foenn.ETL.Models;
 using Assets.Scripts.Foenn.ETL.Transformers;
 using Assets.Scripts.Foenn.Utils;
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.Data;
-using UnityEngine;
 
 namespace Assets.Editor.Tests.ETL
 {
