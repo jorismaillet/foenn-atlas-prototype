@@ -15,7 +15,6 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
             this.datasource = datasource;
             this.connector = connector;
         }
-
         public abstract void CreateTable(Dataset dataset);
         public abstract void Load(Dataset dataset);
     }

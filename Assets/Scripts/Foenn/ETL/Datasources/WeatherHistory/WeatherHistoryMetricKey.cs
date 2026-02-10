@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scripts.Foenn.Engine.Metrics
 {
-    public enum MetricKey
+    public enum WeatherHistoryMetricKey
     {
         ALTI,
         RR1,

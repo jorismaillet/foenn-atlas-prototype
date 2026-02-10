@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys
 {
-    public enum TimeAttributeKey
+    public enum WeatherHistoryTimeAttributeKey
     {
         AAAAMMJJHH
     }

@@ -4,6 +4,7 @@ using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.Filters;
 using Assets.Scripts.Foenn.Engine.Inputs.Databases;
 using Assets.Scripts.Foenn.ETL.CSV;
+using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using Assets.Scripts.Foenn.Utils;
 using Assets.Scripts.Unity.Commons.Behaviours;
 using System.Collections.Generic;
@@ -20,8 +21,8 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations
         private void Heatmap(string city, int department)
         {
             var request = new QueryRequest(WeatherHistoryDatasource.tableName);
-            request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.NOM_USUEL, city));
-            request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.DPT, department.ToString()));
+            request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.NOM_USUEL, city));
+            request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.DPT, department.ToString()));
             var result = request.ExecuteOnce(new SqliteConnector());
             var points = new List<int>();
             foreach (var ac in activities)
@@ -33,7 +34,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations
             Debug.Log(points);
             var heatmap = result.rows.Select(row =>
             {
-                var date = TimeUtils.Date(row.Attribute(AttributeKey.AAAAMMJJHH).value);
+                var date = TimeUtils.Date(row.Attribute(WeatherHistoryAttributeKey.AAAAMMJJHH).value);
 
                 var activity = activities.FirstOrDefault(a => a.Key.conditions.IsMatch(row));
 

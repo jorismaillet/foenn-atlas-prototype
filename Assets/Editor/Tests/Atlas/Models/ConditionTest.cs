@@ -43,17 +43,17 @@ namespace Assets.Editor.Tests.Atlas.Models
         [Test]
         public void TestInsideMetricRangeCondition()
         {
-            var c = new MetricRangeCondition(MetricKey.T, 20, 25);
+            var c = new MetricRangeCondition(WeatherHistoryMetricKey.T, 20, 25);
             var row = new Row();
-            row.measures.Add(new Measure(new Metric(MetricKey.T, AggregationKey.AVG), 20));
+            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 20));
             Assert.IsTrue(c.IsMatch(row));
         }
         [Test]
         public void TestOutsideMetricRangeCondition()
         {
-            var c = new MetricRangeCondition(MetricKey.T, 20, 25);
+            var c = new MetricRangeCondition(WeatherHistoryMetricKey.T, 20, 25);
             var row = new Row();
-            row.measures.Add(new Measure(new Metric(MetricKey.T, AggregationKey.AVG), 30));
+            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 30));
             Assert.IsFalse(c.IsMatch(row));
         }
 
@@ -113,19 +113,19 @@ namespace Assets.Editor.Tests.Atlas.Models
         [Test]
         public void TestMatchGroupAllCondition()
         {
-            var c = new GroupAllCondition(new MetricGroup("Test", MetricKey.T, MetricKey.T10), 10, 20);
+            var c = new GroupAllCondition(new MetricGroup("Test", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10), 10, 20);
             var row = new Row();
-            row.measures.Add(new Measure(new Metric(MetricKey.T, AggregationKey.AVG), 15));
-            row.measures.Add(new Measure(new Metric(MetricKey.T10, AggregationKey.AVG), 15));
+            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 15));
+            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T10, AggregationKey.AVG), 15));
             Assert.IsTrue(c.IsMatch(row));
         }
         [Test]
         public void TestNoMatchGroupAllCondition()
         {
-            var c = new GroupAllCondition(new MetricGroup("Test", MetricKey.T, MetricKey.T10), 10, 20);
+            var c = new GroupAllCondition(new MetricGroup("Test", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10), 10, 20);
             var row = new Row();
-            row.measures.Add(new Measure(new Metric(MetricKey.T, AggregationKey.AVG), 15));
-            row.measures.Add(new Measure(new Metric(MetricKey.T10, AggregationKey.AVG), 35));
+            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 15));
+            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T10, AggregationKey.AVG), 35));
             Assert.IsFalse(c.IsMatch(row));
         }
 
@@ -133,19 +133,19 @@ namespace Assets.Editor.Tests.Atlas.Models
         [Test]
         public void TestMatchGroupAnyCondition()
         {
-            var c = new GroupAnyCondition(new MetricGroup("Test", MetricKey.T, MetricKey.T10), 10, 20);
+            var c = new GroupAnyCondition(new MetricGroup("Test", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10), 10, 20);
             var row = new Row();
-            row.measures.Add(new Measure(new Metric(MetricKey.T, AggregationKey.AVG), 15));
-            row.measures.Add(new Measure(new Metric(MetricKey.T10, AggregationKey.AVG), 15));
+            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 15));
+            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T10, AggregationKey.AVG), 15));
             Assert.IsTrue(c.IsMatch(row));
         }
         [Test]
         public void TestNoMatchGroupAnyondition()
         {
-            var c = new GroupAnyCondition(new MetricGroup("Test", MetricKey.T, MetricKey.T10), 10, 20);
+            var c = new GroupAnyCondition(new MetricGroup("Test", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10), 10, 20);
             var row = new Row();
-            row.measures.Add(new Measure(new Metric(MetricKey.T, AggregationKey.AVG), 15));
-            row.measures.Add(new Measure(new Metric(MetricKey.T10, AggregationKey.AVG), 35));
+            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 15));
+            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T10, AggregationKey.AVG), 35));
             Assert.IsTrue(c.IsMatch(row));
         }
     }

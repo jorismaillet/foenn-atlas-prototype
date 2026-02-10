@@ -6,9 +6,9 @@ namespace Assets.Scripts.Foenn.Engine.Metrics
     public class MetricGroup
     {
         public string name;
-        public List<MetricKey> keys;
+        public List<WeatherHistoryMetricKey> keys;
 
-        public MetricGroup(string name, params MetricKey[] keys)
+        public MetricGroup(string name, params WeatherHistoryMetricKey[] keys)
         {
             this.name = name;
             this.keys = keys.ToList();

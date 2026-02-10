@@ -30,6 +30,8 @@ namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
         }
 
         public abstract bool Exists(string table, string column, string value);
+        public abstract void Insert(string table, List<string> columns, List<string> values);
+        public abstract void CreateTable(string name, List<Datafield> columns);
         public abstract string typeToSql(Datatype type);
 
         public QueryResult ExecuteQuery(QueryRequest request)

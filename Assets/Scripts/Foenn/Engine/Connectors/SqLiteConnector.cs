@@ -1,8 +1,12 @@
 ﻿using Assets.Scripts.Foenn.Engine.Sql.Dialects;
 using Assets.Scripts.Foenn.ETL;
+using Assets.Scripts.Foenn.ETL.Datasources;
 using Mono.Data.Sqlite;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
+using System.Linq;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
@@ -56,6 +60,7 @@ namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
                 Datatype.STRING => "CHAR(50)",
                 Datatype.FLOAT => "REAL",
                 Datatype.INT => "INT",
+                Datatype.PRIMARY_KEY => "INTEGER PRIMARY KEY AUTOINCREMENT",
                 _ => throw new System.NotImplementedException()
             };
         }
@@ -67,6 +72,25 @@ namespace Assets.Scripts.Foenn.Engine.Inputs.Databases
             command.CommandText = sql;
             var count = (long)command.ExecuteScalar();
             return count > 0;
+        }
+
+        public override void Insert(string table, List<string> columns, List<string> values)
+        {
+            var columnsString = string.Join(", ", columns);
+            var valuesString = string.Join(", ", values.Select(val => string.IsNullOrEmpty(val) ? "NULL" : val));
+            var sql = $"INSERT INTO \"{table}\" ({columnsString}) VALUES ({valuesString})";
+            ExecuteOperation(sql);
+        }
+
+        public override void CreateTable(string name, List<Datafield> fields)
+        {
+            var columns = new List<string>();
+            fields.ForEach(field =>
+            {
+                columns.Add($"{field.name} {typeToSql(field.type)}");
+            });
+            var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{name}\" ({string.Join(", ", columns)});";
+            ExecuteOperation(createTableSql);
         }
     }
 }

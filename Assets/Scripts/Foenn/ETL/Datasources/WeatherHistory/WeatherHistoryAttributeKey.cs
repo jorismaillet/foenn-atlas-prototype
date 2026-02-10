@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scripts.Foenn.Engine.Attributes.AttributeKeys
 {
-    public enum AttributeKey
+    public enum WeatherHistoryAttributeKey
     {
         ID,
         INSERT_ID,

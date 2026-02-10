@@ -4,9 +4,9 @@ namespace Assets.Scripts.Foenn.Engine.Filters
 {
     public abstract class Filter
     {
-        public AttributeKey filteredAttributeKey;
+        public WeatherHistoryAttributeKey filteredAttributeKey;
 
-        protected Filter(AttributeKey filteredAttributeKey)
+        protected Filter(WeatherHistoryAttributeKey filteredAttributeKey)
         {
             this.filteredAttributeKey = filteredAttributeKey;
         }

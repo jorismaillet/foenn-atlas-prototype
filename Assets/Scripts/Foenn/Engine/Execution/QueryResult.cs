@@ -30,7 +30,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
                 {
                     var header = rawHeaders[i];
                     string value = rawRow[i];
-                    if (System.Enum.TryParse<MetricKey>(header, out var metricKey))
+                    if (System.Enum.TryParse<WeatherHistoryMetricKey>(header, out var metricKey))
                     {
                         if (float.TryParse(value, out var fval))
                         {
@@ -38,17 +38,16 @@ namespace Assets.Scripts.Foenn.Engine.Execution
                             row.measures.Add(new Measure(metrics, fval));
                         }
                     }
-                    else if (System.Enum.TryParse<TimeAttributeKey>(header, out var timeKey))
+                    else if (System.Enum.TryParse<WeatherHistoryTimeAttributeKey>(header, out var timeKey))
                     {
-                        row.time = new TimeDimension();
-                        row.time.start = TimeUtils.Date(value);
+                        row.time = TimeDimension.AAAAMMJJHH(value);
                     }
-                    else if (System.Enum.TryParse<GeoAttributeKey>(header, out var geoKey))
+                    else if (System.Enum.TryParse<WeatherHistoryGeoAttributeKey>(header, out var geoKey))
                     {
                         row.geo = new GeoDimension();
                         row.geo.numPost = value;
                     }
-                    else if (System.Enum.TryParse<AttributeKey>(header, out var attributeKey))
+                    else if (System.Enum.TryParse<WeatherHistoryAttributeKey>(header, out var attributeKey))
                     {
                         row.attributes.Add(new Attribute(attributeKey, value));
                     }

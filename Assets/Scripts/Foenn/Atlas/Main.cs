@@ -11,7 +11,9 @@ using Assets.Scripts.Foenn.Engine.Filters;
 using Assets.Scripts.Foenn.Engine.Inputs.Databases;
 using Assets.Scripts.Foenn.Engine.Metrics;
 using Assets.Scripts.Foenn.ETL.CSV;
+using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using Assets.Scripts.Foenn.ETL.Loaders;
+using Assets.Scripts.Foenn.ETL.Transformers;
 
 namespace Assets.Scripts.Foenn.Atlas
 {
@@ -19,10 +21,10 @@ namespace Assets.Scripts.Foenn.Atlas
     {
         public void TestScenario()
         {
-            var temp = new MetricGroup("Temperature", MetricKey.T, MetricKey.T10, MetricKey.T20, MetricKey.T50, MetricKey.T100);
-            var rain = new MetricGroup("Pluie", MetricKey.RR1);
-            var wind = new MetricGroup("Vent", MetricKey.FF, MetricKey.FF2);
-            var gust = new MetricGroup("Rafales", MetricKey.FXI, MetricKey.FXI2, MetricKey.FXI3S);
+            var temp = new MetricGroup("Temperature", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10, WeatherHistoryMetricKey.T20, WeatherHistoryMetricKey.T50, WeatherHistoryMetricKey.T100);
+            var rain = new MetricGroup("Pluie", WeatherHistoryMetricKey.RR1);
+            var wind = new MetricGroup("Vent", WeatherHistoryMetricKey.FF, WeatherHistoryMetricKey.FF2);
+            var gust = new MetricGroup("Rafales", WeatherHistoryMetricKey.FXI, WeatherHistoryMetricKey.FXI2, WeatherHistoryMetricKey.FXI3S);
 
             var pasDePluie = new GroupAllCondition(rain, 0, 0);
             var peuDeVent = new GroupAnyCondition(wind, 0, 50);
@@ -84,19 +86,21 @@ namespace Assets.Scripts.Foenn.Atlas
             var map = new Map();
 
             // 2. Upsert SqLite from CSV
+            var datasource = new WeatherHistoryDatasource();
             new ETLProcessor(
-                new WeatherHistoryDatasource(),
+                datasource,
                 new CSVExtractor("Weathers/H_29_latest-2023-2024"),
+                new Transformer(datasource),
                 new SqliteLoader(new WeatherHistoryDatasource())
             ).ProcessETL();
 
             // 3. Run SqLite query
             // Build a QueryRequest (example: AVG temperature)
             var result = new QueryRequest(WeatherHistoryDatasource.tableName)
-                .Select(new Metric(MetricKey.T, AggregationKey.AVG))
-                .Where(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.YEAR, "2019"))
-                .Where(new DataFilter(DataFilterMode.INCLUDE, AttributeKey.DPT, "29"))
-                .GroupBy(AttributeKey.MONTH)
+                .Select(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG))
+                .Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.YEAR, "2019"))
+                .Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.DPT, "29"))
+                .GroupBy(WeatherHistoryAttributeKey.MONTH)
                 .ExecuteOnce(new SqliteConnector());
 
             foreach (var header in result.rawHeaders)

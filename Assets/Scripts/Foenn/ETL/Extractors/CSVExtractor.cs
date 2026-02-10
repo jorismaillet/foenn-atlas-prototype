@@ -39,11 +39,11 @@ namespace Assets.Scripts.Foenn.ETL.CSV
 
         private Datatype GetDataType(string field)
         {
-            if (System.Enum.TryParse<AttributeKey>(field, out _))
+            if (System.Enum.TryParse<WeatherHistoryAttributeKey>(field, out _))
             {
                 return Datatype.STRING;
             }
-            else if (System.Enum.TryParse<MetricKey>(field, out _))
+            else if (System.Enum.TryParse<WeatherHistoryMetricKey>(field, out _))
             {
                 return Datatype.FLOAT;
             }

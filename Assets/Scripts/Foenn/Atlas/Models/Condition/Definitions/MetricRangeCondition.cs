@@ -5,11 +5,11 @@ namespace Assets.Scripts.Foenn.Atlas.Models.Condition
 {
     public class MetricRangeCondition : ICondition
     {
-        public MetricKey metricKey;
+        public WeatherHistoryMetricKey metricKey;
         public float min;
         public float max;
 
-        public MetricRangeCondition(MetricKey metricKey, float min, float max)
+        public MetricRangeCondition(WeatherHistoryMetricKey metricKey, float min, float max)
         {
             this.metricKey = metricKey;
             this.min = min;

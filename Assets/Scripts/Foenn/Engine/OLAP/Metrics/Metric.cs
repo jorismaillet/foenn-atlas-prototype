@@ -2,10 +2,10 @@
 {
     public class Metric
     {
-        public MetricKey key;
+        public WeatherHistoryMetricKey key;
         public AggregationKey aggregation;
 
-        public Metric(MetricKey key, AggregationKey aggregation)
+        public Metric(WeatherHistoryMetricKey key, AggregationKey aggregation)
         {
             this.key = key;
             this.aggregation = aggregation;

@@ -9,7 +9,7 @@ namespace Assets.Scripts.Foenn.Engine.Filters
         public List<string> selectedValues;
         public DataFilterMode mode;
 
-        public DataFilter(DataFilterMode mode, AttributeKey attributeKey, params string[] selectedValues) : base(attributeKey)
+        public DataFilter(DataFilterMode mode, WeatherHistoryAttributeKey attributeKey, params string[] selectedValues) : base(attributeKey)
         {
             this.selectedValues = selectedValues.ToList();
             this.mode = mode;

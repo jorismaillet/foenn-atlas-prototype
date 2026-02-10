@@ -7,7 +7,7 @@ namespace Assets.Scripts.Foenn.Engine.Filters
     {
         public GeoPoint point;
 
-        public GeoFilter(GeoPoint point, AttributeKey filteredAttributeKey) : base(filteredAttributeKey)
+        public GeoFilter(GeoPoint point, WeatherHistoryAttributeKey filteredAttributeKey) : base(filteredAttributeKey)
         {
             this.point = point;
         }

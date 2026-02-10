@@ -13,7 +13,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
     public class QueryRequest
     {
         public List<Metric> selectedMetrics = new List<Metric>();
-        public List<AttributeKey> groups = new List<AttributeKey>();
+        public List<WeatherHistoryAttributeKey> groups = new List<WeatherHistoryAttributeKey>();
         public List<Filter> filters = new List<Filter>();
         public string from;
 
@@ -27,7 +27,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
             return this;
         }
 
-        public QueryRequest GroupBy(params AttributeKey[] attributes)
+        public QueryRequest GroupBy(params WeatherHistoryAttributeKey[] attributes)
         {
             this.groups.AddRange(attributes);
             return this;

@@ -8,7 +8,7 @@ namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
     public class SqlGroupBy
     {
         public readonly string clause;
-        public SqlGroupBy(List<AttributeKey> groups, ISqlDialect dialect)
+        public SqlGroupBy(List<WeatherHistoryAttributeKey> groups, ISqlDialect dialect)
         {
             var groupByParts = new List<string>();
             foreach (var attr in groups)
