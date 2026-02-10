@@ -1,9 +1,11 @@
 ﻿using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using Assets.Scripts.Foenn.ETL.Models;
+using Assets.Scripts.Unity;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 
 namespace Assets.Scripts.Foenn.ETL.Extractors
 {
@@ -11,28 +13,40 @@ namespace Assets.Scripts.Foenn.ETL.Extractors
     {
         public static char[] STRING_SPLIT = { ';' };
         private const string DECIMAL_SPLIT = ".";
-        private string csvText;
+        private string fileName;
 
         public CSVExtractor(string fileName)
         {
-            var textAsset = UnityEngine.Resources.Load<UnityEngine.TextAsset>(fileName);
-            this.csvText = textAsset.text;
+            this.fileName = fileName;
         }
 
-        public override void Extract(Dataset dataset)
+        public override List<Datafield> ExtractHeaders()
         {
-            var reader = new StringReader(csvText);
-            dataset.fields = ExtractFields(reader.ReadLine());
-            dataset.lines = ExtractLines(reader);
-            reader.Close();
-        }
-
-        private List<Datafield> ExtractFields(string header)
-        {
-            return header
+            using var sr = GetStreamReader();
+            var headerStr = sr.ReadLine();
+            return headerStr
                 .Split(STRING_SPLIT)
                 .Select((field) => new Datafield(field, GetDataType(field)))
                 .ToList();
+        }
+
+        public override IEnumerable<List<string>> ExtractContent()
+        {
+            using var sr = GetStreamReader();
+            string line;
+            sr.ReadLine();
+            while ((line = sr.ReadLine()) != null)
+            {
+                if (string.IsNullOrEmpty(line)) continue;
+                yield return line.Split(STRING_SPLIT).ToList();
+            }
+        }
+
+        private StreamReader GetStreamReader()
+        {
+            var path = Path.Combine(UnityEngine.Application.dataPath, "Resources", fileName);
+            var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 1 << 20);
+            return new StreamReader(fs);
         }
 
         private Datatype GetDataType(string field)
@@ -51,15 +65,9 @@ namespace Assets.Scripts.Foenn.ETL.Extractors
             }
         }
 
-        private List<List<string>> ExtractLines(StringReader reader)
+        public override string ExtractionID()
         {
-            var res = new List<List<string>>();
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                res.Add(line.Split(STRING_SPLIT).ToList());
-            }
-            return res;
+            return fileName;
         }
     }
 }

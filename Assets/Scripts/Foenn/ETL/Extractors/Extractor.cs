@@ -1,10 +1,13 @@
 ﻿using Assets.Scripts.Foenn.ETL.Models;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.Foenn.ETL.Extractors
 {
     public abstract class Extractor
     {
-        //TODO Should skip extraction if file already loaded (ex: table with file name of successful extraction and file md5)
-        public abstract void Extract(Dataset dataset);
+        public abstract string ExtractionID();
+        public abstract List<Datafield> ExtractHeaders();
+        public abstract IEnumerable<List<string>> ExtractContent();
     }
 }

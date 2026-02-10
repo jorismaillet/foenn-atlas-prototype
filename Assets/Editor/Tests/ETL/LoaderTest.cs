@@ -16,32 +16,33 @@ namespace Assets.Editor.Tests.ETL
         {
             var datasource = new WeatherHistoryDatasource();
             var loader = new SqliteLoader(datasource, "Resources/sqlite/foenn_test.db");
-            var dataset = new Dataset();
-            loader.connector.OpenSession();
-            loader.connector.ExecuteOperation("DROP TABLE IF EXISTS weather_data");
-            new Transformer(datasource).AddIdColumn(dataset);
-            loader.CreateTable(dataset);
-            var create = $"INSERT INTO \"weather_data\" (ID) VALUES (1)";
+            var schema = new SchemaDefinition("weather_data");
+            loader.connector.ExecuteOperation("DROP TABLE IF EXISTS weather_data;");
+            new Transformer(datasource).TransformHeaders(schema);
+            loader.connector.CreateTable(schema);
+            var create = $"INSERT INTO \"weather_data\" (ID) VALUES (1);";
             loader.connector.ExecuteOperation(create);
             var res = loader.connector.ExecuteQuery(new QueryRequest("weather_data"));
             Assert.AreEqual(res.rows.Count, 1);
-            loader.connector.ExecuteOperation("DROP TABLE IF EXISTS weather_data");
-            loader.connector.CloseSession();
+            loader.connector.ExecuteOperation("DROP TABLE IF EXISTS weather_data;");
         }
 
         [Test]
         public void TestLoad()
         {
             var datasource = new WeatherHistoryDatasource();
-            var dataset = new Dataset();
-            dataset.fields.AddRange(new List<Datafield> { new Datafield("NUM_POSTE", Datatype.INT), new Datafield("AAAAMMJJHH", Datatype.STRING) });
-            dataset.lines.AddRange(new List<List<string>> { new List<string> { "290001", "2023010112" } });
-            new Transformer(datasource).Transform(dataset);
+            var schema = new SchemaDefinition("weather_data");
+            schema.AddHeaders(new List<Datafield> { new Datafield("NUM_POSTE", Datatype.INT), new Datafield("AAAAMMJJHH", Datatype.STRING) });
+            var line = new List<string> { "290001", "2023010112" };
+            var transformer = new Transformer(datasource);
+            transformer.TransformHeaders(schema);
+            transformer.TransformLine(schema, line);
             var loader = new SqliteLoader(datasource, "Resources/sqlite/foenn_test.db");
-            loader.connector.OpenSession();
-            loader.connector.ExecuteOperation("DROP TABLE IF EXISTS weather_data");
-            loader.CreateTable(dataset);
-            loader.Load(dataset);
+            loader.connector.ExecuteOperation("DROP TABLE IF EXISTS weather_data;");
+            loader.connector.CreateTable(schema);
+            loader.StartLoad(schema);
+            loader.LoadLine(line);
+            loader.EndLoad();
             var res = loader.connector.ExecuteQuery(new QueryRequest("weather_data"));
             Assert.AreEqual(res.rows.Count, 1);
             Assert.AreEqual(res.rows[0].geo.numPost, "290001");
@@ -49,8 +50,7 @@ namespace Assets.Editor.Tests.ETL
             Assert.AreEqual(res.rows[0].time.durationHours, 1);
             Assert.AreEqual(res.rows[0].attributes.Count, 2);
             Assert.AreEqual(res.rows[0].measures.Count, 0);
-            loader.connector.ExecuteOperation("DROP TABLE IF EXISTS weather_data");
-            loader.connector.CloseSession();
+            loader.connector.ExecuteOperation("DROP TABLE IF EXISTS weather_data;");
         }
     }
 }

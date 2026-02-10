@@ -11,16 +11,24 @@ using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
 using Assets.Scripts.Foenn.Engine.OLAP.Filters;
 using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
 using Assets.Scripts.Foenn.ETL;
+using Assets.Scripts.Foenn.ETL.Datasources;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using Assets.Scripts.Foenn.ETL.Extractors;
 using Assets.Scripts.Foenn.ETL.Loaders;
 using Assets.Scripts.Foenn.ETL.Transformers;
+using Assets.Scripts.Unity;
+using Assets.Scripts.Unity.Commons.Behaviours;
+using Assets.Scripts.Unity.Commons.Holders;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Assets.Scripts.Foenn.Atlas
 {
-    public class Main
+    public class Main : BaseHolder
     {
-        public void TestScenario()
+        public void TestModels()
         {
             var temp = new MetricGroup("Temperature", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10, WeatherHistoryMetricKey.T20, WeatherHistoryMetricKey.T50, WeatherHistoryMetricKey.T100);
             var rain = new MetricGroup("Pluie", WeatherHistoryMetricKey.RR1);
@@ -86,23 +94,28 @@ namespace Assets.Scripts.Foenn.Atlas
 
             var map = new Map();
 
-            // 2. Upsert SqLite from CSV
-            var datasource = new WeatherHistoryDatasource();
-            new ETLProcessor(
-                datasource,
-                new CSVExtractor("Weathers/H_29_latest-2023-2024"),
-                new Transformer(datasource),
-                new SqliteLoader(new WeatherHistoryDatasource())
-            ).ProcessETL();
+        }
 
+        public IEnumerator TestETL()
+        {
+            MainThreadLog.Log("TestETL");
+            var files = new List<string>() { "Weathers/H_29_latest-2023-2024.csv" };
+            var datasource = new WeatherHistoryDatasource();
+            foreach (var file in files)
+            {
+                MainThreadLog.Log(file);
+                yield return LoadFile(datasource, file);
+            }
+        }
+
+        public void TestEngine() {
             // 3. Run SqLite query
             // Build a QueryRequest (example: AVG temperature)
-            var result = new QueryRequest(WeatherHistoryDatasource.tableName)
+            var result = new SqliteConnector().ExecuteQuery(new QueryRequest(WeatherHistoryDatasource.tableName)
                 .Select(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG))
                 .Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.YEAR, "2019"))
                 .Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.DPT, "29"))
-                .GroupBy(WeatherHistoryAttributeKey.MONTH)
-                .ExecuteOnce(new SqliteConnector());
+                .GroupBy(WeatherHistoryAttributeKey.MONTH));
 
             foreach (var header in result.rawHeaders)
             {
@@ -117,6 +130,36 @@ namespace Assets.Scripts.Foenn.Atlas
                 foreach (var measure in row.measures)
                     UnityEngine.Debug.Log($"Measure: ({measure.metric.aggregation}) {measure.metric.key} - {measure.value}");
             }
+        }
+
+        void Start()
+        {
+            UnityEngine.Debug.Log("ok");
+            TestModels();
+            //StartCoroutine(TestETL());
+        }
+
+        public IEnumerator LoadFile(Datasource datasource, string file)
+        {
+            var processor = new ETLProcessor(
+                    datasource,
+                    new CSVExtractor(file),
+                    new Transformer(datasource),
+                    new SqliteLoader(datasource)
+                );
+            if (!processor.ShouldProcess())
+                yield break;
+
+            MainThreadLog.Log("Process");
+            var task = Task.Run(() => processor.ProcessETL());
+
+            while (!task.IsCompleted)
+                yield return null;
+
+            if (task.IsFaulted)
+                UnityEngine.Debug.LogException(task.Exception);
+
+            UnityEngine.Debug.Log("ETL finished: " + file);
         }
     }
 }

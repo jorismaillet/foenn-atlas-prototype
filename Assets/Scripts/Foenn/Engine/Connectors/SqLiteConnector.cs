@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Foenn.Engine.Sql.Dialects;
+﻿using Assets.Scripts.Common.Extensions;
+using Assets.Scripts.Foenn.Engine.Sql.Dialects;
 using Assets.Scripts.Foenn.ETL.Models;
 using Mono.Data.Sqlite;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Assets.Scripts.Foenn.Engine.Connectors
 {
@@ -27,16 +29,45 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
                 : Path.Combine(Application.dataPath, databasePath);
         }
 
-        public override void OpenSession()
+        public override IDbConnection OpenSession()
         {
             var path = ResolveDatabasePath();
             CreateDb(path);
             string connString = $"Data Source={path};Version=3;";
-            connection = new SqliteConnection(connString);
+            var connection = new SqliteConnection(connString);
             connection.Open();
+            return connection;
         }
 
-        public override void CloseSession()
+        public static void ApplyPragmas(SqliteConnection connection)
+        {
+            using var command = connection.CreateCommand();
+            command.CommandText = @"
+                PRAGMA journal_mode=WAL;
+                PRAGMA synchronous=NORMAL;
+                PRAGMA temp_store=MEMORY;
+                PRAGMA foreign_keys=ON;
+                PRAGMA busy_timeout=2000;
+                ";
+            command.ExecuteNonQuery();
+        }
+
+        public static SqliteCommand PrepareInsert(SqliteConnection connexion, SqliteTransaction transaction, SchemaDefinition schema)
+        {
+            var command = connexion.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText = @$"
+            INSERT OR IGNORE INTO {schema.tableName}({string.Join(", ", schema.headers.Select(h => h.name))})
+            VALUES ({string.Join(", ", schema.headers.Select(h => $"@{h.name}"))})
+            ";
+            schema.headers.Each(header =>
+            {
+                command.Parameters.Add(new SqliteParameter($"@{header.name}", TypeToDbParam(header.type)));
+            });
+            return command;
+        }
+
+        public override void CloseSession(IDbConnection connection)
         {
             connection.Close();
         }
@@ -51,11 +82,23 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
                 File.Create(path).Close();
         }
 
+        public static DbType TypeToDbParam(Datatype type)
+        {
+            return type switch
+            {
+                Datatype.STRING => DbType.String,
+                Datatype.FLOAT => DbType.Single,
+                Datatype.INT => DbType.Int32,
+                Datatype.PRIMARY_KEY => DbType.Int32,
+                _ => throw new System.NotImplementedException()
+            };
+        }
+
         public override string typeToSql(Datatype type)
         {
             return type switch
             {
-                Datatype.STRING => "CHAR(50)",
+                Datatype.STRING => "TEXT",
                 Datatype.FLOAT => "REAL",
                 Datatype.INT => "INT",
                 Datatype.PRIMARY_KEY => "INTEGER PRIMARY KEY AUTOINCREMENT",
@@ -65,29 +108,51 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
 
         public override bool Exists(string table, string column, string value)
         {
-            var sql = $"SELECT COUNT(*) FROM \"{table}\" WHERE \"{column}\" = '{value}' LIMIT 1";
+            var sql = $"SELECT COUNT(*) FROM \"{table}\" WHERE \"{column}\" = '{value}' LIMIT 1;";
+            var connection = OpenSession();
             var command = connection.CreateCommand();
             command.CommandText = sql;
             var count = (long)command.ExecuteScalar();
+            CloseSession(connection);
             return count > 0;
         }
 
-        public override void Insert(string table, List<string> columns, List<string> values)
+        public override void Insert(string table, List<Datafield> columns, List<string> values)
         {
-            var columnsString = string.Join(", ", columns);
-            var valuesString = string.Join(", ", values.Select(val => string.IsNullOrEmpty(val) ? "NULL" : val));
-            var sql = $"INSERT INTO \"{table}\" ({columnsString}) VALUES ({valuesString})";
+            var columnsString = string.Join(", ", columns.Select(c => c.name));
+            var valuesString = string.Join(", ", values.Select((val, i) => ValToString(val, columns[i].type)));
+            var sql = $"INSERT INTO \"{table}\" ({columnsString}) VALUES ({valuesString});";
             ExecuteOperation(sql);
         }
 
-        public override void CreateTable(string name, List<Datafield> fields)
+        private string ValToString(string rawValue, Datatype type)
+        {
+            if (string.IsNullOrEmpty(rawValue)) return "NULL";
+            switch (type)
+            {
+                case Datatype.STRING:
+                    return $"\"{rawValue}\"";
+                case Datatype.FLOAT:
+                case Datatype.INT:
+                case Datatype.PRIMARY_KEY:
+                    return rawValue;
+                default:
+                    throw new System.NotImplementedException();
+            }
+        }
+
+        public override void CreateTable(SchemaDefinition schema)
         {
             var columns = new List<string>();
-            fields.ForEach(field =>
+            schema.headers.ForEach(field =>
             {
                 columns.Add($"{field.name} {typeToSql(field.type)}");
             });
-            var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{name}\" ({string.Join(", ", columns)});";
+            var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{schema.tableName}\" ({string.Join(", ", columns)});";
+            schema.indexes.ForEach(index =>
+            {
+                createTableSql += $"CREATE UNIQUE INDEX IF NOT EXISTS {index.name} ON {schema.tableName}({index.column});";
+            });
             ExecuteOperation(createTableSql);
         }
     }

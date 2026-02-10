@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Foenn.ETL.Datasources;
 using Assets.Scripts.Foenn.ETL.Models;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
@@ -14,29 +15,17 @@ namespace Assets.Scripts.Foenn.ETL.Transformers
             this.datasource = datasource;
         }
 
-        public void Transform(Dataset dataset)
+        public void TransformHeaders(SchemaDefinition schema)
         {
-            AddIdColumn(dataset);
-            AddLineIdentifierColumn(dataset);
+            schema.headers.Insert(0, new Datafield("ID", Datatype.PRIMARY_KEY));
+            schema.headers.Insert(1, new Datafield(datasource.InsertIdColumn(), Datatype.STRING));
         }
 
-        public void AddIdColumn(Dataset dataset)
+        public void TransformLine(SchemaDefinition schema, List<string> line)
         {
-            dataset.fields.Insert(0, new Datafield("ID", Datatype.PRIMARY_KEY));
-            dataset.lines.ForEach(line =>
-            {
-                line.Insert(0, "");
-            });
-        }
-
-        public void AddLineIdentifierColumn(Dataset dataset)
-        {
-            var columnIndexes = dataset.fields.Select((f, i) => new { f.name, index = i }).ToDictionary(x => x.name, x => x.index);
-            dataset.fields.Insert(1, new Datafield(datasource.InsertIdColumn(), Datatype.STRING));
-            dataset.lines.ForEach(line =>
-            {
-                line.Insert(1, datasource.Identifier(columnIndexes, line));
-            });
+            var insertId = datasource.Identifier(schema.headersIndexes, line);
+            line.Insert(0, "");
+            line.Insert(1, insertId);
         }
     }
 }

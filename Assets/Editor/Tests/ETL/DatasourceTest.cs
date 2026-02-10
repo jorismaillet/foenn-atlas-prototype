@@ -21,25 +21,26 @@ namespace Assets.Editor.Tests.ETL
         public void TestTransform()
         {
             var datasource = new WeatherHistoryDatasource();
-            var dataset = new Dataset();
-            dataset.fields = new List<Datafield> { new Datafield("NUM_POSTE", Datatype.INT), new Datafield("AAAAMMJJHH", Datatype.STRING) };
-            dataset.lines = new List<List<string>> { new List<string> { "290001", "2023010112" } };
-            new Transformer(datasource).Transform(dataset);
-            Assert.AreEqual(dataset.fields.Count, 4);
-            Assert.AreEqual(dataset.fields[0].name, "ID");
-            Assert.AreEqual(dataset.fields[0].type, Datatype.PRIMARY_KEY);
-            Assert.AreEqual(dataset.fields[1].name, "INSERT_ID");
-            Assert.AreEqual(dataset.fields[1].type, Datatype.STRING);
-            Assert.AreEqual(dataset.fields[2].name, "NUM_POSTE");
-            Assert.AreEqual(dataset.fields[2].type, Datatype.INT);
-            Assert.AreEqual(dataset.fields[3].name, "AAAAMMJJHH");
-            Assert.AreEqual(dataset.fields[3].type, Datatype.STRING);
-            Assert.AreEqual(dataset.lines.Count, 1);
-            Assert.AreEqual(dataset.lines[0].Count, 4);
-            Assert.AreEqual(dataset.lines[0][0], "");
-            Assert.AreEqual(dataset.lines[0][1], "2900012023010112");
-            Assert.AreEqual(dataset.lines[0][2], "290001");
-            Assert.AreEqual(dataset.lines[0][3], "2023010112");
+            var schema = new SchemaDefinition(datasource.TableName());
+            var transformer = new Transformer(datasource);
+            schema.AddHeaders(new List<Datafield> { new Datafield("NUM_POSTE", Datatype.INT), new Datafield("AAAAMMJJHH", Datatype.STRING) });
+            transformer.TransformHeaders(schema);
+            var line = new List<string> { "290001", "2023010112" };
+            new Transformer(datasource).TransformLine(schema, line);
+            Assert.AreEqual(schema.headers.Count, 4);
+            Assert.AreEqual(schema.headers[0].name, "ID");
+            Assert.AreEqual(schema.headers[0].type, Datatype.PRIMARY_KEY);
+            Assert.AreEqual(schema.headers[1].name, "INSERT_ID");
+            Assert.AreEqual(schema.headers[1].type, Datatype.STRING);
+            Assert.AreEqual(schema.headers[2].name, "NUM_POSTE");
+            Assert.AreEqual(schema.headers[2].type, Datatype.INT);
+            Assert.AreEqual(schema.headers[3].name, "AAAAMMJJHH");
+            Assert.AreEqual(schema.headers[3].type, Datatype.STRING);
+            Assert.AreEqual(line.Count, 4);
+            Assert.AreEqual(line[0], "");
+            Assert.AreEqual(line[1], "2900012023010112");
+            Assert.AreEqual(line[2], "290001");
+            Assert.AreEqual(line[3], "2023010112");
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Foenn.ETL.Extractors;
 using Assets.Scripts.Foenn.ETL.Models;
 using NUnit.Framework;
+using System.Linq;
 
 namespace Assets.Editor.Tests.ETL
 {
@@ -9,12 +10,14 @@ namespace Assets.Editor.Tests.ETL
         [Test]
         public void TestCSVExtraction()
         {
-            var fileName = "Tests/Weathers/H_29_latest-2023-2024";
-            var dataset = new Dataset();
-            new CSVExtractor(fileName).Extract(dataset);
-            Assert.AreEqual(204, dataset.fields.Count);
-            Assert.AreEqual(4, dataset.lines.Count);
-            Assert.AreEqual(204, dataset.lines[0].Count);
+            var fileName = "Tests/Weathers/H_29_latest-2023-2024.csv";
+            var schema = new SchemaDefinition("weather_data");
+            var extractor = new CSVExtractor(fileName);
+            var headers = extractor.ExtractHeaders();
+            Assert.AreEqual(204, headers.Count);
+            var lines = extractor.ExtractContent().ToList();
+            Assert.AreEqual(4, lines.Count);
+            Assert.AreEqual(204, lines[0].Count);
         }
     }
 }

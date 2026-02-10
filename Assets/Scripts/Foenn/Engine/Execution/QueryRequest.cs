@@ -49,13 +49,5 @@ namespace Assets.Scripts.Foenn.Engine.Execution
             sql.Append(dialect.EndOfLine());
             return sql.ToString();
         }
-
-        public QueryResult ExecuteOnce(SqlConnector connector)
-        {
-            connector.OpenSession();
-            var res = connector.ExecuteQuery(this);
-            connector.CloseSession();
-            return res;
-        }
     }
 }
