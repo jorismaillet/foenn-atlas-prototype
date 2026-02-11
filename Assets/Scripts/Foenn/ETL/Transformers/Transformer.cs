@@ -15,17 +15,16 @@ namespace Assets.Scripts.Foenn.ETL.Transformers
             this.datasource = datasource;
         }
 
-        public void TransformHeaders(SchemaDefinition schema)
+        public void TransformColumns(SchemaDefinition schema)
         {
-            schema.headers.Insert(0, new Datafield("ID", Datatype.PRIMARY_KEY));
-            schema.headers.Insert(1, new Datafield(datasource.InsertIdColumn(), Datatype.STRING));
+            schema.primaryKey = new PrimaryKey("ID", Datatype.STRING, false);
+            schema.columns.Add(schema.primaryKey);
+            schema.indexes.Add(schema.primaryKey);
         }
 
-        public void TransformLine(SchemaDefinition schema, List<string> line)
+        public void TransformLine(SchemaDefinition schema, string[] line)
         {
-            var insertId = datasource.Identifier(schema.headersIndexes, line);
-            line.Insert(0, "");
-            line.Insert(1, insertId);
+
         }
     }
 }

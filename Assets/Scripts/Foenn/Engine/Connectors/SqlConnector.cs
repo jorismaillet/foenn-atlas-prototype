@@ -2,6 +2,7 @@
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
 using Assets.Scripts.Foenn.ETL.Models;
 using Assets.Scripts.Unity;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -33,15 +34,20 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
         public abstract bool Exists(string table, string column, string value);
         public abstract void Insert(string table, List<Datafield> columns, List<string> values);
         public abstract void CreateTable(SchemaDefinition schema);
-        public abstract string typeToSql(Datatype type);
+        public abstract void CreateStagingTable(SchemaDefinition schema);
+        public abstract void DropStagingTable(SchemaDefinition schema);
+        public abstract string FieldToSql(Datafield field);
+        public abstract string FieldToStagingSql(Datafield field);
 
         public static object DbTypeToValue(DbType type, string rawValue)
         {
+            if (string.IsNullOrEmpty(rawValue))
+                return DBNull.Value;
             return type switch
             {
                 DbType.String => rawValue,
-                DbType.Single => string.IsNullOrEmpty(rawValue) ? null : float.Parse(rawValue, CultureInfo.InvariantCulture),
-                DbType.Int32 => string.IsNullOrEmpty(rawValue) ? null : int.Parse(rawValue),
+                DbType.Single => float.Parse(rawValue, CultureInfo.InvariantCulture),
+                DbType.Int32 => int.Parse(rawValue, CultureInfo.InvariantCulture),
                 _ => throw new System.NotImplementedException()
             };
         }

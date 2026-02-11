@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using UnityEditor.MemoryProfiler;
 
 namespace Assets.Scripts.Foenn.ETL
 {
@@ -31,7 +33,7 @@ namespace Assets.Scripts.Foenn.ETL
             this.metaDataTable = $"{datasource.TableName()}_metadata";
         }
 
-        public void ProcessETL()
+        public void ProcessETL(CancellationToken cancellationToken = default)
         {
 
             var swRead = new Stopwatch();
@@ -42,44 +44,44 @@ namespace Assets.Scripts.Foenn.ETL
 
 
             MainThreadLog.Log("Start");
+            cancellationToken.ThrowIfCancellationRequested();
             var newProcess = ShouldProcess();
             MainThreadLog.Log("Extract");
             var schema = new SchemaDefinition(datasource.TableName());
-            schema.AddHeaders(extractor.ExtractHeaders());
-            transformer.TransformHeaders(schema);
+            schema.AddColumns(extractor.ExtractHeaders());
+            var headersCount = schema.columns.Count;
+            datasource.PrepareTranformer(schema);
+            transformer.TransformColumns(schema);
             MainThreadLog.Log("Create table");
-            loader.Connector().CreateTable(schema);
-            MainThreadLog.Log("try");
+            loader.Connector().CreateStagingTable(schema);
             try
             {
                 MainThreadLog.Log("StartLoad");
-                loader.StartLoad(schema);
+                loader.StartStaging(schema);
                 MainThreadLog.Log("ExtractContent");
-
-                swRead.Start();
-                foreach (var line in extractor.ExtractContent())
+                foreach (var line in extractor.ExtractContent(headersCount))
                 {
-                    swRead.Stop();
-                    swTransform.Start();
+                    cancellationToken.ThrowIfCancellationRequested();
                     transformer.TransformLine(schema, line);
-                    swTransform.Stop();
-                    swLoad.Start();
-                    loader.LoadLine(line);
-                    swLoad.Stop();
+                    loader.StageLine(line, datasource.GetExtraColumns(line));
                     n++;
-                    if (n % 1000 == 0) MainThreadLog.Log($"n={n} E={swRead.Elapsed} T={swTransform.Elapsed} L={swLoad.Elapsed}");
-                    swRead.Start();
                 }
+                cancellationToken.ThrowIfCancellationRequested();
+                loader.CommitStaging();
+                loader.Connector().CreateTable(schema);
+                loader.MergeStaging(schema);
+
                 if (newProcess) FlagProcessed(loader);
             }
             finally
             {
-                loader.EndLoad();
+                loader.Connector().DropStagingTable(schema);
+                loader.Connector().CloseSession();
             }
             MainThreadLog.Log("End");
         }
 
-        private Datafield metadataID = new Datafield("ID", Datatype.PRIMARY_KEY);
+        private PrimaryKey metadataID = new PrimaryKey("ID", Datatype.INT, true);
         private Datafield metadataFile = new Datafield("File", Datatype.STRING);
 
         private void FlagProcessed(Loader loader)
@@ -94,7 +96,9 @@ namespace Assets.Scripts.Foenn.ETL
         public bool ShouldProcess()
         {
             var metadataSchema = new SchemaDefinition(metaDataTable);
-            metadataSchema.headers = MetaDataFields();
+            metadataSchema.primaryKey = metadataID;
+            metadataSchema.indexes.Add(metadataID);
+            metadataSchema.columns = MetaDataFields();
             var connector = loader.Connector();
             connector.CreateTable(metadataSchema);
             var res = !connector.Exists(metaDataTable, metadataFile.name, extractor.ExtractionID());

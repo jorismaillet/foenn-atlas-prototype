@@ -22,6 +22,7 @@ using Assets.Scripts.Unity.Commons.Holders;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Assets.Scripts.Foenn.Atlas
@@ -135,14 +136,27 @@ namespace Assets.Scripts.Foenn.Atlas
 
         void Start()
         {
+            Env.SetDatabasePath(SqliteConnector.DATABASE_PATH);
             UnityEngine.Debug.Log("ok");
             TestModels();
             StartCoroutine(TestETL());
         }
 
-        protected override void OnDestroy()
+        private CancellationTokenSource ct;
+        private Task task;
+
+        void OnApplicationQuit()
         {
-            SqlConnector.connection.Close();
+            ct?.Cancel();
+            ct?.Dispose();
+            ct = null;
+
+            if (SqlConnector.connection != null)
+            {
+                SqlConnector.connection.Close();
+                SqlConnector.connection.Dispose();
+                SqlConnector.connection = null;
+            }
         }
 
         public IEnumerator LoadFile(Datasource datasource, string file)
@@ -158,7 +172,8 @@ namespace Assets.Scripts.Foenn.Atlas
                 yield break;
 
             MainThreadLog.Log("Process");
-            var task = Task.Run(() => processor.ProcessETL());
+            ct = new CancellationTokenSource();
+            task = Task.Run(() => processor.ProcessETL(ct.Token), ct.Token);
 
             while (!task.IsCompleted)
                 yield return null;

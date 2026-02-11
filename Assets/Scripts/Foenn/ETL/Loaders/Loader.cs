@@ -15,8 +15,9 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
             this.datasource = datasource;
         }
         public abstract SqlConnector Connector();
-        public abstract void StartLoad(SchemaDefinition schema);
-        public abstract void LoadLine(List<string> line);
-        public abstract void EndLoad();
+        public abstract void StartStaging(SchemaDefinition schema);
+        public abstract void StageLine(string[] line, string[] extraLines);
+        public abstract void CommitStaging();
+        public abstract void MergeStaging(SchemaDefinition schema);
     }
 }

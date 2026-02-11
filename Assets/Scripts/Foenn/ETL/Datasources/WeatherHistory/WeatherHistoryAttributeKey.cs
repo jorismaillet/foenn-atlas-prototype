@@ -3,7 +3,6 @@
     public enum WeatherHistoryAttributeKey
     {
         ID,
-        INSERT_ID,
         NOM_USUEL,
         LAT,
         LON,

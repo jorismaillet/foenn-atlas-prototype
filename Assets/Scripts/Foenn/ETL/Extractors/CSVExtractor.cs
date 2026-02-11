@@ -1,11 +1,11 @@
 ﻿using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using Assets.Scripts.Foenn.ETL.Models;
-using Assets.Scripts.Unity;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 
 namespace Assets.Scripts.Foenn.ETL.Extractors
 {
@@ -30,7 +30,7 @@ namespace Assets.Scripts.Foenn.ETL.Extractors
                 .ToList();
         }
 
-        public override IEnumerable<List<string>> ExtractContent()
+        public override IEnumerable<string[]> ExtractContent(int headersCount)
         {
             using var sr = GetStreamReader();
             string line;
@@ -38,7 +38,7 @@ namespace Assets.Scripts.Foenn.ETL.Extractors
             while ((line = sr.ReadLine()) != null)
             {
                 if (string.IsNullOrEmpty(line)) continue;
-                yield return line.Split(STRING_SPLIT).ToList();
+                yield return line.Split(STRING_SPLIT);
             }
         }
 
@@ -68,6 +68,22 @@ namespace Assets.Scripts.Foenn.ETL.Extractors
         public override string ExtractionID()
         {
             return fileName;
+        }
+
+        public static int SplitLine(ReadOnlySpan<char> line, char sep, Span<Range> ranges)
+        {
+            int count = 0;
+            int start = 0;
+
+            for (int i = 0; i <= line.Length; i++)
+            {
+                if (i == line.Length || line[i] == sep)
+                {
+                    ranges[count++] = start..i;
+                    start = i + 1;
+                }
+            }
+            return count;
         }
     }
 }

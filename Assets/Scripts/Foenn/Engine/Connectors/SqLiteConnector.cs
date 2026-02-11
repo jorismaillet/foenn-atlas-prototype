@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Common.Extensions;
 using Assets.Scripts.Foenn.Engine.Sql.Dialects;
+using Assets.Scripts.Foenn.ETL.Loaders;
 using Assets.Scripts.Foenn.ETL.Models;
 using Mono.Data.Sqlite;
 using System.Collections.Generic;
@@ -7,6 +8,8 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
 
 namespace Assets.Scripts.Foenn.Engine.Connectors
@@ -14,13 +17,14 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
     public class SqliteConnector : SqlConnector
     {
 
-        public string databasePath;
+        private readonly string databasePath;
 
         public const string DATABASE_PATH = "Resources/sqlite/foenn.db";
+        public const string DATABASE_TEST_PATH = "Resources/sqlite/foenn_test.db";
 
-        public SqliteConnector(string databasePath = DATABASE_PATH) : base(new SqliteDialect())
+        public SqliteConnector() : base(new SqliteDialect())
         {
-            this.databasePath = databasePath;
+            this.databasePath = Env.DatabasePath();
         }
 
         private string ResolveDatabasePath()
@@ -40,14 +44,14 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             connection.Open();
         }
 
-        public static void ApplyPragmas(SqliteConnection connection)
+        public static void ApplyStagingPragmas()
         {
             using var command = connection.CreateCommand();
             command.CommandText = @"
-                PRAGMA journal_mode=WAL;
-                PRAGMA synchronous=NORMAL;
+                PRAGMA journal_mode=OFF;
+                PRAGMA synchronous=OFF;
                 PRAGMA temp_store=MEMORY;
-                PRAGMA foreign_keys=ON;
+                PRAGMA foreign_keys=OFF;
                 PRAGMA busy_timeout=2000;
                 PRAGMA temp_store=MEMORY;
                 PRAGMA cache_size=-200000;
@@ -56,19 +60,29 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             command.ExecuteNonQuery();
         }
 
-        public static SqliteCommand PrepareInsert(SqliteConnection connexion, SqliteTransaction transaction, SchemaDefinition schema)
+        public static SqliteCommand PrepareStaging(SqliteTransaction transaction, SchemaDefinition schema)
         {
-            var command = connexion.CreateCommand();
+            var command = (connection as SqliteConnection).CreateCommand();
             command.Transaction = transaction;
             command.CommandText = @$"
-            INSERT OR IGNORE INTO {schema.tableName}({string.Join(", ", schema.headers.Select(h => h.name))})
-            VALUES ({string.Join(", ", schema.headers.Select(h => $"@{h.name}"))})
+            INSERT INTO {schema.tableName}_staging({string.Join(", ", schema.columns.Select(h => h.name))})
+            VALUES ({string.Join(", ", schema.columns.Select(h => $"@{h.name}"))})
             ";
-            schema.headers.Each(header =>
+            schema.columns.Each(header =>
             {
                 command.Parameters.Add(new SqliteParameter($"@{header.name}", TypeToDbParam(header.type)));
             });
             return command;
+        }
+
+        public void MergeStaging(SchemaDefinition schema)
+        {
+            var command = connection.CreateCommand();
+            command.CommandText = @$"
+                INSERT OR IGNORE INTO {schema.tableName}
+                SELECT * FROM {schema.tableName}_staging;
+            ";
+            command.ExecuteNonQuery();
         }
 
         public override void CloseSession()
@@ -96,19 +110,34 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
                 Datatype.STRING => DbType.String,
                 Datatype.FLOAT => DbType.Single,
                 Datatype.INT => DbType.Int32,
-                Datatype.PRIMARY_KEY => DbType.Int32,
                 _ => throw new System.NotImplementedException()
             };
         }
 
-        public override string typeToSql(Datatype type)
+        public override string FieldToSql(Datafield field)
         {
-            return type switch
+            var res = field.type switch
             {
                 Datatype.STRING => "TEXT",
                 Datatype.FLOAT => "REAL",
-                Datatype.INT => "INT",
-                Datatype.PRIMARY_KEY => "INTEGER PRIMARY KEY AUTOINCREMENT",
+                Datatype.INT => "INTEGER",
+                _ => throw new System.NotImplementedException()
+            };
+            if (field is PrimaryKey pk)
+            {
+                res += " PRIMARY KEY";
+                if (pk.autoIncrement)
+                    res += " AUTOINCREMENT";
+            }
+            return res;
+        }
+        public override string FieldToStagingSql(Datafield field)
+        {
+            return field.type switch
+            {
+                Datatype.STRING => "TEXT",
+                Datatype.FLOAT => "REAL",
+                Datatype.INT => "INTEGER",
                 _ => throw new System.NotImplementedException()
             };
         }
@@ -141,7 +170,6 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
                     return $"\"{rawValue}\"";
                 case Datatype.FLOAT:
                 case Datatype.INT:
-                case Datatype.PRIMARY_KEY:
                     return rawValue;
                 default:
                     throw new System.NotImplementedException();
@@ -151,16 +179,30 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
         public override void CreateTable(SchemaDefinition schema)
         {
             var columns = new List<string>();
-            schema.headers.ForEach(field =>
+            schema.columns.ForEach(field =>
             {
-                columns.Add($"{field.name} {typeToSql(field.type)}");
+                columns.Add($"{field.name} {FieldToSql(field)}");
             });
             var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{schema.tableName}\" ({string.Join(", ", columns)});";
             schema.indexes.ForEach(index =>
             {
-                createTableSql += $"CREATE UNIQUE INDEX IF NOT EXISTS {index.name} ON {schema.tableName}({index.column});";
+                createTableSql += $"CREATE UNIQUE INDEX IF NOT EXISTS index_{index.name} ON {schema.tableName}({index.name});";
             });
             ExecuteOperation(createTableSql);
+        }
+        public override void CreateStagingTable(SchemaDefinition schema)
+        {
+            var columns = new List<string>();
+            schema.columns.ForEach(field =>
+            {
+                columns.Add($"{field.name} {FieldToStagingSql(field)}");
+            });
+            var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{schema.tableName}_staging\" ({string.Join(", ", columns)});";
+            ExecuteOperation(createTableSql);
+        }
+        public override void DropStagingTable(SchemaDefinition schema)
+        {
+            ExecuteOperation($"DROP TABLE IF EXISTS {schema.tableName}_staging;");
         }
     }
 }

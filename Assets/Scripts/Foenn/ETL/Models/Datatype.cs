@@ -4,7 +4,6 @@
     {
         STRING,
         FLOAT,
-        INT,
-        PRIMARY_KEY
+        INT
     }
 }

@@ -15,9 +15,9 @@ namespace Assets.Editor.Tests.ETL
             var extractor = new CSVExtractor(fileName);
             var headers = extractor.ExtractHeaders();
             Assert.AreEqual(204, headers.Count);
-            var lines = extractor.ExtractContent().ToList();
+            var lines = extractor.ExtractContent(headers.Count).ToList();
             Assert.AreEqual(4, lines.Count);
-            Assert.AreEqual(204, lines[0].Count);
+            Assert.AreEqual(204, lines[0].Length);
         }
     }
 }

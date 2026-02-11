@@ -8,6 +8,6 @@ namespace Assets.Scripts.Foenn.ETL.Extractors
     {
         public abstract string ExtractionID();
         public abstract List<Datafield> ExtractHeaders();
-        public abstract IEnumerable<List<string>> ExtractContent();
+        public abstract IEnumerable<string[]> ExtractContent(int headersCount);
     }
 }
