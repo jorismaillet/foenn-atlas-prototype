@@ -13,6 +13,7 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
 {
     public class SqliteConnector : SqlConnector
     {
+
         public string databasePath;
 
         public const string DATABASE_PATH = "Resources/sqlite/foenn.db";
@@ -29,14 +30,14 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
                 : Path.Combine(Application.dataPath, databasePath);
         }
 
-        public override IDbConnection OpenSession()
+        public override void OpenSession()
         {
+            CloseSession();
             var path = ResolveDatabasePath();
             CreateDb(path);
             string connString = $"Data Source={path};Version=3;";
-            var connection = new SqliteConnection(connString);
+            connection = new SqliteConnection(connString);
             connection.Open();
-            return connection;
         }
 
         public static void ApplyPragmas(SqliteConnection connection)
@@ -48,7 +49,10 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
                 PRAGMA temp_store=MEMORY;
                 PRAGMA foreign_keys=ON;
                 PRAGMA busy_timeout=2000;
-                ";
+                PRAGMA temp_store=MEMORY;
+                PRAGMA cache_size=-200000;
+                PRAGMA locking_mode=EXCLUSIVE; 
+            ";
             command.ExecuteNonQuery();
         }
 
@@ -67,9 +71,12 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             return command;
         }
 
-        public override void CloseSession(IDbConnection connection)
+        public override void CloseSession()
         {
+            if(connection == null) return;
             connection.Close();
+            connection.Dispose();
+            connection = null;
         }
 
         private void CreateDb(string path)
@@ -109,11 +116,11 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
         public override bool Exists(string table, string column, string value)
         {
             var sql = $"SELECT COUNT(*) FROM \"{table}\" WHERE \"{column}\" = '{value}' LIMIT 1;";
-            var connection = OpenSession();
+            OpenSession();
             var command = connection.CreateCommand();
             command.CommandText = sql;
             var count = (long)command.ExecuteScalar();
-            CloseSession(connection);
+            CloseSession();
             return count > 0;
         }
 

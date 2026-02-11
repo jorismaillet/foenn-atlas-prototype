@@ -8,6 +8,7 @@ using Assets.Scripts.Unity;
 using PlasticPipe.PlasticProtocol.Messages;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Assets.Scripts.Foenn.ETL
@@ -32,6 +33,14 @@ namespace Assets.Scripts.Foenn.ETL
 
         public void ProcessETL()
         {
+
+            var swRead = new Stopwatch();
+            var swTransform = new Stopwatch();
+            var swLoad = new Stopwatch();
+            long n = 0;
+
+
+
             MainThreadLog.Log("Start");
             var newProcess = ShouldProcess();
             MainThreadLog.Log("Extract");
@@ -40,13 +49,26 @@ namespace Assets.Scripts.Foenn.ETL
             transformer.TransformHeaders(schema);
             MainThreadLog.Log("Create table");
             loader.Connector().CreateTable(schema);
+            MainThreadLog.Log("try");
             try
             {
+                MainThreadLog.Log("StartLoad");
                 loader.StartLoad(schema);
+                MainThreadLog.Log("ExtractContent");
+
+                swRead.Start();
                 foreach (var line in extractor.ExtractContent())
                 {
+                    swRead.Stop();
+                    swTransform.Start();
                     transformer.TransformLine(schema, line);
+                    swTransform.Stop();
+                    swLoad.Start();
                     loader.LoadLine(line);
+                    swLoad.Stop();
+                    n++;
+                    if (n % 1000 == 0) MainThreadLog.Log($"n={n} E={swRead.Elapsed} T={swTransform.Elapsed} L={swLoad.Elapsed}");
+                    swRead.Start();
                 }
                 if (newProcess) FlagProcessed(loader);
             }
@@ -54,6 +76,7 @@ namespace Assets.Scripts.Foenn.ETL
             {
                 loader.EndLoad();
             }
+            MainThreadLog.Log("End");
         }
 
         private Datafield metadataID = new Datafield("ID", Datatype.PRIMARY_KEY);

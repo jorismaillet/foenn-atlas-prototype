@@ -4,15 +4,17 @@ using Assets.Scripts.Foenn.ETL.Models;
 using Assets.Scripts.Unity;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 
 namespace Assets.Scripts.Foenn.Engine.Connectors
 {
     public abstract class SqlConnector
     {
         public ISqlDialect dialect;
+        public static IDbConnection connection;
 
-        public abstract IDbConnection OpenSession();
-        public abstract void CloseSession(IDbConnection session);
+        public abstract void OpenSession();
+        public abstract void CloseSession();
 
         public SqlConnector(ISqlDialect dialect)
         {
@@ -21,11 +23,11 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
 
         public void ExecuteOperation(string sql)
         {
-            var session = OpenSession();
-            var cmd = session.CreateCommand();
+            OpenSession();
+            var cmd = connection.CreateCommand();
             cmd.CommandText = sql;
             cmd.ExecuteNonQuery();
-            CloseSession(session);
+            CloseSession();
         }
 
         public abstract bool Exists(string table, string column, string value);
@@ -38,7 +40,7 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             return type switch
             {
                 DbType.String => rawValue,
-                DbType.Single => string.IsNullOrEmpty(rawValue) ? null : float.Parse(rawValue),
+                DbType.Single => string.IsNullOrEmpty(rawValue) ? null : float.Parse(rawValue, CultureInfo.InvariantCulture),
                 DbType.Int32 => string.IsNullOrEmpty(rawValue) ? null : int.Parse(rawValue),
                 _ => throw new System.NotImplementedException()
             };
@@ -47,8 +49,8 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
         public QueryResult ExecuteQuery(QueryRequest request)
         {
             var sql = request.ToSql(dialect);
-            var session = OpenSession();
-            var command = session.CreateCommand();
+            OpenSession();
+            var command = connection.CreateCommand();
             command.CommandText = sql;
             var columns = new List<string>();
             var rows = new List<List<string>>();
@@ -69,7 +71,7 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
                     rows.Add(row);
                 }
             }
-            CloseSession(session);
+            CloseSession();
             return new QueryResult(request, columns, rows);
         }
     }

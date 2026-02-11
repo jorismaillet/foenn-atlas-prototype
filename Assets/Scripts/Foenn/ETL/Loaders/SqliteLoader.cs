@@ -14,10 +14,9 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
     {
         private string tableName;
         public SqliteConnector connector;
-        private SqliteConnection connection;
         private SqliteTransaction transaction;
         private SqliteCommand command;
-        private int loaded = 0, inBatch = 0, batchSize = 10000;
+        private int loaded = 0, inBatch = 0, batchSize = 1000;
 
         public SqliteLoader(Datasource datasource, string databasePath = SqliteConnector.DATABASE_PATH) : base(datasource)
         {
@@ -27,10 +26,11 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
 
         public override void StartLoad(SchemaDefinition schema)
         {
-            connection = connector.OpenSession() as SqliteConnection;
-            SqliteConnector.ApplyPragmas(connection);
-            this.transaction = connection.BeginTransaction();
-            this.command = SqliteConnector.PrepareInsert(connection, transaction, schema);
+            connector.OpenSession();
+            var sqliteConnection = SqlConnector.connection as SqliteConnection;
+            SqliteConnector.ApplyPragmas(sqliteConnection);
+            this.transaction = sqliteConnection.BeginTransaction();
+            this.command = SqliteConnector.PrepareInsert(sqliteConnection, transaction, schema);
         }
 
         public override void LoadLine(List<string> line)
@@ -41,22 +41,23 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
             }
             command.ExecuteNonQuery();
             loaded++;
+            inBatch++;
             if (inBatch >= batchSize)
             {
                 transaction.Commit();
                 transaction.Dispose();
-                transaction = connection.BeginTransaction();
+                transaction = (SqlConnector.connection as SqliteConnection).BeginTransaction();
                 command.Transaction = transaction;
                 inBatch = 0;
-                UnityEngine.Debug.Log($"Inserted batch, total={loaded}");
+                MainThreadLog.Log($"Inserted batch, total={loaded}");
             }
         }
 
         public override void EndLoad()
         {
             transaction.Commit();
-            connection.Close();
             transaction.Dispose();
+            connector.CloseSession();
         }
 
         public override SqlConnector Connector()

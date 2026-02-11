@@ -106,6 +106,7 @@ namespace Assets.Scripts.Foenn.Atlas
                 MainThreadLog.Log(file);
                 yield return LoadFile(datasource, file);
             }
+            MainThreadLog.Log("Done");
         }
 
         public void TestEngine() {
@@ -136,11 +137,17 @@ namespace Assets.Scripts.Foenn.Atlas
         {
             UnityEngine.Debug.Log("ok");
             TestModels();
-            //StartCoroutine(TestETL());
+            StartCoroutine(TestETL());
+        }
+
+        protected override void OnDestroy()
+        {
+            SqlConnector.connection.Close();
         }
 
         public IEnumerator LoadFile(Datasource datasource, string file)
         {
+            MainThreadLog.Log("ETLProcessor");
             var processor = new ETLProcessor(
                     datasource,
                     new CSVExtractor(file),
