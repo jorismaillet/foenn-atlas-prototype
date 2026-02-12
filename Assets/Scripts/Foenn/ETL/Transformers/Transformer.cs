@@ -17,7 +17,7 @@ namespace Assets.Scripts.Foenn.ETL.Transformers
 
         public void TransformColumns(SchemaDefinition schema)
         {
-            schema.primaryKey = new PrimaryKey("ID", Datatype.STRING, false);
+            schema.primaryKey = new PrimaryKey("ID", DbType.String, false);
             schema.columns.Add(schema.primaryKey);
             schema.indexes.Add(schema.primaryKey);
         }

@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Foenn.ETL.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using static Codice.CM.WorkspaceServer.DataStore.WkTree.WriteWorkspaceTree;
 
 namespace Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory

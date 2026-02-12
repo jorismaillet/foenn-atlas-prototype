@@ -15,7 +15,7 @@ namespace Assets.Editor.Tests.Engine
                 .Select(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG))
                 .Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.DPT, "29"))
                 .GroupBy(WeatherHistoryAttributeKey.NUM_POSTE);
-            var sqlExpect = "SELECT AVG(\"T\") FROM \"weather_data\" WHERE \"DPT\"=\"29\" GROUP BY \"NUM_POSTE\";";
+            var sqlExpect = "SELECT AVG(\"T\"), \"NUM_POSTE\" FROM \"weather_data\" WHERE \"DPT\"=\"29\" GROUP BY \"NUM_POSTE\";";
             Assert.AreEqual(queryRequest.ToSql(new SqliteDialect()), sqlExpect);
         }
     }

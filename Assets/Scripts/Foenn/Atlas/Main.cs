@@ -100,7 +100,7 @@ namespace Assets.Scripts.Foenn.Atlas
         public IEnumerator TestETL()
         {
             MainThreadLog.Log("TestETL");
-            var files = new List<string>() { "Weathers/H_29_latest-2023-2024.csv" };
+            var files = new List<string>() { "Weathers/Test.csv" };// "Weathers/H_29_latest-2023-2024.csv" };
             var datasource = new WeatherHistoryDatasource();
             foreach (var file in files)
             {
@@ -115,24 +115,43 @@ namespace Assets.Scripts.Foenn.Atlas
             // Build a QueryRequest (example: AVG temperature)
             var result = new SqliteConnector().ExecuteQuery(new QueryRequest(WeatherHistoryDatasource.tableName)
                 .Select(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG))
-                .Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.YEAR, "2019"))
-                .Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.DPT, "29"))
-                .GroupBy(WeatherHistoryAttributeKey.MONTH));
+                .Select(new Attribute(WeatherHistoryAttributeKey.NUM_POSTE))
+                .GroupBy(WeatherHistoryAttributeKey.NUM_POSTE));
+            //.Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.YEAR, "2019"))
+            //.Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.DPT, "29"))
 
-            foreach (var header in result.rawHeaders)
-            {
-                UnityEngine.Debug.Log($"Header: {header}");
-            }
             foreach (var row in result.rows)
             {
                 UnityEngine.Debug.Log($"Time: {row.time.start}");
                 UnityEngine.Debug.Log($"Location: {row.geo.numPost}");
-                foreach (Attribute attr in row.attributes)
-                    UnityEngine.Debug.Log($"Attribute: {attr.key} - {attr.value}");
+                foreach (AttributeValue attr in row.attributes)
+                    UnityEngine.Debug.Log($"Attribute: {attr.attribute.key} - {attr.value}");
                 foreach (var measure in row.measures)
                     UnityEngine.Debug.Log($"Measure: ({measure.metric.aggregation}) {measure.metric.key} - {measure.value}");
             }
         }
+
+        //SqliteException: The database disk image is malformed
+        //database disk image is malformed
+        //Mono.Data.Sqlite.SQLite3.Reset(Mono.Data.Sqlite.SqliteStatement stmt) (at<99f7d8f9a65b4d91ae5b1d55c424866f>:0)
+        //Mono.Data.Sqlite.SQLite3.Step(Mono.Data.Sqlite.SqliteStatement stmt) (at<99f7d8f9a65b4d91ae5b1d55c424866f>:0)
+        //Mono.Data.Sqlite.SqliteDataReader.NextResult() (at<99f7d8f9a65b4d91ae5b1d55c424866f>:0)
+        //(wrapper remoting-invoke-with-check) Mono.Data.Sqlite.SqliteDataReader.NextResult()
+        //Mono.Data.Sqlite.SqliteDataReader..ctor(Mono.Data.Sqlite.SqliteCommand cmd, System.Data.CommandBehavior behave) (at<99f7d8f9a65b4d91ae5b1d55c424866f>:0)
+        //(wrapper remoting-invoke-with-check) Mono.Data.Sqlite.SqliteDataReader..ctor(Mono.Data.Sqlite.SqliteCommand, System.Data.CommandBehavior)
+        //Mono.Data.Sqlite.SqliteCommand.ExecuteReader(System.Data.CommandBehavior behavior) (at<99f7d8f9a65b4d91ae5b1d55c424866f>:0)
+        //Mono.Data.Sqlite.SqliteCommand.ExecuteNonQuery() (at<99f7d8f9a65b4d91ae5b1d55c424866f>:0)
+        //Assets.Scripts.Foenn.Engine.Connectors.SqlConnector.ExecuteOperation(System.String sql) (at Assets/Scripts/Foenn/Engine/Connectors/SqlConnector.cs:30)
+        //Assets.Scripts.Foenn.Engine.Connectors.SqliteConnector.DropStagingTable(Assets.Scripts.Foenn.ETL.Models.SchemaDefinition schema) (at Assets/Scripts/Foenn/Engine/Connectors/SqliteConnector.cs:205)
+        //Assets.Scripts.Foenn.ETL.ETLProcessor.ProcessETL(System.Threading.CancellationToken cancellationToken) (at Assets/Scripts/Foenn/ETL/ETLProcessor.cs:78)
+        //Assets.Scripts.Foenn.Atlas.Main+<>c__DisplayClass7_0.<LoadFile>b__0() (at Assets/Scripts/Foenn/Atlas/Main.cs:176)
+        //System.Threading.Tasks.Task.InnerInvoke() (at<8ce0bd04a7a04b4b9395538239d3fdd8>:0)
+        //System.Threading.Tasks.Task.Execute() (at<8ce0bd04a7a04b4b9395538239d3fdd8>:0)
+        //Rethrow as AggregateException: One or more errors occurred. (The database disk image is malformed
+        //database disk image is malformed)
+        //UnityEngine.Debug:LogException(Exception)
+        //Assets.Scripts.Foenn.Atlas.<LoadFile>d__7:MoveNext() (at Assets/Scripts/Foenn/Atlas/Main.cs:182)
+        //UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
 
         void Start()
         {
@@ -140,6 +159,7 @@ namespace Assets.Scripts.Foenn.Atlas
             UnityEngine.Debug.Log("ok");
             TestModels();
             StartCoroutine(TestETL());
+            TestEngine();
         }
 
         private CancellationTokenSource ct;

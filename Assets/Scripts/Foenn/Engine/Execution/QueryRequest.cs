@@ -1,4 +1,6 @@
 ﻿using Assets.Scripts.Foenn.Engine.Connectors;
+using Assets.Scripts.Foenn.Engine.OLAP;
+using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
 using Assets.Scripts.Foenn.Engine.OLAP.Filters;
 using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
 using Assets.Scripts.Foenn.Engine.Sql.Clauses;
@@ -12,6 +14,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
     public class QueryRequest
     {
         public List<Metric> selectedMetrics = new List<Metric>();
+        public List<Attribute> selectedAttributes = new List<Attribute>();
         public List<WeatherHistoryAttributeKey> groups = new List<WeatherHistoryAttributeKey>();
         public List<Filter> filters = new List<Filter>();
         public string from;
@@ -27,9 +30,19 @@ namespace Assets.Scripts.Foenn.Engine.Execution
             return this;
         }
 
+        public QueryRequest Select(params Attribute[] attributes)
+        {
+            this.selectedAttributes.AddRange(attributes);
+            return this;
+        }
+
         public QueryRequest GroupBy(params WeatherHistoryAttributeKey[] attributes)
         {
-            this.groups.AddRange(attributes);
+            foreach (var attribute in attributes)
+            {
+                groups.Add(attribute);
+                Select(new Attribute(attribute));
+            }
             return this;
         }
 
@@ -42,7 +55,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
         public string ToSql(ISqlDialect dialect)
         {
             StringBuilder sql = new StringBuilder();
-            sql.Append(new SqlSelect(selectedMetrics, dialect).clause);
+            sql.Append(new SqlSelect(selectedMetrics, selectedAttributes, dialect).clause);
             sql.Append(new SqlFrom(from, dialect).clause);
             sql.Append(new SqlWhere(filters, dialect).clause);
             sql.Append(new SqlGroupBy(groups, dialect).clause);

@@ -47,7 +47,7 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
                 {
                     DbType.String => (s) => string.IsNullOrEmpty(s) ? DBNull.Value : s,
                     DbType.Single => (s) => string.IsNullOrEmpty(s) ? DBNull.Value : float.Parse(s, CultureInfo.InvariantCulture),
-                    DbType.Int32 => (s) => string.IsNullOrEmpty(s) ? DBNull.Value : int.Parse(s, CultureInfo.InvariantCulture),
+                    DbType.Int64 => (s) => string.IsNullOrEmpty(s) ? DBNull.Value : int.Parse(s, CultureInfo.InvariantCulture),
                     _ => (s) => string.IsNullOrEmpty(s) ? DBNull.Value : s
                 };
             }

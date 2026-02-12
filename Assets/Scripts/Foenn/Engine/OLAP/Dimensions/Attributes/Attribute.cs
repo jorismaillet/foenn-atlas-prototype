@@ -1,11 +1,12 @@
-﻿using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+﻿using Assets.Scripts.Foenn.Engine.Sql.Dialects;
+using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using System.Collections.Generic;
 
 namespace Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes
 {
     public class Attribute
     {
-        private static readonly Dictionary<WeatherHistoryAttributeKey, string> attributeNames = new()
+        public static readonly Dictionary<WeatherHistoryAttributeKey, string> Translate = new()
         {
             { WeatherHistoryAttributeKey.NUM_POSTE, "Numéro de station" },
             { WeatherHistoryAttributeKey.NOM_USUEL, "Nom de station" },
@@ -21,21 +22,10 @@ namespace Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes
         };
 
         public WeatherHistoryAttributeKey key;
-        public string value;
 
-        public Attribute(WeatherHistoryAttributeKey key, string value)
+        public Attribute(WeatherHistoryAttributeKey key)
         {
             this.key = key;
-            this.value = value;
-        }
-
-        public static string Name(WeatherHistoryAttributeKey key)
-        {
-            if (attributeNames.TryGetValue(key, out var res))
-            {
-                return res;
-            }
-            return key.ToString();
         }
     }
 }

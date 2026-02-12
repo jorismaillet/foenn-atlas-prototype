@@ -8,6 +8,7 @@ using Assets.Scripts.Foenn.ETL.Transformers;
 using Assets.Scripts.Foenn.Utils;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Data;
 
 namespace Assets.Editor.Tests.ETL
 {
@@ -36,7 +37,7 @@ namespace Assets.Editor.Tests.ETL
             Env.SetDatabasePath(SqliteConnector.DATABASE_TEST_PATH);
             var datasource = new WeatherHistoryDatasource();
             var schema = new SchemaDefinition("weather_data");
-            schema.AddColumns(new List<Datafield> { new Datafield("NUM_POSTE", Datatype.INT), new Datafield("AAAAMMJJHH", Datatype.STRING) });
+            schema.AddColumns(new List<Datafield> { new Datafield("NUM_POSTE", DbType.String), new Datafield("AAAAMMJJHH", DbType.String) });
             var line = new string[] { "290001", "2023010112" };
             var transformer = new Transformer(datasource);
             datasource.PrepareTranformer(schema);
@@ -55,7 +56,8 @@ namespace Assets.Editor.Tests.ETL
             Assert.AreEqual(TimeUtils.Date("2023010112"), res.rows[0].time.start);
             Assert.AreEqual(res.rows[0].time.durationHours, 1);
             Assert.AreEqual(res.rows[0].attributes.Count, 1);
-            Assert.AreEqual(res.rows[0].attributes[0].key, WeatherHistoryAttributeKey.ID);
+            Assert.AreEqual(res.rows[0].attributes[0].attribute.key, WeatherHistoryAttributeKey.ID);
+            Assert.AreEqual(res.rows[0].attributes[0].value, "2900012023010112");
             Assert.AreEqual(res.rows[0].measures.Count, 0);
             loader.connector.DropStagingTable(schema);
         }

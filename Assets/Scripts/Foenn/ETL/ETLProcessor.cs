@@ -81,8 +81,8 @@ namespace Assets.Scripts.Foenn.ETL
             MainThreadLog.Log("End");
         }
 
-        private PrimaryKey metadataID = new PrimaryKey("ID", Datatype.INT, true);
-        private Datafield metadataFile = new Datafield("File", Datatype.STRING);
+        private PrimaryKey metadataID = new PrimaryKey("ID", DbType.Int64, true);
+        private Datafield metadataFile = new Datafield("File", DbType.String);
 
         private void FlagProcessed(Loader loader)
         {

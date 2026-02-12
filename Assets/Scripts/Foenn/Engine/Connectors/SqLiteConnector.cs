@@ -16,7 +16,6 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
 {
     public class SqliteConnector : SqlConnector
     {
-
         private readonly string databasePath;
 
         public const string DATABASE_PATH = "Resources/sqlite/foenn.db";
@@ -70,7 +69,7 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             ";
             schema.columns.Each(header =>
             {
-                command.Parameters.Add(new SqliteParameter($"@{header.name}", TypeToDbParam(header.type)));
+                command.Parameters.Add(new SqliteParameter($"@{header.name}", header.type));
             });
             return command;
         }
@@ -103,43 +102,22 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
                 File.Create(path).Close();
         }
 
-        public static DbType TypeToDbParam(Datatype type)
-        {
-            return type switch
-            {
-                Datatype.STRING => DbType.String,
-                Datatype.FLOAT => DbType.Single,
-                Datatype.INT => DbType.Int32,
-                _ => throw new System.NotImplementedException()
-            };
-        }
-
-        public override string FieldToSql(Datafield field)
+        public override string FieldToSql(Datafield field, bool skipPK = false)
         {
             var res = field.type switch
             {
-                Datatype.STRING => "TEXT",
-                Datatype.FLOAT => "REAL",
-                Datatype.INT => "INTEGER",
+                DbType.String => "TEXT",
+                DbType.Single => "REAL",
+                DbType.Int64 => "INTEGER",
                 _ => throw new System.NotImplementedException()
             };
-            if (field is PrimaryKey pk)
+            if (!skipPK && field is PrimaryKey pk)
             {
                 res += " PRIMARY KEY";
                 if (pk.autoIncrement)
                     res += " AUTOINCREMENT";
             }
             return res;
-        }
-        public override string FieldToStagingSql(Datafield field)
-        {
-            return field.type switch
-            {
-                Datatype.STRING => "TEXT",
-                Datatype.FLOAT => "REAL",
-                Datatype.INT => "INTEGER",
-                _ => throw new System.NotImplementedException()
-            };
         }
 
         public override bool Exists(string table, string column, string value)
@@ -156,20 +134,20 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
         public override void Insert(string table, List<Datafield> columns, List<string> values)
         {
             var columnsString = string.Join(", ", columns.Select(c => c.name));
-            var valuesString = string.Join(", ", values.Select((val, i) => ValToString(val, columns[i].type)));
+            var valuesString = string.Join(", ", values.Select((val, i) => ValueToSql(val, columns[i].type)));
             var sql = $"INSERT INTO \"{table}\" ({columnsString}) VALUES ({valuesString});";
             ExecuteOperation(sql);
         }
 
-        private string ValToString(string rawValue, Datatype type)
+        private string ValueToSql(string rawValue, DbType type)
         {
             if (string.IsNullOrEmpty(rawValue)) return "NULL";
             switch (type)
             {
-                case Datatype.STRING:
+                case DbType.String:
                     return $"\"{rawValue}\"";
-                case Datatype.FLOAT:
-                case Datatype.INT:
+                case DbType.Single:
+                case DbType.Int64:
                     return rawValue;
                 default:
                     throw new System.NotImplementedException();
@@ -188,6 +166,7 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             {
                 createTableSql += $"CREATE UNIQUE INDEX IF NOT EXISTS index_{index.name} ON {schema.tableName}({index.name});";
             });
+            UnityEngine.Debug.Log(createTableSql);
             ExecuteOperation(createTableSql);
         }
         public override void CreateStagingTable(SchemaDefinition schema)
@@ -195,14 +174,17 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             var columns = new List<string>();
             schema.columns.ForEach(field =>
             {
-                columns.Add($"{field.name} {FieldToStagingSql(field)}");
+                columns.Add($"{field.name} {FieldToSql(field, skipPK: true)}");
             });
             var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{schema.tableName}_staging\" ({string.Join(", ", columns)});";
+            UnityEngine.Debug.Log(createTableSql);
             ExecuteOperation(createTableSql);
         }
         public override void DropStagingTable(SchemaDefinition schema)
         {
-            ExecuteOperation($"DROP TABLE IF EXISTS {schema.tableName}_staging;");
+            var sql = $"DROP TABLE IF EXISTS {schema.tableName}_staging;";
+            UnityEngine.Debug.Log(sql);
+            ExecuteOperation(sql);
         }
     }
 }

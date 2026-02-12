@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using System.Linq;
+using UnityEngine.UIElements;
 
 namespace Assets.Scripts.Foenn.Engine.Connectors
 {
@@ -36,49 +38,33 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
         public abstract void CreateTable(SchemaDefinition schema);
         public abstract void CreateStagingTable(SchemaDefinition schema);
         public abstract void DropStagingTable(SchemaDefinition schema);
-        public abstract string FieldToSql(Datafield field);
-        public abstract string FieldToStagingSql(Datafield field);
-
-        public static object DbTypeToValue(DbType type, string rawValue)
-        {
-            if (string.IsNullOrEmpty(rawValue))
-                return DBNull.Value;
-            return type switch
-            {
-                DbType.String => rawValue,
-                DbType.Single => float.Parse(rawValue, CultureInfo.InvariantCulture),
-                DbType.Int32 => int.Parse(rawValue, CultureInfo.InvariantCulture),
-                _ => throw new System.NotImplementedException()
-            };
-        }
+        public abstract string FieldToSql(Datafield field, bool skipPK = false);
 
         public QueryResult ExecuteQuery(QueryRequest request)
         {
             var sql = request.ToSql(dialect);
             OpenSession();
             var command = connection.CreateCommand();
+            
             command.CommandText = sql;
-            var columns = new List<string>();
-            var rows = new List<List<string>>();
             using (var reader = command.ExecuteReader())
             {
-                for (int i = 0; i < reader.FieldCount; i++)
+                int nbColumns = reader.FieldCount;
+                string[] rawHeaders = new string[nbColumns];
+                for (int i = 0; i < nbColumns; i++)
                 {
-                    columns.Add(reader.GetName(i));
+                    rawHeaders[i] = reader.GetName(i);
                 }
+                var res = new QueryResult(rawHeaders);
                 while (reader.Read())
                 {
-                    var row = new List<string>();
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        var value = reader.GetValue(i)?.ToString() ?? string.Empty;
-                        row.Add(value);
-                    }
-                    rows.Add(row);
+                    var row = new object[nbColumns];
+                    reader.GetValues(row);
+                    res.ParseLine(row);
                 }
+                CloseSession();
+                return res;
             }
-            CloseSession();
-            return new QueryResult(request, columns, rows);
         }
     }
 }

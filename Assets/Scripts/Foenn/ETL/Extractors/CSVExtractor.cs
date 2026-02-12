@@ -26,7 +26,7 @@ namespace Assets.Scripts.Foenn.ETL.Extractors
             var headerStr = sr.ReadLine();
             return headerStr
                 .Split(STRING_SPLIT)
-                .Select((field) => new Datafield(field, GetDataType(field)))
+                .Select((field) => new Datafield(field, GetDbType(field)))
                 .ToList();
         }
 
@@ -49,15 +49,15 @@ namespace Assets.Scripts.Foenn.ETL.Extractors
             return new StreamReader(fs);
         }
 
-        private Datatype GetDataType(string field)
+        private DbType GetDbType(string field)
         {
-            if (System.Enum.TryParse<WeatherHistoryAttributeKey>(field, out _))
+            if (System.Enum.TryParse<WeatherHistoryAttributeKey>(field, out var attributeKey))
             {
-                return Datatype.STRING;
+                return DbType.String;
             }
             else if (System.Enum.TryParse<WeatherHistoryMetricKey>(field, out _))
             {
-                return Datatype.FLOAT;
+                return DbType.Single;
             }
             else
             {
@@ -68,22 +68,6 @@ namespace Assets.Scripts.Foenn.ETL.Extractors
         public override string ExtractionID()
         {
             return fileName;
-        }
-
-        public static int SplitLine(ReadOnlySpan<char> line, char sep, Span<Range> ranges)
-        {
-            int count = 0;
-            int start = 0;
-
-            for (int i = 0; i <= line.Length; i++)
-            {
-                if (i == line.Length || line[i] == sep)
-                {
-                    ranges[count++] = start..i;
-                    start = i + 1;
-                }
-            }
-            return count;
         }
     }
 }

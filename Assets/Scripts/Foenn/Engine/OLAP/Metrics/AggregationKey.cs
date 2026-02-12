@@ -5,6 +5,7 @@
         SUM,
         MIN,
         MAX,
-        AVG
+        AVG,
+        D_COUNT
     }
 }
