@@ -41,7 +41,6 @@ namespace Assets.Scripts.Foenn.Engine.Execution
             foreach (var attribute in attributes)
             {
                 groups.Add(attribute);
-                Select(new Attribute(attribute));
             }
             return this;
         }

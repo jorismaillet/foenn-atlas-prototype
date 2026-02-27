@@ -34,6 +34,10 @@ namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
                 {
                     whereParts.Add($"AAAAMMJJHH >= {TimeUtils.ToString(tf.startTime)} AND AAAAMMJJHH <= {TimeUtils.ToString(tf.endTime)}");
                 }
+                else if (filter is ExcludeNullFilter enf)
+                {
+                    whereParts.Add($"{dialect.QuoteIdent(enf.metricKey.ToString())} IS NOT NULL");
+                }
                 // TODO GeoFilter
                 else
                 {

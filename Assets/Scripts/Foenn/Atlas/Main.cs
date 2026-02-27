@@ -5,6 +5,7 @@ using Assets.Scripts.Foenn.Atlas.Models.Geo;
 using Assets.Scripts.Foenn.Atlas.Models.Locations;
 using Assets.Scripts.Foenn.Atlas.Models.Maps;
 using Assets.Scripts.Foenn.Atlas.Models.Plannings;
+using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap;
 using Assets.Scripts.Foenn.Engine.Connectors;
 using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
@@ -22,13 +23,19 @@ using Assets.Scripts.Unity.Commons.Holders;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.Foenn.Atlas
 {
     public class Main : BaseHolder
     {
+        public RawImage rawImage;
+
         public void TestModels()
         {
             var temp = new MetricGroup("Temperature", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10, WeatherHistoryMetricKey.T20, WeatherHistoryMetricKey.T50, WeatherHistoryMetricKey.T100);
@@ -100,7 +107,7 @@ namespace Assets.Scripts.Foenn.Atlas
         public IEnumerator TestETL()
         {
             MainThreadLog.Log("TestETL");
-            var files = new List<string>() { "Weathers/Test.csv" };// "Weathers/H_29_latest-2023-2024.csv" };
+            var files = new List<string>() { "Weathers/H_29_latest-2023-2024.csv" };
             var datasource = new WeatherHistoryDatasource();
             foreach (var file in files)
             {
@@ -113,17 +120,13 @@ namespace Assets.Scripts.Foenn.Atlas
         public void TestEngine() {
             // 3. Run SqLite query
             // Build a QueryRequest (example: AVG temperature)
-            var result = new SqliteConnector().ExecuteQuery(new QueryRequest(WeatherHistoryDatasource.tableName)
-                .Select(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG))
-                .Select(new Attribute(WeatherHistoryAttributeKey.NUM_POSTE))
-                .GroupBy(WeatherHistoryAttributeKey.NUM_POSTE));
-            //.Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.YEAR, "2019"))
-            //.Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.DPT, "29"))
+            var dataPoints = TemperatureDataPoints("2023010110");
 
-            foreach (var row in result.rows)
+            UnityEngine.Debug.Log("Temperature data point for france for 2023/01/01 at 10am");
+            foreach (var row in dataPoints.rows)
             {
-                UnityEngine.Debug.Log($"Time: {row.time.start}");
-                UnityEngine.Debug.Log($"Location: {row.geo.numPost}");
+                //UnityEngine.Debug.Log($"Time: {row.time.start}");
+                //UnityEngine.Debug.Log($"Location: {row.geo.numPost}");
                 foreach (AttributeValue attr in row.attributes)
                     UnityEngine.Debug.Log($"Attribute: {attr.attribute.key} - {attr.value}");
                 foreach (var measure in row.measures)
@@ -131,32 +134,76 @@ namespace Assets.Scripts.Foenn.Atlas
             }
         }
 
-        //SqliteException: The database disk image is malformed
-        //database disk image is malformed
-        //Mono.Data.Sqlite.SQLite3.Reset(Mono.Data.Sqlite.SqliteStatement stmt) (at<99f7d8f9a65b4d91ae5b1d55c424866f>:0)
-        //Mono.Data.Sqlite.SQLite3.Step(Mono.Data.Sqlite.SqliteStatement stmt) (at<99f7d8f9a65b4d91ae5b1d55c424866f>:0)
-        //Mono.Data.Sqlite.SqliteDataReader.NextResult() (at<99f7d8f9a65b4d91ae5b1d55c424866f>:0)
-        //(wrapper remoting-invoke-with-check) Mono.Data.Sqlite.SqliteDataReader.NextResult()
-        //Mono.Data.Sqlite.SqliteDataReader..ctor(Mono.Data.Sqlite.SqliteCommand cmd, System.Data.CommandBehavior behave) (at<99f7d8f9a65b4d91ae5b1d55c424866f>:0)
-        //(wrapper remoting-invoke-with-check) Mono.Data.Sqlite.SqliteDataReader..ctor(Mono.Data.Sqlite.SqliteCommand, System.Data.CommandBehavior)
-        //Mono.Data.Sqlite.SqliteCommand.ExecuteReader(System.Data.CommandBehavior behavior) (at<99f7d8f9a65b4d91ae5b1d55c424866f>:0)
-        //Mono.Data.Sqlite.SqliteCommand.ExecuteNonQuery() (at<99f7d8f9a65b4d91ae5b1d55c424866f>:0)
-        //Assets.Scripts.Foenn.Engine.Connectors.SqlConnector.ExecuteOperation(System.String sql) (at Assets/Scripts/Foenn/Engine/Connectors/SqlConnector.cs:30)
-        //Assets.Scripts.Foenn.Engine.Connectors.SqliteConnector.DropStagingTable(Assets.Scripts.Foenn.ETL.Models.SchemaDefinition schema) (at Assets/Scripts/Foenn/Engine/Connectors/SqliteConnector.cs:205)
-        //Assets.Scripts.Foenn.ETL.ETLProcessor.ProcessETL(System.Threading.CancellationToken cancellationToken) (at Assets/Scripts/Foenn/ETL/ETLProcessor.cs:78)
-        //Assets.Scripts.Foenn.Atlas.Main+<>c__DisplayClass7_0.<LoadFile>b__0() (at Assets/Scripts/Foenn/Atlas/Main.cs:176)
-        //System.Threading.Tasks.Task.InnerInvoke() (at<8ce0bd04a7a04b4b9395538239d3fdd8>:0)
-        //System.Threading.Tasks.Task.Execute() (at<8ce0bd04a7a04b4b9395538239d3fdd8>:0)
-        //Rethrow as AggregateException: One or more errors occurred. (The database disk image is malformed
-        //database disk image is malformed)
-        //UnityEngine.Debug:LogException(Exception)
-        //Assets.Scripts.Foenn.Atlas.<LoadFile>d__7:MoveNext() (at Assets/Scripts/Foenn/Atlas/Main.cs:182)
-        //UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+        private QueryResult TemperatureDataPoints(string AAAAMMJJHH)
+        {
+            return new SqliteConnector().ExecuteQuery(new QueryRequest(WeatherHistoryDatasource.tableName)
+                .Select(new Attribute(WeatherHistoryAttributeKey.LON))
+                .Select(new Attribute(WeatherHistoryAttributeKey.LAT))
+                .Select(new Attribute(WeatherHistoryAttributeKey.NOM_USUEL))
+                .Select(new Metric(WeatherHistoryMetricKey.T))
+                .Where(new ExcludeNullFilter(WeatherHistoryMetricKey.T))
+                .Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.AAAAMMJJHH, AAAAMMJJHH)));
+        }
+
+
+        private void TestHeatmap()
+        {
+            QueryResult result = TemperatureDataPoints("2023010110");
+            var points = new List<MeasurePoint>();
+            foreach (var item in result.rows)
+            {
+                string station = item.attributes.Find(a => a.attribute.key.Equals(WeatherHistoryAttributeKey.NOM_USUEL)).value;
+                float lon = float.Parse(item.attributes.Find(a => a.attribute.key.Equals(WeatherHistoryAttributeKey.LON)).value, CultureInfo.InvariantCulture);
+                float lat = float.Parse(item.attributes.Find(a => a.attribute.key.Equals(WeatherHistoryAttributeKey.LAT)).value, CultureInfo.InvariantCulture);
+                var measure = item.measures.Find(a => a.metric.key.Equals(WeatherHistoryMetricKey.T));
+                if(measure == null)
+                {
+                    throw new System.Exception("measure not found");
+                }
+                float? temp = item.measures.Find(a => a.metric.key.Equals(WeatherHistoryMetricKey.T)).value;
+                if(!temp.HasValue)
+                {
+                    throw new System.Exception("no T found for " + station);
+                }
+                points.Add(new MeasurePoint(lon, lat, temp.Value));
+            }
+
+            var settings = new HeatmapSettings
+            {
+                width = 1024,
+                height = 1024,
+                bBox = BBox.France,
+
+                idwPower = 2f,
+                maxNeighbors = 16,
+                maxRadiusPx = 120f,
+
+                cellSizePx = 32,
+                alpha = 0.85f,
+
+                // Choix: fixe ou dynamique. Fixe = couleurs stables dans le temps.
+                tempMin = -10f,
+                tempMax = 40f
+            };
+
+            // Optionnel: masque France (PNG N/B importé en Texture2D)
+            Texture2D mask = null;// franceMaskTex;
+
+            Texture2D heat = HeatmapGenerator.BuildHeatmapTexture(points, settings, mask);
+
+            // Assigne à un RawImage (UI) ou à un material sur un quad
+            rawImage.texture = heat;
+        }
 
         void Start()
         {
             Env.SetDatabasePath(SqliteConnector.DATABASE_PATH);
             UnityEngine.Debug.Log("ok");
+
+            TestHeatmap();
+
+            return;
+
             TestModels();
             StartCoroutine(TestETL());
             TestEngine();

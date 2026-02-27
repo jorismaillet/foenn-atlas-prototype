@@ -4,11 +4,9 @@ namespace Assets.Scripts.Foenn.Engine.OLAP.Filters
 {
     public abstract class Filter
     {
-        public WeatherHistoryAttributeKey filteredAttributeKey;
-
-        protected Filter(WeatherHistoryAttributeKey filteredAttributeKey)
+        protected Filter()
         {
-            this.filteredAttributeKey = filteredAttributeKey;
+
         }
     }
 }

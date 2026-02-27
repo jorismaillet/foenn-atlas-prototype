@@ -49,7 +49,7 @@ namespace Assets.Editor.Tests.ETL
             loader.connector.CreateStagingTable(schema);
             loader.StartStaging(schema);
             loader.StageLine(line, extraColumns);
-            loader.CommitStaging();
+            loader.EndStaging();
             var res = loader.connector.ExecuteQuery(new QueryRequest("weather_data_staging"));
             Assert.AreEqual(res.rows.Count, 1);
             Assert.AreEqual(res.rows[0].geo.numPost, "290001");

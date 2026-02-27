@@ -17,7 +17,17 @@ namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
         }
         public IEnumerable<string> SelectedMetrics(List<Metric> selectedMetrics, ISqlDialect dialect)
         {
-            return selectedMetrics.Select(m => $"{m.aggregation}({dialect.QuoteIdent(m.key.ToString())})");
+            return selectedMetrics.Select(m =>
+            {
+                if (m.aggregation == null)
+                {
+                    return $"{dialect.QuoteIdent(m.key.ToString())}";
+                }
+                else
+                {
+                    return $"{m.aggregation}({dialect.QuoteIdent(m.key.ToString())})";
+                }
+            });
         }
         public IEnumerable<string> SelectedAttributes(List<Attribute> selectedAttributes, ISqlDialect dialect)
         {

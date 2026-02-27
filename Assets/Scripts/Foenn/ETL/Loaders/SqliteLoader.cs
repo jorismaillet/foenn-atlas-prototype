@@ -20,7 +20,7 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
         public SqliteConnector connector;
         private SqliteTransaction transaction;
         private SqliteCommand command;
-        private int loaded = 0, inBatch = 0, batchSize = 1000;
+        private int loaded = 0, inBatch = 0, batchSize = 10000;
 
         public SqliteLoader(Datasource datasource) : base(datasource)
         {
@@ -78,9 +78,7 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
             inBatch++;
             if (inBatch >= batchSize)
             {
-                swBatch.Start();
-                transaction.Commit();
-                transaction.Dispose();
+                CommitStaging();
                 transaction = (SqlConnector.connection as SqliteConnection).BeginTransaction();
                 command.Transaction = transaction;
                 inBatch = 0;
@@ -88,21 +86,33 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
             }
         }
 
+        public override void EndStaging()
+        {
+            try
+            {
+                CommitStaging();
+            }
+            finally
+            {
+                command.Dispose();
+                connector.CloseSession();
+                loaded = 0;
+            }
+        }
+
         public override void CommitStaging()
         {
             try
             {
-                transaction?.Commit();
+                swBatch.Start();
+                transaction.Commit();
+                transaction.Dispose();
+                transaction = null;
+                swBatch.Stop();
             }
             finally
             {
-                command?.Dispose();
-                command = null;
-                transaction?.Dispose();
-                transaction = null;
-                connector.CloseSession();
                 inBatch = 0;
-                loaded = 0;
             }
         }
 

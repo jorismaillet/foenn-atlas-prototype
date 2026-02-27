@@ -18,6 +18,7 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
         public abstract void StartStaging(SchemaDefinition schema);
         public abstract void StageLine(string[] line, string[] extraLines);
         public abstract void CommitStaging();
+        public abstract void EndStaging();
         public abstract void MergeStaging(SchemaDefinition schema);
     }
 }

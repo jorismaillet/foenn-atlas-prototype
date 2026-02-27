@@ -43,6 +43,7 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
         public QueryResult ExecuteQuery(QueryRequest request)
         {
             var sql = request.ToSql(dialect);
+            UnityEngine.Debug.Log($"Executing query : {sql}");
             OpenSession();
             var command = connection.CreateCommand();
             

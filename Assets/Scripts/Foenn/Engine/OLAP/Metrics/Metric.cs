@@ -7,9 +7,9 @@ namespace Assets.Scripts.Foenn.Engine.OLAP.Metrics
     public class Metric
     {
         public WeatherHistoryMetricKey key;
-        public AggregationKey aggregation;
+        public AggregationKey? aggregation;
 
-        public Metric(WeatherHistoryMetricKey key, AggregationKey aggregation)
+        public Metric(WeatherHistoryMetricKey key, AggregationKey? aggregation = null)
         {
             this.key = key;
             this.aggregation = aggregation;

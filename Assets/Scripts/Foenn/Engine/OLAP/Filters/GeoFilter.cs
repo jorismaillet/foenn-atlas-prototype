@@ -7,7 +7,7 @@ namespace Assets.Scripts.Foenn.Engine.OLAP.Filters
     {
         public GeoPoint point;
 
-        public GeoFilter(GeoPoint point, WeatherHistoryAttributeKey filteredAttributeKey) : base(filteredAttributeKey)
+        public GeoFilter(GeoPoint point, WeatherHistoryAttributeKey filteredAttributeKey) : base()
         {
             this.point = point;
         }
