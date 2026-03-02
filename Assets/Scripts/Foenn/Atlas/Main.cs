@@ -37,6 +37,7 @@ namespace Assets.Scripts.Foenn.Atlas
     {
         public RawImage pointmapImage;
         public RawImage heatmapImage;
+        public PointmapUiOverlay pointmapUiOverlay;
 
         public void TestModels()
         {
@@ -162,12 +163,14 @@ namespace Assets.Scripts.Foenn.Atlas
 
             pointmapImage.texture = pointmapTexture;
             heatmapImage.texture = heatmapTexture;
+
+            pointmapUiOverlay.SetMeasures(measures);
         }
 
         private List<GeoMeasure> GetMeasuresFor(string AAAAMMJJHH, WeatherHistoryMetricKey metricKey)
         {
             var res = new List<GeoMeasure>();
-            foreach (var item in TemperatureDataPoints("2023010110").rows)
+            foreach (var item in TemperatureDataPoints(AAAAMMJJHH).rows)
             {
                 string station = item.attributes.Find(a => a.attribute.key.Equals(WeatherHistoryAttributeKey.NOM_USUEL)).value;
                 float lon = float.Parse(item.attributes.Find(a => a.attribute.key.Equals(WeatherHistoryAttributeKey.LON)).value, CultureInfo.InvariantCulture);

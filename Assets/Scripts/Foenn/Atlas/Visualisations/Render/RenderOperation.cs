@@ -5,6 +5,7 @@ namespace Assets.Scripts.Foenn.Atlas.Models.Geo
 {
     public static class RenderOperation
     {
+
         public static float LonToX(float lon, Visualisations.RenderSettings settings)
         {
             float denom = settings.bBox.maxLon - settings.bBox.minLon;
