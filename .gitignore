@@ -106,10 +106,4 @@ $RECYCLE.BIN/
 Assets/Store/
 
 # Dataset files
-Assets/Resources/Descriptions
-Assets/Resources/Populations
-Assets/Resources/Weathers
-Assets/Resources/sqlite
-Assets/Resources/Descriptions.meta
-Assets/Resources/Populations.meta
-Assets/Resources/Weathers.meta
+Assets/Resources/*

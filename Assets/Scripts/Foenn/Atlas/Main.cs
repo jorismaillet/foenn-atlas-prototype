@@ -6,6 +6,7 @@ using Assets.Scripts.Foenn.Atlas.Models.Locations;
 using Assets.Scripts.Foenn.Atlas.Models.Maps;
 using Assets.Scripts.Foenn.Atlas.Models.Plannings;
 using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap;
+using Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap;
 using Assets.Scripts.Foenn.Engine.Connectors;
 using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
@@ -34,7 +35,8 @@ namespace Assets.Scripts.Foenn.Atlas
 {
     public class Main : BaseHolder
     {
-        public RawImage rawImage;
+        public RawImage pointmapImage;
+        public RawImage heatmapImage;
 
         public void TestModels()
         {
@@ -49,13 +51,13 @@ namespace Assets.Scripts.Foenn.Atlas
 
             var beauTemps = new NamedCondition("Beau temps", new AllCondition(pasDePluie, peuDeRafales, peuDeVent));
 
-            var brest = new PointLocation("Brest", new GeoPoint(48.3904, -4.4861));
+            var brest = new PointLocation("Brest", new GeoPoint(48.3904F, -4.4861F));
 
-            Location tcQuimper = new PointLocation("TC Quimper", new GeoPoint(48.3904, -4.4861));
-            Location tcPontLabbe = new PointLocation("TC Pont l'Abbé", new GeoPoint(48.3904, -4.4861));
-            PointLocation maison = new PointLocation("Maison", new GeoPoint(48.3904, -4.4861));
+            Location tcQuimper = new PointLocation("TC Quimper", new GeoPoint(48.3904F, -4.4861F));
+            Location tcPontLabbe = new PointLocation("TC Pont l'Abbé", new GeoPoint(48.3904F, -4.4861F));
+            PointLocation maison = new PointLocation("Maison", new GeoPoint(48.3904F, -4.4861F));
             Location procheMaison = new CircleLocation("Proche Maison", maison, 5000);
-            Location plageIleTudy = new PolygonLocation("Plage Ile Tudy", new GeoPoint(48.3904, -4.4861), new GeoPoint(48.3904, -4.4861), new GeoPoint(48.3904, -4.4861));
+            Location plageIleTudy = new PolygonLocation("Plage Ile Tudy", new GeoPoint(48.3904F, -4.4861F), new GeoPoint(48.3904F, -4.4861F), new GeoPoint(48.3904F, -4.4861F));
 
             var piscine = new Activity("Piscine", beauTemps, new GroupAllCondition(temp, 25, 33));
 
@@ -146,53 +148,43 @@ namespace Assets.Scripts.Foenn.Atlas
         }
 
 
-        private void TestHeatmap()
+        private void TestRender()
         {
-            QueryResult result = TemperatureDataPoints("2023010110");
-            var points = new List<MeasurePoint>();
-            foreach (var item in result.rows)
+            var renderSettings = new Visualisations.RenderSettings(1024, 1024, BBox.France);
+            var heatmapSettings = new HeatmapSettings(renderSettings, 2f, 16, 120f, 0.85f, -10f, 40f, 32);
+            var pointmapSettings = new PointmapSettings(renderSettings, PointmapSettings.defaultColor);
+
+            // Optionnel: masque France (PNG N/B importé en Texture2D)
+            Texture2D mask = null;// franceMaskTex;
+            List<GeoMeasure> measures = GetMeasuresFor("2023010110", WeatherHistoryMetricKey.T);
+            Texture2D heatmapTexture = HeatmapGenerator.BuildHeatmapTexture(measures, heatmapSettings, mask);
+            Texture2D pointmapTexture = PointmapGenerator.BuildPointmapTexture(measures, pointmapSettings, mask);
+
+            pointmapImage.texture = pointmapTexture;
+            heatmapImage.texture = heatmapTexture;
+        }
+
+        private List<GeoMeasure> GetMeasuresFor(string AAAAMMJJHH, WeatherHistoryMetricKey metricKey)
+        {
+            var res = new List<GeoMeasure>();
+            foreach (var item in TemperatureDataPoints("2023010110").rows)
             {
                 string station = item.attributes.Find(a => a.attribute.key.Equals(WeatherHistoryAttributeKey.NOM_USUEL)).value;
                 float lon = float.Parse(item.attributes.Find(a => a.attribute.key.Equals(WeatherHistoryAttributeKey.LON)).value, CultureInfo.InvariantCulture);
                 float lat = float.Parse(item.attributes.Find(a => a.attribute.key.Equals(WeatherHistoryAttributeKey.LAT)).value, CultureInfo.InvariantCulture);
                 var measure = item.measures.Find(a => a.metric.key.Equals(WeatherHistoryMetricKey.T));
-                if(measure == null)
+                if (measure == null)
                 {
                     throw new System.Exception("measure not found");
                 }
                 float? temp = item.measures.Find(a => a.metric.key.Equals(WeatherHistoryMetricKey.T)).value;
-                if(!temp.HasValue)
+                if (!temp.HasValue)
                 {
                     throw new System.Exception("no T found for " + station);
                 }
-                points.Add(new MeasurePoint(lon, lat, temp.Value));
+                res.Add(new GeoMeasure(new GeoPoint(lat, lon), temp.Value));
             }
-
-            var settings = new HeatmapSettings
-            {
-                width = 1024,
-                height = 1024,
-                bBox = BBox.France,
-
-                idwPower = 2f,
-                maxNeighbors = 16,
-                maxRadiusPx = 120f,
-
-                cellSizePx = 32,
-                alpha = 0.85f,
-
-                // Choix: fixe ou dynamique. Fixe = couleurs stables dans le temps.
-                tempMin = -10f,
-                tempMax = 40f
-            };
-
-            // Optionnel: masque France (PNG N/B importé en Texture2D)
-            Texture2D mask = null;// franceMaskTex;
-
-            Texture2D heat = HeatmapGenerator.BuildHeatmapTexture(points, settings, mask);
-
-            // Assigne à un RawImage (UI) ou à un material sur un quad
-            rawImage.texture = heat;
+            return res;
         }
 
         void Start()
@@ -200,7 +192,7 @@ namespace Assets.Scripts.Foenn.Atlas
             Env.SetDatabasePath(SqliteConnector.DATABASE_PATH);
             UnityEngine.Debug.Log("ok");
 
-            TestHeatmap();
+            TestRender();
 
             return;
 

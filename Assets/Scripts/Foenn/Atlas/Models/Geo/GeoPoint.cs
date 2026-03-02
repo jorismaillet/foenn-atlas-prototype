@@ -1,10 +1,10 @@
 ﻿namespace Assets.Scripts.Foenn.Atlas.Models.Geo
 {
-    public class GeoPoint
+    public readonly struct GeoPoint
     {
-        public double lat, lon;
+        public readonly float lat, lon;
 
-        public GeoPoint(double lat, double lon)
+        public GeoPoint(float lat, float lon)
         {
             this.lat = lat;
             this.lon = lon;
