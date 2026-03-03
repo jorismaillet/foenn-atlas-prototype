@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 3076155363517200857}
   - component: {fileID: 1726569378786863371}
   - component: {fileID: 7615554416089258681}
+  - component: {fileID: 1704424740500954166}
   m_Layer: 5
-  m_Name: GeoPoint
+  m_Name: GeoMeasure
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75,3 +76,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1704424740500954166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5764748186541555107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e8efe6d7f25621489c2e8c3ec27a916, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onInitialize:
+    m_PersistentCalls:
+      m_Calls: []

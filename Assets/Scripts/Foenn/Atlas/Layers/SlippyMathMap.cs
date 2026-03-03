@@ -33,6 +33,15 @@ namespace Assets.Scripts.Foenn.Atlas.Layers
         }
 
         /// <summary>
+        /// Inverse of <see cref="LonToTileX"/>.
+        /// </summary>
+        public static double TileXToLon(double tileX, int z)
+        {
+            double scale = (double)(1 << z);
+            return tileX / scale * 360.0 - 180.0;
+        }
+
+        /// <summary>
         /// Slippy-map tile Y coordinate (WebMercator), continuous in [0, 2^z].
         /// </summary>
         public static double LatToTileY(double lat, int z)
@@ -45,6 +54,16 @@ namespace Assets.Scripts.Foenn.Atlas.Layers
             double n = Math.Log(Math.Tan(QuarterPi + latRad * Half));
             double scale = (double)(1 << z);
             return (Half - (n * InvPi) * Half) * scale;
+        }
+
+        /// <summary>
+        /// Inverse of <see cref="LatToTileY"/>.
+        /// </summary>
+        public static double TileYToLat(double tileY, int z)
+        {
+            double scale = (double)(1 << z);
+            double n = Math.PI - 2.0 * Math.PI * tileY / scale;
+            return Math.Atan(Math.Sinh(n)) / Deg2Rad;
         }
 
         public static Vector2 GeoToWorld(GeoPoint point, int z, double centerTileX, double centerTileY)

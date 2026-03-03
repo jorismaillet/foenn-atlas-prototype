@@ -1,9 +1,9 @@
 ﻿namespace Assets.Scripts.Foenn.Atlas.Models.Geo
 {
-    public readonly struct GeoMeasure
+    public class GeoMeasure
     {
-        public readonly GeoPoint point;
-        public readonly float value;
+        public GeoPoint point;
+        public float value;
 
         public GeoMeasure(GeoPoint point, float value)
         {

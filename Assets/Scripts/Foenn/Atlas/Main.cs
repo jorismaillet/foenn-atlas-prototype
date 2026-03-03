@@ -6,7 +6,9 @@ using Assets.Scripts.Foenn.Atlas.Models.Locations;
 using Assets.Scripts.Foenn.Atlas.Models.Maps;
 using Assets.Scripts.Foenn.Atlas.Models.Plannings;
 using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap;
+using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage;
 using Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap;
+using Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap.RawImage;
 using Assets.Scripts.Foenn.Engine.Connectors;
 using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
@@ -20,12 +22,14 @@ using Assets.Scripts.Foenn.ETL.Loaders;
 using Assets.Scripts.Foenn.ETL.Transformers;
 using Assets.Scripts.Unity;
 using Assets.Scripts.Unity.Commons.Behaviours;
+using Assets.Scripts.Unity.Commons.Containers;
 using Assets.Scripts.Unity.Commons.Holders;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Security.Permissions;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -35,9 +39,9 @@ namespace Assets.Scripts.Foenn.Atlas
 {
     public class Main : BaseHolder
     {
-        public RawImage pointmapImage;
-        public RawImage heatmapImage;
-        public PointmapUiOverlay pointmapUiOverlay;
+        public PrefabsContainer pointMapContainer;
+        public DisplayPointmapRawImage pointmapRawImageOverlay;
+        public DisplayHeatmapRawImage heatmapRawImageOverlay;
 
         public void TestModels()
         {
@@ -151,20 +155,18 @@ namespace Assets.Scripts.Foenn.Atlas
 
         private void TestRender()
         {
-            var renderSettings = new Visualisations.RenderSettings(1024, 1024, BBox.France);
-            var heatmapSettings = new HeatmapSettings(renderSettings, 2f, 16, 120f, 0.85f, -10f, 40f, 32);
-            var pointmapSettings = new PointmapSettings(renderSettings, PointmapSettings.defaultColor);
+            var renderSettings = Visualisations.RenderSettings.franceHDRender;
 
-            // Optionnel: masque France (PNG N/B importé en Texture2D)
-            Texture2D mask = null;// franceMaskTex;
+            var heatmapRawImageSettings = new HeatmapRawImageSettings(0.85f, -10f, 40f);
+            var heatmapSettings = new HeatmapSettings(2f, 16, 120f, 32);
+
+            var pointmapRawImageSettings = new PointmapRawImageSettings(PointmapRawImageSettings.defaultColor);
+
             List<GeoMeasure> measures = GetMeasuresFor("2023010110", WeatherHistoryMetricKey.T);
-            Texture2D heatmapTexture = HeatmapGenerator.BuildHeatmapTexture(measures, heatmapSettings, mask);
-            Texture2D pointmapTexture = PointmapGenerator.BuildPointmapTexture(measures, pointmapSettings, mask);
 
-            pointmapImage.texture = pointmapTexture;
-            heatmapImage.texture = heatmapTexture;
-
-            pointmapUiOverlay.SetMeasures(measures);
+            pointMapContainer.Initialize(measures);
+            pointmapRawImageOverlay.Display(measures, renderSettings);
+            heatmapRawImageOverlay.Display(measures, heatmapSettings, renderSettings);
         }
 
         private List<GeoMeasure> GetMeasuresFor(string AAAAMMJJHH, WeatherHistoryMetricKey metricKey)

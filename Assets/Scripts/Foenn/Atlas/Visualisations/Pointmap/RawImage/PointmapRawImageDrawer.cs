@@ -1,31 +1,28 @@
 using Assets.Scripts.Foenn.Atlas.Models.Geo;
+using Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap.RawImage;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap
 {
-    internal static class PointmapTextureRenderer
+    public static class PointmapRawImageDrawer
     {
-        internal static Color32[] RenderPointmapPixels(
-            IReadOnlyList<PixelPoint> points,
-            PointmapSettings s,
-            Color32[] maskPixels
-        )
+        public static Color32[] RenderPointmapPixels(IReadOnlyList<PixelPoint> points, PointmapRawImageSettings rawImageSettings, RenderSettings renderSettings)
         {
-            var outPixels = new Color32[s.render.width * s.render.height];
+            var outPixels = new Color32[renderSettings.width * renderSettings.height];
 
-            Color c = s.pointColor;
-            c.a *= s.alpha;
+            Color c = rawImageSettings.pointColor;
+            c.a *= rawImageSettings.alpha;
             Color32 src = c;
 
-            int r = Mathf.Max(0, s.pointRadiusPx);
+            int r = Mathf.Max(0, rawImageSettings.pointRadiusPx);
             int r2 = r * r;
 
             for (int i = 0; i < points.Count; i++)
             {
                 var p = points[i];
-                DrawFilledCircle(outPixels, s.render, maskPixels, p.x, p.y, r, r2, src);
+                DrawFilledCircle(outPixels, renderSettings, p.x, p.y, r, r2, src);
             }
 
             return outPixels;
@@ -34,7 +31,6 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap
         static void DrawFilledCircle(
             Color32[] outPixels,
             RenderSettings render,
-            Color32[] maskPixels,
             int cx,
             int cy,
             int r,
@@ -58,9 +54,6 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap
                     if (dx * dx + dy2 > r2) continue;
 
                     int idx = y * render.width + x;
-
-                    if (maskPixels != null && maskPixels[idx].r < 128)
-                        continue;
 
                     outPixels[idx] = AlphaBlend(src, outPixels[idx]);
                 }

@@ -1,4 +1,5 @@
 using Assets.Scripts.Foenn.Atlas.Models.Geo;
+using Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap.RawImage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,25 +9,19 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap
 {
     public static class PointmapGenerator
     {
-        public static Texture2D BuildPointmapTexture(
-            IReadOnlyList<GeoMeasure> geoMeasures,
-            PointmapSettings s,
-            Texture2D mapMask = null
-        )
+        public static Texture2D BuildRawImageTexture(IReadOnlyList<GeoMeasure> geoMeasures, PointmapRawImageSettings rawImageSettings, RenderSettings renderSettings)
         {
-            ValidateInputs(geoMeasures, s);
-
-            var pixelPoints = geoMeasures.ToPixelPoints(s.render).ToList();;
-            var maskPixels = RenderOperation.ReadMaskPixels(mapMask, s.render);
-            var outPixels = PointmapRenderer.RenderPointmapPixels(pixelPoints, s, maskPixels);
-            return RenderOperation.CreateTexture(outPixels, s.render);
+            ValidateInput(geoMeasures);
+            rawImageSettings.Validate();
+            var pixelPoints = geoMeasures.ToPixelPoints(renderSettings).ToList();
+            var coloredPixels = PointmapRawImageDrawer.RenderPointmapPixels(pixelPoints, rawImageSettings, renderSettings);
+            var texture = RenderOperation.CreateTexture(coloredPixels, renderSettings);
+            return texture;
         }
 
-        static void ValidateInputs(IReadOnlyList<GeoMeasure> geoMeasures, PointmapSettings s)
+        static void ValidateInput(IReadOnlyList<GeoMeasure> geoMeasures)
         {
-            s.Validate();
-
-            if (geoMeasures == null || geoMeasures.Count == 0)
+            if (geoMeasures == null || !geoMeasures.Any())
                 throw new ArgumentException("No points.");
         }
     }

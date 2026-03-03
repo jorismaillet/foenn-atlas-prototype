@@ -9,6 +9,8 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations
         public readonly int height;
         public readonly BBox bBox;
 
+        public static readonly RenderSettings franceHDRender = new RenderSettings(1024, 1024, BBox.France);
+
         public RenderSettings(int width, int height, BBox bBox)
         {
             this.width = width;

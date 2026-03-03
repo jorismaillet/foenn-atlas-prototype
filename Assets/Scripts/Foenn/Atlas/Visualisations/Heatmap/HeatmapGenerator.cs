@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
+using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,35 +9,32 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
 {
     public class HeatmapGenerator
     {
-        public static Texture2D BuildHeatmapTexture(
-            IReadOnlyList<GeoMeasure> geoMeasures,
-            HeatmapSettings s,
-            Texture2D mapMask = null // optional, same size, white=keep, black=hide
-        )
+        public static Texture2D BuildRawImageTexture(IReadOnlyList<GeoMeasure> geoMeasures, HeatmapSettings settings, RenderSettings render, HeatmapRawImageSettings rawImageSettings)
         {
-            ValidateInputs(geoMeasures, s);
+            ValidateInputs(geoMeasures, settings, rawImageSettings);
 
-            var pixelMeasures = geoMeasures.ToPixelMeasures(s.render).ToList();
+            var pixelMeasures = geoMeasures.ToPixelMeasures(render).ToList();
             if (pixelMeasures.Count < 3) throw new ArgumentException("Not enough points in bbox.");
 
-            int cellSize = Mathf.Max(4, s.cellSizePx);
-            int gridCols = Mathf.CeilToInt(s.render.width / (float)cellSize);
-            int gridRows = Mathf.CeilToInt(s.render.height / (float)cellSize);
+            int cellSize = Mathf.Max(4, settings.cellSizePx);
+            int gridCols = Mathf.CeilToInt(render.width / (float)cellSize);
+            int gridRows = Mathf.CeilToInt(render.height / (float)cellSize);
 
-            var gridBucketsArray = BuildGridBucketsArray(pixelMeasures, cellSize, gridCols, gridRows);
-            var maskPixels = RenderOperation.ReadMaskPixels(mapMask, s.render);
-            var outPixels = HeatmapRenderer.RenderHeatmapPixels(pixelMeasures, gridBucketsArray, s, cellSize, gridCols, gridRows, maskPixels);
-
-            return RenderOperation.CreateTexture(outPixels, s.render);
+            var spatialHash = BuildSpatialHash(pixelMeasures, cellSize, gridCols, gridRows);
+            var averageGrid = new TemperatureGrid(pixelMeasures, spatialHash, settings, render, cellSize, gridCols, gridRows);
+            var outPixels = HeatmapRawImageDrawer.ColorizeAverageGrid(averageGrid, render, settings, rawImageSettings);
+            var texture = RenderOperation.CreateTexture(outPixels, render);
+            return texture;
         }
 
-        static void ValidateInputs(IReadOnlyList<GeoMeasure> geoMeasures, HeatmapSettings s)
+        private static void ValidateInputs(IReadOnlyList<GeoMeasure> geoMeasures, HeatmapSettings settings, HeatmapRawImageSettings rawImageSettings)
         {
-            s.Validate();
+            settings.Validate();
+            rawImageSettings.Validate();
             if (geoMeasures == null || geoMeasures.Count == 0) throw new ArgumentException("No points.");
         }
 
-        static int[][] BuildGridBucketsArray(IReadOnlyList<PixelMeasure> pixelMeasures, int cellSize, int gridCols, int gridRows)
+        private static int[][] BuildSpatialHash(IReadOnlyList<PixelMeasure> pixelMeasures, int cellSize, int gridCols, int gridRows)
         {
             int cellCount = gridCols * gridRows;
             var gridBucketsList = new List<int>[cellCount];
@@ -55,7 +53,6 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
                 }
                 gridBucket.Add(pixelMeasureIndice);
             }
-
             var gridBucketsArray = new int[cellCount][];
             for (int i = 0; i < gridBucketsList.Length; i++)
             {
@@ -63,7 +60,6 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
                 if (bucket != null)
                     gridBucketsArray[i] = bucket.ToArray();
             }
-
             return gridBucketsArray;
         }
     }
