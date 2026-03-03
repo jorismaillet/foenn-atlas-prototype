@@ -87,7 +87,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap
                 if (screenPos.z <= 0f)
                     continue;
 
-                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPos, worldCamera, out var localPos))
+                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPos, null, out var localPos))
                     rect.anchoredPosition = localPos;
             }
         }

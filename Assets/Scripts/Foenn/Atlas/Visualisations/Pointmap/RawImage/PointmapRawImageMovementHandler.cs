@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.Foenn.Atlas.Visualisations.Render
 {
-    public class RawImageMovementHandler : MonoBehaviour
+    public class PointmapRawImageMovementHandler : MonoBehaviour
     {
         [Header("References")]
         [SerializeField] TileGridRenderer tileGridRenderer;

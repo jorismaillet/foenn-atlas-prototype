@@ -39,9 +39,8 @@ namespace Assets.Scripts.Foenn.Atlas
 {
     public class Main : BaseHolder
     {
-        public PrefabsContainer pointMapContainer;
-        public DisplayPointmapRawImage pointmapRawImageOverlay;
-        public DisplayHeatmapRawImage heatmapRawImageOverlay;
+        public PrefabsContainer pointmapContainer;
+        public HeatmapWorldOverlay heatmapContainer;
 
         public void TestModels()
         {
@@ -164,9 +163,8 @@ namespace Assets.Scripts.Foenn.Atlas
 
             List<GeoMeasure> measures = GetMeasuresFor("2023010110", WeatherHistoryMetricKey.T);
 
-            pointMapContainer.Initialize(measures);
-            pointmapRawImageOverlay.Display(measures, renderSettings);
-            heatmapRawImageOverlay.Display(measures, heatmapSettings, renderSettings);
+            pointmapContainer.Initialize(measures);
+            heatmapContainer.SetMeasures(measures);
         }
 
         private List<GeoMeasure> GetMeasuresFor(string AAAAMMJJHH, WeatherHistoryMetricKey metricKey)

@@ -5,7 +5,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
 {
     internal static class HeatmapRawImageDrawer
     {
-        internal static Color32[] ColorizeAverageGrid(TemperatureGrid grid, RenderSettings render, HeatmapSettings settings, HeatmapRawImageSettings rawImageSettings)
+        internal static Color32[] ColorizeAverageGrid(TemperatureGrid grid, RenderSettings render, HeatmapSettings settings, HeatmapRawImageSettings rawImageSettings, Color32[] maskPixels = null)
         {
             var outPixels = new Color32[render.width * render.height];
 
@@ -13,6 +13,12 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
 
             for (int i = 0; i < outPixels.Length; i++)
             {
+                if (maskPixels != null && maskPixels[i].r < 128)
+                {
+                    outPixels[i] = new Color32(0, 0, 0, 0);
+                    continue;
+                }
+
                 float v = grid.values[i];
                 if (float.IsNaN(v))
                 {

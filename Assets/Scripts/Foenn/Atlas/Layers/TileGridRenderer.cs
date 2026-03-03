@@ -11,7 +11,7 @@ namespace Assets.Scripts.Foenn.Atlas.Layers
 
     public class TileGridRenderer : MonoBehaviour
     {
-        public GeoPoint franceCenter = new GeoPoint(46.5f, 2.0f);
+        public GeoPoint franceCenter = new GeoPoint(46.50f, 2.00f);
 
         [Header("Slippy Tiles")]
         [Range(0, 19)] public int mapZoom = 6;
