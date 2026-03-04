@@ -2,16 +2,20 @@
 
 namespace Assets.Scripts.Foenn.Atlas.Models.Locations
 {
-    public class RectangleLocation : Location
+    public class RectangleLocation : ILocation
     {
+        public string name; 
         public GeoPoint center;
         public float widthMeters, heightMeters;
 
-        public RectangleLocation(string name, GeoPoint center, float widthMeters, float heightMeters) : base(name)
+        public RectangleLocation(string name, GeoPoint center, float widthMeters, float heightMeters)
         {
+            this.name = name;
             this.center = center;
             this.widthMeters = widthMeters;
             this.heightMeters = heightMeters;
         }
+
+        public string Name => this.name;
     }
 }

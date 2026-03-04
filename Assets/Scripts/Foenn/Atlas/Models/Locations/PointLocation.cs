@@ -1,14 +1,17 @@
 ﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
+using UnityEngine;
 
 namespace Assets.Scripts.Foenn.Atlas.Models.Locations
 {
-    public class PointLocation : Location
+    public class PointLocation : GeoPoint, ILocation
     {
-        public GeoPoint point;
+        public string name;
 
-        public PointLocation(string name, GeoPoint point) : base(name)
+        public PointLocation(string name, float lat, float lon) : base(lat, lon)
         {
-            this.point = point;
+            this.name = name;
         }
+
+        public string Name => this.name;
     }
 }

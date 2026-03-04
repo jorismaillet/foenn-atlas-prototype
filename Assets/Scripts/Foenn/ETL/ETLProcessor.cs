@@ -41,24 +41,21 @@ namespace Assets.Scripts.Foenn.ETL
             var swLoad = new Stopwatch();
             long n = 0;
 
-
-
-            MainThreadLog.Log("Start");
             cancellationToken.ThrowIfCancellationRequested();
             var newProcess = ShouldProcess();
-            MainThreadLog.Log("Extract");
             var schema = new SchemaDefinition(datasource.TableName());
             schema.AddColumns(extractor.ExtractHeaders());
             var headersCount = schema.columns.Count;
             datasource.PrepareTranformer(schema);
             transformer.TransformColumns(schema);
-            MainThreadLog.Log("Create table");
             loader.Connector().CreateStagingTable(schema);
+
+            bool stagingStarted = false;
+            bool stagingEnded = false;
             try
             {
-                MainThreadLog.Log("StartLoad");
                 loader.StartStaging(schema);
-                MainThreadLog.Log("ExtractContent");
+                stagingStarted = true;
                 foreach (var line in extractor.ExtractContent(headersCount))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
@@ -67,7 +64,9 @@ namespace Assets.Scripts.Foenn.ETL
                     n++;
                 }
                 cancellationToken.ThrowIfCancellationRequested();
-                loader.CommitStaging();
+                loader.EndStaging();
+                stagingEnded = true;
+
                 loader.Connector().CreateTable(schema);
                 loader.MergeStaging(schema);
 
@@ -75,10 +74,14 @@ namespace Assets.Scripts.Foenn.ETL
             }
             finally
             {
+                if (stagingStarted && !stagingEnded)
+                {
+                    try { loader.EndStaging(); }
+                    catch {}
+                }
                 loader.Connector().DropStagingTable(schema);
                 loader.Connector().CloseSession();
             }
-            MainThreadLog.Log("End");
         }
 
         private PrimaryKey metadataID = new PrimaryKey("ID", DbType.Int64, true);

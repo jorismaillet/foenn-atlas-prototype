@@ -7,5 +7,10 @@ namespace Assets.Scripts.Foenn.Atlas.Models.Plannings
         public List<PlannedActivity> plannedActivities = new List<PlannedActivity>();
         public List<ActivityProposal> activityProposals;
         public List<PlanningRow> planningRows;
+
+        public Planning(params PlannedActivity[] plannedActivities)
+        {
+            this.plannedActivities = new List<PlannedActivity>(plannedActivities);
+        }
     }
 }

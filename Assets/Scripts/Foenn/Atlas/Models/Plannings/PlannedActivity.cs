@@ -6,9 +6,9 @@ namespace Assets.Scripts.Foenn.Atlas.Models.Plannings
     public class PlannedActivity
     {
         public Activity activity;
-        public Location location;
+        public ILocation location;
 
-        public PlannedActivity(Activity activity, Location location)
+        public PlannedActivity(Activity activity, ILocation location)
         {
             this.activity = activity;
             this.location = location;

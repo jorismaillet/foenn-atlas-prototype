@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scripts.Foenn.Atlas.Models.Geo
 {
-    public readonly struct GeoPoint
+    public class GeoPoint
     {
         public readonly float lat, lon;
 

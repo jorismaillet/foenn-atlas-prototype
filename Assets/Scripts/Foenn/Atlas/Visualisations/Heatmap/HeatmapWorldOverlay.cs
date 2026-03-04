@@ -92,7 +92,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
 
         void RebuildAll()
         {
-            if (tileGridRenderer == null) return;
+            if (tileGridRenderer == null || _measures == null) return;
 
             _lastZoom = tileGridRenderer.mapZoom;
             _lastGridSize = tileGridRenderer.gridSize;

@@ -72,7 +72,7 @@ namespace Assets.Scripts.Foenn.Atlas.Layers
         private void Start()
         {
             if (!generateOnStart) return;
-            MainThreadLog.Log($"Start");
+            MainThreadLog.Log($"Render background map");
 
             if (gridSize % 2 == 0) gridSize += 1; // force odd
             if (tileMaterial == null)

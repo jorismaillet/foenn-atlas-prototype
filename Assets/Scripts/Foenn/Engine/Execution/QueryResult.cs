@@ -2,10 +2,8 @@
 using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
 using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
-using Assets.Scripts.Foenn.ETL.Models;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Assets.Scripts.Foenn.Engine.Execution
@@ -13,25 +11,35 @@ namespace Assets.Scripts.Foenn.Engine.Execution
     public class QueryResult
     {
         public List<Row> rows;
+        public Dictionary<WeatherHistoryAttributeKey, int> attributeIndex = new Dictionary<WeatherHistoryAttributeKey, int>();
+        public Dictionary<WeatherHistoryMetricKey, int> metricIndex = new Dictionary<WeatherHistoryMetricKey, int>();
         private List<System.Action<Row, object>> columnParser = new List<System.Action<Row, object>>();
 
         public QueryResult(string[] rawHeaders)
         {
             this.rows = new List<Row>();
-            foreach (var header in rawHeaders)
+            int metricIndex = 0;
+            int attributeIndex = 0;
+            foreach (var header in rawHeaders) 
             {
                 if (System.Enum.TryParse<WeatherHistoryAttributeKey>(header, out var attributeKey))
                 {
+                    this.attributeIndex[attributeKey] = attributeIndex;
+                    attributeIndex++;
                     AddDimensionParser(new Attribute(attributeKey));
                 }
                 // Metric without aggregation
                 else if (System.Enum.TryParse<WeatherHistoryMetricKey>(header, out var metricKey))
                 {
+                    this.metricIndex[metricKey] = metricIndex;
+                    metricIndex++;
                     AddMeasureParser(new Metric(metricKey, AggregationKey.D_COUNT));
                 }
                 // Metric with aggregation
-                else if(TryParseMetric(header, out var metric))
+                else if (TryParseMetric(header, out var metric))
                 {
+                    this.metricIndex[metric.key] = metricIndex;
+                    metricIndex++;
                     AddMeasureParser(metric);
                 }
                 else
