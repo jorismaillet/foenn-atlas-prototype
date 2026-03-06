@@ -67,6 +67,11 @@ namespace Assets.Scripts.Foenn.Atlas.Components
             RebuildAll();
         }
 
+        private void OnEnable()
+        {
+            RebuildAll();
+        }
+
         void RebuildAll()
         {
             if (tileGridRenderer == null || _measures == null) return;

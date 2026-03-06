@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
+﻿using Assets.Scripts.Foenn.Atlas.Components.Holders;
+using Assets.Scripts.Foenn.Atlas.Models.Geo;
 using Assets.Scripts.Foenn.Atlas.Models.Locations;
 using Assets.Scripts.Unity.Commons.Holders;
 using TMPro;
@@ -11,7 +12,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap.Go
         {
             text.text = element.name;
         }
-        public void SetGeoPoint(Holder<GeoPoint> holder)
+        public void SetGeoPoint(GeoPointHolder holder)
         {
             holder.Initialize(element);
         } 

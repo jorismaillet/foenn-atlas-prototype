@@ -29,29 +29,13 @@ namespace Assets.Scripts.Foenn.Atlas
         }
         IEnumerator Init(List<string> filesToLoad)
         {
-            var sw = new Stopwatch();
-            sw.Start();
-            sw.Stop();
-            UnityEngine.Debug.Log($"1 {sw.ElapsedMilliseconds}ms");
-            sw.Start();
-            sw.Stop();
-            UnityEngine.Debug.Log($"2 {sw.ElapsedMilliseconds}ms");
-            sw.Start();
             if (filesToLoad.Any())
             {
                 Application.runInBackground = true;
                 yield return StartCoroutine(etlHandler.PrepareData(filesToLoad));
                 Application.runInBackground = false;
             }
-            sw.Stop();
-            UnityEngine.Debug.Log($"3 {sw.ElapsedMilliseconds}ms");
-            sw.Start();
             map.Initialize(HourToLoad, department, key);
-            sw.Stop();
-            UnityEngine.Debug.Log($"4 {sw.ElapsedMilliseconds}ms");
-            sw.Start();
-            sw.Stop();
-            UnityEngine.Debug.Log($"5 {sw.ElapsedMilliseconds}ms");
         }
     }
 }

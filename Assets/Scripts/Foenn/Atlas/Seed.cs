@@ -56,7 +56,7 @@ namespace Assets.Scripts.Foenn.Atlas
 
         public static Activity dinner = new Activity("Diner en extérieur", beauTemps, new HourRangeCondition(18, 22));
 
-        public static Planning planningSportif = new Planning(
+        public static Planning planningSportif = new Planning("Planning sportif",
             new PlannedActivity(randonee, procheMaison),
             new PlannedActivity(piscine, maison),
             new PlannedActivity(tennis, tcQuimper),
@@ -64,7 +64,7 @@ namespace Assets.Scripts.Foenn.Atlas
             new PlannedActivity(velo, procheMaison),
             new PlannedActivity(kayak, plageIleTudy)
         );
-        public static Planning ideesDeSorties = new Planning(
+        public static Planning ideesDeSorties = new Planning("Idées de sorties",
             new PlannedActivity(plage, plageIleTudy),
             new PlannedActivity(jardin, maison),
             new PlannedActivity(ville, brest),
