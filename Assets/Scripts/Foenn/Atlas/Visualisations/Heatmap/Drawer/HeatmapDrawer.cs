@@ -12,14 +12,14 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
         private const double WeightEpsilon = 1e-6;
 
         public static Color32[] RenderHeatmapPixels(
-            IReadOnlyList<PixelMeasure> pixelMeasures,
-            int[][] gridBucketsArray,
+            int[] xs,
+            int[] ys,
+            float[] vals,
+            CsrSpatialIndex spatialIndex,
             HeatmapSettings settings,
             HeatmapDrawerSettings drawer,
             RenderSettings render,
             int cellSize,
-            int gridCols,
-            int gridRows,
             Color32[] maskPixels
         )
         {
@@ -27,21 +27,8 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
             int h = render.height;
             var outPixels = new Color32[w * h];
 
-            if (pixelMeasures == null || pixelMeasures.Count == 0 || w <= 0 || h <= 0)
+            if (xs == null || ys == null || vals == null || xs.Length == 0 || w <= 0 || h <= 0)
                 return outPixels;
-
-            // Flatten measures into SoA arrays (significantly better cache behavior in hot loops).
-            int mCount = pixelMeasures.Count;
-            var xs = new int[mCount];
-            var ys = new int[mCount];
-            var vals = new float[mCount];
-            for (int i = 0; i < mCount; i++)
-            {
-                var pm = pixelMeasures[i];
-                xs[i] = pm.point.x;
-                ys[i] = pm.point.y;
-                vals[i] = pm.value;
-            }
 
             float maxRadiusPx = settings.maxRadiusPx;
             float maxR2 = maxRadiusPx * maxRadiusPx;
@@ -54,7 +41,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
             // ---- BIG perf lever ----
             // On calcule l'IDW sur une grille coarse, puis on upscale.
             // 1024² -> step 4 => ~256² samples => ~16x moins de boulot.
-            int sampleStep = ChooseSampleStep(w, h, cellSize, pixelMeasures.Count, settings.maxRadiusPx);
+            int sampleStep = ChooseSampleStep(w, h, cellSize, xs.Length, settings.maxRadiusPx);
 
             if (sampleStep <= 1)
             {
@@ -62,13 +49,11 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
                     xs,
                     ys,
                     vals,
-                    gridBucketsArray,
+                    spatialIndex,
                     settings,
                     drawer,
                     render,
                     cellSize,
-                    gridCols,
-                    gridRows,
                     maskPixels,
                     outPixels,
                     maxR2,
@@ -84,13 +69,11 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
                 xs,
                 ys,
                 vals,
-                gridBucketsArray,
+                spatialIndex,
                 settings,
                 drawer,
                 render,
                 cellSize,
-                gridCols,
-                gridRows,
                 maskPixels,
                 outPixels,
                 maxR2,
@@ -129,13 +112,11 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
             int[] xs,
             int[] ys,
             float[] vals,
-            int[][] gridBucketsArray,
+            CsrSpatialIndex spatialIndex,
             HeatmapSettings settings,
             HeatmapDrawerSettings drawer,
             RenderSettings render,
             int cellSize,
-            int gridCols,
-            int gridRows,
             Color32[] maskPixels,
             Color32[] outPixels,
             float maxR2,
@@ -170,7 +151,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
                     int bestCount = 0;
 
                     if (TryAccumulateNeighborBuckets(
-                        gridBucketsArray,
+                        spatialIndex,
                         xs,
                         ys,
                         vals,
@@ -179,8 +160,6 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
                         cx,
                         cy,
                         rangeCells,
-                        gridCols,
-                        gridRows,
                         maxR2,
                         k,
                         bestD2,
@@ -214,13 +193,11 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
             int[] xs,
             int[] ys,
             float[] vals,
-            int[][] gridBucketsArray,
+            CsrSpatialIndex spatialIndex,
             HeatmapSettings settings,
             HeatmapDrawerSettings drawer,
             RenderSettings render,
             int cellSize,
-            int gridCols,
-            int gridRows,
             Color32[] maskPixels,
             Color32[] outPixels,
             float maxR2,
@@ -240,64 +217,80 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
             var coarseTemp = new float[coarseW * coarseH];
             var coarseAlpha = new byte[coarseW * coarseH];
 
-            for (int i = 0; i < coarseTemp.Length; i++)
+#if UNITY_2019_1_OR_NEWER
+            // 1) Compute coarse field (Burst/Jobs when available)
+            if (!HeatmapDrawerJobs.TryComputeCoarseField(
+                xs,
+                ys,
+                vals,
+                spatialIndex,
+                settings,
+                cellSize,
+                maxR2,
+                pwr,
+                k,
+                rangeCells,
+                baseAlpha,
+                w,
+                h,
+                coarseW,
+                coarseH,
+                sampleStep,
+                coarseTemp,
+                coarseAlpha))
+#endif
             {
-                coarseTemp[i] = float.NaN;
-                coarseAlpha[i] = 0;
-            }
+                // 1) Compute coarse field (managed fallback)
+                var bestD2 = new float[64];
+                var bestI = new int[64];
 
-            var bestD2 = new float[64];
-            var bestI = new int[64];
-
-            // 1) Compute coarse field
-            for (int gy = 0; gy < coarseH; gy++)
-            {
-                int y = Mathf.Min(h - 1, gy * sampleStep);
-                int cy = y / cellSize;
-                int coarseRow = gy * coarseW;
-
-                for (int gx = 0; gx < coarseW; gx++)
+                for (int gy = 0; gy < coarseH; gy++)
                 {
-                    int x = Mathf.Min(w - 1, gx * sampleStep);
-                    int cx = x / cellSize;
-                    int bestCount = 0;
+                    int y = Mathf.Min(h - 1, gy * sampleStep);
+                    int cy = y / cellSize;
+                    int coarseRow = gy * coarseW;
 
-                    if (TryAccumulateNeighborBuckets(
-                        gridBucketsArray,
-                        xs,
-                        ys,
-                        vals,
-                        x,
-                        y,
-                        cx,
-                        cy,
-                        rangeCells,
-                        gridCols,
-                        gridRows,
-                        maxR2,
-                        k,
-                        bestD2,
-                        bestI,
-                        ref bestCount,
-                        out float exactValue))
+                    for (int gx = 0; gx < coarseW; gx++)
                     {
-                        coarseTemp[coarseRow + gx] = exactValue;
-                        coarseAlpha[coarseRow + gx] = baseAlpha;
-                        continue;
+                        int x = Mathf.Min(w - 1, gx * sampleStep);
+                        int cx = x / cellSize;
+                        int bestCount = 0;
+
+                        float temp = float.NaN;
+                        byte alphaByte = 0;
+
+                        if (TryAccumulateNeighborBuckets(
+                            spatialIndex,
+                            xs,
+                            ys,
+                            vals,
+                            x,
+                            y,
+                            cx,
+                            cy,
+                            rangeCells,
+                            maxR2,
+                            k,
+                            bestD2,
+                            bestI,
+                            ref bestCount,
+                            out float exactValue))
+                        {
+                            temp = exactValue;
+                            alphaByte = baseAlpha;
+                        }
+                        else if (bestCount > 0)
+                        {
+                            temp = ComputeIdwTemperature(vals, bestD2, bestI, bestCount, pwr);
+                            float nearestD = Mathf.Sqrt(bestD2[0]);
+                            float fade = 1f - (nearestD / (settings.maxRadiusPx + 1e-6f));
+                            fade = Mathf.Clamp01(fade);
+                            alphaByte = (byte)Mathf.Clamp(Mathf.RoundToInt(baseAlpha * fade), 0, 255);
+                        }
+
+                        coarseTemp[coarseRow + gx] = temp;
+                        coarseAlpha[coarseRow + gx] = alphaByte;
                     }
-
-                    if (bestCount == 0)
-                        continue;
-
-                    float temp = ComputeIdwTemperature(vals, bestD2, bestI, bestCount, pwr);
-
-                    float nearestD = Mathf.Sqrt(bestD2[0]);
-                    float fade = 1f - (nearestD / (settings.maxRadiusPx + 1e-6f));
-                    fade = Mathf.Clamp01(fade);
-                    byte alphaByte = (byte)Mathf.Clamp(Mathf.RoundToInt(baseAlpha * fade), 0, 255);
-
-                    coarseTemp[coarseRow + gx] = temp;
-                    coarseAlpha[coarseRow + gx] = alphaByte;
                 }
             }
 
@@ -379,7 +372,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
         }
 
         private static bool TryAccumulateNeighborBuckets(
-            int[][] gridBucketsArray,
+            CsrSpatialIndex spatialIndex,
             int[] xs,
             int[] ys,
             float[] vals,
@@ -388,8 +381,6 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
             int cx,
             int cy,
             int rangeCells,
-            int gridCols,
-            int gridRows,
             float maxR2,
             int k,
             float[] bestD2,
@@ -400,6 +391,8 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
         {
             exactValue = 0f;
 
+            int gridCols = spatialIndex.gridCols;
+            int gridRows = spatialIndex.gridRows;
             int minY = Mathf.Max(0, cy - rangeCells);
             int maxY = Mathf.Min(gridRows - 1, cy + rangeCells);
             int minX = Mathf.Max(0, cx - rangeCells);
@@ -411,12 +404,15 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
 
                 for (int nx = minX; nx <= maxX; nx++)
                 {
-                    var arr = gridBucketsArray[rowOffset + nx];
-                    if (arr == null || arr.Length == 0)
-                        continue;
+                    int cellId = rowOffset + nx;
+                    int start = spatialIndex.bucketStart[cellId];
+                    int end = spatialIndex.bucketStart[cellId + 1];
+                    if (start == end) continue;
 
                     if (TryAccumulateBucketCandidates(
-                        arr,
+                        spatialIndex.bucketItems,
+                        start,
+                        end,
                         xs,
                         ys,
                         vals,
@@ -438,7 +434,9 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
         }
 
         private static bool TryAccumulateBucketCandidates(
-            int[] bucketPointIndices,
+            int[] bucketItems,
+            int start,
+            int end,
             int[] xs,
             int[] ys,
             float[] vals,
@@ -454,9 +452,9 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
         {
             exactValue = 0f;
 
-            for (int ai = 0; ai < bucketPointIndices.Length; ai++)
+            for (int ii = start; ii < end; ii++)
             {
-                int pi = bucketPointIndices[ai];
+                int pi = bucketItems[ii];
 
                 float dx = xs[pi] - x;
                 float dy = ys[pi] - y;

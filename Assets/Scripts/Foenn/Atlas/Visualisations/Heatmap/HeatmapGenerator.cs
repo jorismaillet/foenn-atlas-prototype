@@ -5,7 +5,6 @@ using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
 using Assets.Scripts.Unity;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 
@@ -28,65 +27,37 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
         {
             ValidateInputs(settings, rawImageSettings);
 
-            var sw = new Stopwatch();
-            sw.Start();
             int fullSizePx = gridSize * TileGridHelper.TileSize;
             int sizePx = (targetTextureSizePx > 0) ? Mathf.Min(fullSizePx, targetTextureSizePx) : fullSizePx;
             sizePx = Mathf.Max(16, sizePx);
-            sw.Stop();
-            MainThreadLog.Log($"1 {sw.ElapsedMilliseconds}");
-
-            sw.Start();
             var render = new RenderSettings(sizePx, sizePx, new BBox(0f, 0f, 1f, 1f));
 
-            sw.Stop();
-            MainThreadLog.Log($"2 {sw.ElapsedMilliseconds}");
-            sw.Start();
             var fullPixelMeasures = geoMeasures.ToTileGridPixelMeasures(mapCenter, zoom, gridSize).ToList();
             if (fullPixelMeasures.Count < 3)
                 return RenderOperation.CreateTexture(new Color32[render.width * render.height], render);
 
-            sw.Stop();
-            MainThreadLog.Log($"3 {sw.ElapsedMilliseconds}");
-            sw.Start();
             // Downscale measures and pixel-based settings if we render at a lower resolution than the tile grid.
             float scale = (fullSizePx <= 1 || sizePx == fullSizePx) ? 1f : (sizePx - 1) / (float)(fullSizePx - 1);
 
             var pixelMeasures = (scale == 1f) ? fullPixelMeasures : DownscalePixelMeasures(fullPixelMeasures, scale);
 
-            sw.Stop();
-            MainThreadLog.Log($"4 {sw.ElapsedMilliseconds}");
-            sw.Start();
             // Keep world-space look consistent: pixel distances must scale with the render resolution.
             float invScale = (scale <= 0f) ? 1f : 1f / scale;
             var scaledSettings = (scale == 1f)
                 ? settings
                 : new HeatmapSettings(settings.idwPower, settings.maxNeighbors, settings.maxRadiusPx * invScale, Mathf.Max(1, Mathf.RoundToInt(settings.cellSizePx * invScale)));
 
-            sw.Stop();
-            MainThreadLog.Log($"5 {sw.ElapsedMilliseconds}");
-            sw.Start();
             int cellSize = Mathf.Max(2, scaledSettings.cellSizePx);
             int gridCols = Mathf.CeilToInt(render.width / (float)cellSize);
             int gridRows = Mathf.CeilToInt(render.height / (float)cellSize);
 
-            sw.Stop();
-            MainThreadLog.Log($"6 {sw.ElapsedMilliseconds}");
-            sw.Start();
-            var spatialHash = BuildSpatialHash(pixelMeasures, cellSize, gridCols, gridRows);
+            FlattenPixelMeasures(pixelMeasures, out var xs, out var ys, out var vals);
+            var spatialIndex = CsrSpatialIndex.Build(xs, ys, cellSize, gridCols, gridRows);
             var maskPixels = ReadMaskPixelsForTileGrid(mapMask, render, mapCenter, zoom, gridSize, maskBBox, reprojectMaskToTileGrid);
 
-            sw.Stop();
-            MainThreadLog.Log($"7 {sw.ElapsedMilliseconds}");
-            sw.Start();
             // Direct render: compute IDW + color in one pass (no full-resolution TemperatureGrid buffers).
-            var outPixels = HeatmapDrawer.RenderHeatmapPixels(pixelMeasures, spatialHash, scaledSettings, rawImageSettings, render, cellSize, gridCols, gridRows, maskPixels);
-            sw.Stop();
-            MainThreadLog.Log($"8 {sw.ElapsedMilliseconds}");
-            sw.Start();
+            var outPixels = HeatmapDrawer.RenderHeatmapPixels(xs, ys, vals, spatialIndex, scaledSettings, rawImageSettings, render, cellSize, maskPixels);
             var texture = RenderOperation.CreateTexture(outPixels, render);
-            sw.Stop();
-            MainThreadLog.Log($"9 {sw.ElapsedMilliseconds}");
             return texture;
         }
 
@@ -110,33 +81,19 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
             rawImageSettings.Validate();
         }
 
-        private static int[][] BuildSpatialHash(IReadOnlyList<PixelMeasure> pixelMeasures, int cellSize, int gridCols, int gridRows)
+        static void FlattenPixelMeasures(IReadOnlyList<PixelMeasure> pixelMeasures, out int[] xs, out int[] ys, out float[] vals)
         {
-            int cellCount = gridCols * gridRows;
-            var gridBucketsList = new List<int>[cellCount];
-
-            for (int pixelMeasureIndice = 0; pixelMeasureIndice < pixelMeasures.Count; pixelMeasureIndice++)
+            int n = pixelMeasures.Count;
+            xs = new int[n];
+            ys = new int[n];
+            vals = new float[n];
+            for (int i = 0; i < n; i++)
             {
-                int cx = Mathf.Clamp(pixelMeasures[pixelMeasureIndice].point.x / cellSize, 0, gridCols - 1);
-                int cy = Mathf.Clamp(pixelMeasures[pixelMeasureIndice].point.y / cellSize, 0, gridRows - 1);
-                int bucketIdentifier = cy * gridCols + cx;
-
-                var gridBucket = gridBucketsList[bucketIdentifier];
-                if (gridBucket == null)
-                {
-                    gridBucket = new List<int>(8);
-                    gridBucketsList[bucketIdentifier] = gridBucket;
-                }
-                gridBucket.Add(pixelMeasureIndice);
+                var pm = pixelMeasures[i];
+                xs[i] = pm.point.x;
+                ys[i] = pm.point.y;
+                vals[i] = pm.value;
             }
-            var gridBucketsArray = new int[cellCount][];
-            for (int i = 0; i < gridBucketsList.Length; i++)
-            {
-                var bucket = gridBucketsList[i];
-                if (bucket != null)
-                    gridBucketsArray[i] = bucket.ToArray();
-            }
-            return gridBucketsArray;
         }
 
         static Color32[] ReadMaskPixelsForTileGrid(
