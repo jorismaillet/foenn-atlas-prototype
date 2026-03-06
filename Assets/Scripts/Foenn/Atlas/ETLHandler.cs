@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Profiling.Memory.Experimental;
+using static UnityEngine.Mesh;
 
 namespace Assets.Scripts.Foenn.Atlas
 {
@@ -65,25 +66,13 @@ namespace Assets.Scripts.Foenn.Atlas
             SqlConnector.connection = null;
         }
 
-        public IEnumerator PrepareData()
+        public IEnumerator PrepareData(List<string> filesToLoad)
         {
-            MainThreadLog.Log("Initialize data");
             var sw = new Stopwatch();
             sw.Start();
-
-            var weathersDir = Path.Combine(UnityEngine.Application.dataPath, "Resources", "Weathers");
-            if (!Directory.Exists(weathersDir))
-            {
-                MainThreadLog.Log($"Weathers folder not found: {weathersDir}");
-                yield break;
-            }
-
-            var files = Directory.EnumerateFiles(weathersDir, "*.csv", SearchOption.TopDirectoryOnly)
-                .Select(f => Path.Combine("Weathers", Path.GetFileName(f)))
-                .ToList();
-
+            MainThreadLog.Log("Initialize data");
             var metadata = new MetadataDatasource(WeatherHistoryDatasource.tableName);
-            foreach (var fileName in metadata.FilesToLoad(files))
+            foreach (var fileName in filesToLoad)
             {
                 MainThreadLog.Log($"Check {fileName}");
                 string dpt = fileName.Split('_')[1];

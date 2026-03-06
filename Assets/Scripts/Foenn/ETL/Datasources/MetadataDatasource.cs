@@ -1,10 +1,13 @@
 ﻿using Assets.Scripts.Foenn.Engine.Connectors;
+using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using Assets.Scripts.Foenn.ETL.Extractors;
 using Assets.Scripts.Foenn.ETL.Loaders;
 using Assets.Scripts.Foenn.ETL.Models;
+using Assets.Scripts.Unity;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,17 +32,30 @@ namespace Assets.Scripts.Foenn.ETL.Datasources
             connector.CreateTable(metadataSchema);
         }
 
-        public List<string> FilesToLoad(List<string> allFiles)
+        public static List<string> FilesToLoad()
         {
-            using (var reader = connector.ExecuteRawQuery($"SELECT {metadataFile.name} FROM {metaDataTable}"))
+            var connector = new SqliteConnector();
+
+            var weathersDir = Path.Combine(UnityEngine.Application.dataPath, "Resources", "Weathers");
+            if (!Directory.Exists(weathersDir))
             {
-                var existingFiles = new List<string>();
+                throw new Exception($"Weathers folder not found: {weathersDir}");
+            }
+
+            var allFiles = Directory.EnumerateFiles(weathersDir, "*.csv", SearchOption.TopDirectoryOnly)
+                .Select(f => Path.Combine("Weathers", Path.GetFileName(f)));
+
+            var metadata = new MetadataDatasource(WeatherHistoryDatasource.tableName);
+            var existingFiles = new List<string>();
+
+            using (var reader = connector.ExecuteRawQuery($"SELECT {metadata.metadataFile.name} FROM {metadata.metaDataTable}"))
+            {
                 while (reader.Read())
                 {
                     existingFiles.Add((string)reader.GetValue(0));
                 }
-                return allFiles.Except(existingFiles).ToList();
             }
+            return allFiles.Except(existingFiles).ToList();
         }
 
         public void FlagProcessed(string fileName)
