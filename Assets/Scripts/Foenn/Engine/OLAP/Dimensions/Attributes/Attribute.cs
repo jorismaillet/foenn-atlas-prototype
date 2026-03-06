@@ -13,11 +13,6 @@ namespace Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes
             { WeatherHistoryAttributeKey.AAAAMMJJHH, "Date" },
             { WeatherHistoryAttributeKey.LAT, "Latitude" },
             { WeatherHistoryAttributeKey.LON, "Longitude" },
-            { WeatherHistoryAttributeKey.DAY_OF_WEEK, "Jour de la semaine" },
-            { WeatherHistoryAttributeKey.DAY_OF_MONTH, "Jour" },
-            { WeatherHistoryAttributeKey.DAY_OF_YEAR, "Jour de l'année" },
-            { WeatherHistoryAttributeKey.MONTH, "Mois" },
-            { WeatherHistoryAttributeKey.YEAR, "Année" },
             { WeatherHistoryAttributeKey.DPT, "Département" }
         };
 

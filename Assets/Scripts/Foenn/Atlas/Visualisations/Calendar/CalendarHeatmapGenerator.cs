@@ -30,7 +30,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations
             Debug.Log(points);
             var heatmap = result.rows.Select(row =>
             {
-                var date = TimeUtils.Date(row.Attribute(WeatherHistoryAttributeKey.AAAAMMJJHH).value);
+                var date = TimeUtils.Date(row.attributes[WeatherHistoryAttributeKey.AAAAMMJJHH].value);
                 var activity = activities.FirstOrDefault(a => a.Key.conditions.IsMatch(row));
                 return activity.Value;
             }).ToArray();

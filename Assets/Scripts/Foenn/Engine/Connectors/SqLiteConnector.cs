@@ -159,12 +159,16 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             var columns = new List<string>();
             schema.columns.ForEach(field =>
             {
-                columns.Add($"{field.name} {FieldToSql(field)}");
+                columns.Add($"{dialect.QuoteIdent(field.name)} {FieldToSql(field)}");
             });
-            var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{schema.tableName}\" ({string.Join(", ", columns)});";
-            schema.indexes.ForEach(index =>
+
+            var createTableSql = $"CREATE TABLE IF NOT EXISTS {dialect.QuoteIdent(schema.tableName)} ({string.Join(", ", columns)});";
+
+            schema.indexes.ForEach(idx =>
             {
-                createTableSql += $"CREATE UNIQUE INDEX IF NOT EXISTS index_{index.name} ON {schema.tableName}({index.name});";
+                string cols = string.Join(", ", idx.fields.Select(f => dialect.QuoteIdent(f)));
+                string unique = idx.unique ? "UNIQUE " : string.Empty;
+                createTableSql += $"CREATE {unique}INDEX IF NOT EXISTS {dialect.QuoteIdent(idx.name)} ON {dialect.QuoteIdent(schema.tableName)}({cols});";
             });
             UnityEngine.Debug.Log(createTableSql);
             ExecuteOperation(createTableSql);

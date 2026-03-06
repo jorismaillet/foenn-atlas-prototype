@@ -18,7 +18,7 @@ namespace Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions
 
         public bool IsMatch(Row row)
         {
-            var measure = row.Measure(metricKey);
+            var measure = row.measures[metricKey];
             return min <= measure.value && max >= measure.value;
         }
     }

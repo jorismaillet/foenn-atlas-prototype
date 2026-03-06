@@ -2,6 +2,7 @@
 {
     public enum WeatherHistoryGeoAttributeKey
     {
-        NUM_POSTE
+        LAT,
+        LON
     }
 }

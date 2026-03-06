@@ -1,6 +1,7 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
-using Assets.Scripts.Foenn.Atlas.Layers;
+﻿using Assets.Scripts.Foenn.Atlas.Layers;
+using Assets.Scripts.Foenn.Atlas.Models.Geo;
 using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage;
+using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,39 +11,21 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
 {
     public class HeatmapGenerator
     {
-        public static Texture2D BuildRawImageTexture(IReadOnlyList<GeoMeasure> geoMeasures, HeatmapSettings settings, RenderSettings render, HeatmapRawImageSettings rawImageSettings)
-        {
-            ValidateInputs(geoMeasures, settings, rawImageSettings);
-
-            var pixelMeasures = geoMeasures.ToPixelMeasures(render).ToList();
-            if (pixelMeasures.Count < 3) throw new ArgumentException("Not enough points in bbox.");
-
-            int cellSize = Mathf.Max(4, settings.cellSizePx);
-            int gridCols = Mathf.CeilToInt(render.width / (float)cellSize);
-            int gridRows = Mathf.CeilToInt(render.height / (float)cellSize);
-
-            var spatialHash = BuildSpatialHash(pixelMeasures, cellSize, gridCols, gridRows);
-            var averageGrid = new TemperatureGrid(pixelMeasures, spatialHash, settings, render, cellSize, gridCols, gridRows);
-            var outPixels = HeatmapRawImageDrawer.ColorizeAverageGrid(averageGrid, render, settings, rawImageSettings);
-            var texture = RenderOperation.CreateTexture(outPixels, render);
-            return texture;
-        }
-
         public static Texture2D BuildTileGridRawImageTexture(
-            IReadOnlyList<GeoMeasure> geoMeasures,
+            List<GeoMeasure> geoMeasures,
             HeatmapSettings settings,
             GeoPoint mapCenter,
             int zoom,
             int gridSize,
-            HeatmapRawImageSettings rawImageSettings,
+            HeatmapDrawerSettings rawImageSettings,
             Texture2D mapMask = null,
             BBox maskBBox = default,
             bool reprojectMaskToTileGrid = true
         )
         {
-            ValidateInputs(geoMeasures, settings, rawImageSettings);
+            ValidateInputs(settings, rawImageSettings);
 
-            int sizePx = gridSize * SlippyMapMath.TileSize;
+            int sizePx = gridSize * TileGridHelper.TileSize;
             var render = new RenderSettings(sizePx, sizePx, new BBox(0f, 0f, 1f, 1f));
 
             var pixelMeasures = geoMeasures.ToTileGridPixelMeasures(mapCenter, zoom, gridSize).ToList();
@@ -56,16 +39,15 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
             var spatialHash = BuildSpatialHash(pixelMeasures, cellSize, gridCols, gridRows);
             var averageGrid = new TemperatureGrid(pixelMeasures, spatialHash, settings, render, cellSize, gridCols, gridRows);
             var maskPixels = ReadMaskPixelsForTileGrid(mapMask, render, mapCenter, zoom, gridSize, maskBBox, reprojectMaskToTileGrid);
-            var outPixels = HeatmapRawImageDrawer.ColorizeAverageGrid(averageGrid, render, settings, rawImageSettings, maskPixels);
+            var outPixels = HeatmapDrawer.ColorizeAverageGrid(averageGrid, render, settings, rawImageSettings, maskPixels);
 
             return RenderOperation.CreateTexture(outPixels, render);
         }
 
-        private static void ValidateInputs(IReadOnlyList<GeoMeasure> geoMeasures, HeatmapSettings settings, HeatmapRawImageSettings rawImageSettings)
+        private static void ValidateInputs(HeatmapSettings settings, HeatmapDrawerSettings rawImageSettings)
         {
             settings.Validate();
             rawImageSettings.Validate();
-            if (geoMeasures == null || geoMeasures.Count == 0) throw new ArgumentException("No points.");
         }
 
         private static int[][] BuildSpatialHash(IReadOnlyList<PixelMeasure> pixelMeasures, int cellSize, int gridCols, int gridRows)
@@ -127,8 +109,8 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
                 return null;
 
             int halfGridSize = gridSize / 2;
-            double centerTileXf = SlippyMapMath.LonToTileX(mapCenter.lon, zoom);
-            double centerTileYf = SlippyMapMath.LatToTileY(mapCenter.lat, zoom);
+            double centerTileXf = TileGridHelper.LonToTileX(mapCenter.lon, zoom);
+            double centerTileYf = TileGridHelper.LatToTileY(mapCenter.lat, zoom);
             int centerTileX = (int)Math.Floor(centerTileXf);
             int centerTileY = (int)Math.Floor(centerTileYf);
             double leftTileX = centerTileX - halfGridSize;
@@ -144,9 +126,9 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
             for (int y = 0; y < targetHeight; y++)
             {
                 int yFromTop = (targetHeight - 1) - y;
-                double tileY = topTileY + ((yFromTop + 0.5) / SlippyMapMath.TileSize);
+                double tileY = topTileY + ((yFromTop + 0.5) / TileGridHelper.TileSize);
 
-                double lat = SlippyMapMath.TileYToLat(tileY, zoom);
+                double lat = TileGridHelper.TileYToLat(tileY, zoom);
                 float v = (float)((lat - maskBBox.minLat) / latDenom);
                 if (v < 0f || v > 1f)
                     continue;
@@ -155,8 +137,8 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
 
                 for (int x = 0; x < targetWidth; x++)
                 {
-                    double tileX = leftTileX + ((x + 0.5) / SlippyMapMath.TileSize);
-                    double lon = SlippyMapMath.TileXToLon(tileX, zoom);
+                    double tileX = leftTileX + ((x + 0.5) / TileGridHelper.TileSize);
+                    double lon = TileGridHelper.TileXToLon(tileX, zoom);
 
                     float u = (float)((lon - maskBBox.minLon) / lonDenom);
                     if (u < 0f || u > 1f)

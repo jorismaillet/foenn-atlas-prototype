@@ -7,9 +7,8 @@ namespace Assets.Scripts.Foenn.ETL.Models
     public class SchemaDefinition
     {
         public string tableName;
-        public PrimaryKey primaryKey;
         public List<Datafield> columns = new List<Datafield>();
-        public List<Datafield> indexes = new List<Datafield>();
+        public List<IndexDefinition> indexes = new List<IndexDefinition>();
         public Dictionary<string, int> headersIndexes;
 
         public SchemaDefinition(string tableName)

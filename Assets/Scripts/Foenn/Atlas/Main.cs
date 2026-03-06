@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
+﻿using Assets.Scripts.Foenn.Atlas.Components.Holders;
+using Assets.Scripts.Foenn.Atlas.Models.Geo;
 using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap;
 using Assets.Scripts.Foenn.Engine.Connectors;
 using Assets.Scripts.Foenn.Engine.Execution;
@@ -13,9 +14,10 @@ namespace Assets.Scripts.Foenn.Atlas
     public class Main : MonoBehaviour
     {
         public ETLHandler etlHandler;
-        public PrefabsContainer pointmapContainer;
-        public HeatmapWorldOverlay heatmapContainer;
         public string HourToLoad = "2023080110";
+        [SerializeField] public string department = "29";
+        public WeatherHistoryMetricKey key;
+        public MapComponent map;
 
         void Start()
         {
@@ -23,11 +25,11 @@ namespace Assets.Scripts.Foenn.Atlas
         }
         IEnumerator Init()
         {
+            Application.runInBackground = true;
             Env.SetDatabasePath(SqliteConnector.DATABASE_PATH);
             yield return StartCoroutine(etlHandler.PrepareData());
-            List<GeoMeasure> measures = PreconfiguredRequest.WeatherHistoryMeasures(HourToLoad, WeatherHistoryMetricKey.T);
-            heatmapContainer.SetMeasures(measures);
-            pointmapContainer.Initialize(measures);
+            map.Initialize(HourToLoad, department, key);
+            Application.runInBackground = false;
         }
     }
 }

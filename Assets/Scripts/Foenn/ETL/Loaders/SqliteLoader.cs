@@ -53,9 +53,6 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
             }
 
         }
-        static Stopwatch swParams = new Stopwatch();
-        static Stopwatch swExecute = new Stopwatch();
-        static Stopwatch swBatch = new Stopwatch();
 
         private SqliteParameter[] _p;
         private DbType[] _types;
@@ -72,6 +69,7 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
             for (int i = 0; i < extraLines.Length; i++)
             {
                 _p[column].Value = _conv[column](extraLines[i]);
+                column++;
             }
             command.ExecuteNonQuery();
             loaded++;
@@ -104,11 +102,9 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
         {
             try
             {
-                swBatch.Start();
                 transaction.Commit();
                 transaction.Dispose();
                 transaction = null;
-                swBatch.Stop();
             }
             finally
             {
@@ -130,30 +126,6 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
         public override SqlConnector Connector()
         {
             return connector;
-        }
-
-        void LogIndexes(SqliteConnection conn, string table)
-        {
-            using var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT name, sql FROM sqlite_master WHERE type='index' AND tbl_name=@t;";
-            cmd.Parameters.AddWithValue("@t", table);
-
-            using var r = cmd.ExecuteReader();
-            int count = 0;
-            while (r.Read())
-            {
-                count++;
-                MainThreadLog.Log($"INDEX on {table}: {r.GetString(0)} SQL={r.GetValue(1)}");
-            }
-            if (count == 0)
-                MainThreadLog.Log($"No index found on {table}");
-        }
-
-        string Scalar(SqliteConnection conn, string sql)
-        {
-            using var cmd = conn.CreateCommand();
-            cmd.CommandText = sql;
-            return cmd.ExecuteScalar()?.ToString();
         }
     }
 }

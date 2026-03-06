@@ -1,8 +1,11 @@
-﻿using Assets.Scripts.Foenn.Engine.OLAP.Dimensions;
+﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
+using Assets.Scripts.Foenn.Engine.OLAP.Dimensions;
 using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
 using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+using Assets.Scripts.Unity;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -11,41 +14,47 @@ namespace Assets.Scripts.Foenn.Engine.Execution
     public class QueryResult
     {
         public List<Row> rows;
-        public Dictionary<WeatherHistoryAttributeKey, int> attributeIndex = new Dictionary<WeatherHistoryAttributeKey, int>();
-        public Dictionary<WeatherHistoryMetricKey, int> metricIndex = new Dictionary<WeatherHistoryMetricKey, int>();
-        private List<System.Action<Row, object>> columnParser = new List<System.Action<Row, object>>();
+        private System.Action<Row, object>[] columnParsers;
+        private List<System.Action<Row, object[]>> lineParsers = new List<System.Action<Row, object[]>>();
 
         public QueryResult(string[] rawHeaders)
         {
             this.rows = new List<Row>();
-            int metricIndex = 0;
-            int attributeIndex = 0;
-            foreach (var header in rawHeaders) 
+            this.columnParsers = new System.Action<Row, object>[rawHeaders.Length];
+            var geoHeaderIndexes = new Dictionary<WeatherHistoryGeoAttributeKey, int>();
+            for (int i = 0; i < rawHeaders.Length; i++) 
             {
-                if (System.Enum.TryParse<WeatherHistoryAttributeKey>(header, out var attributeKey))
+                var header = rawHeaders[i];
+                if (System.Enum.TryParse<WeatherHistoryTimeAttributeKey>(header, out var timeAttributeKey))
                 {
-                    this.attributeIndex[attributeKey] = attributeIndex;
-                    attributeIndex++;
-                    AddDimensionParser(new Attribute(attributeKey));
+                    AddTimeDimensionParser(i);
+                }
+                else if (System.Enum.TryParse<WeatherHistoryGeoAttributeKey>(header, out var geoAttributeKey))
+                {
+                    geoHeaderIndexes[geoAttributeKey] = i;
+                }
+                else if (System.Enum.TryParse<WeatherHistoryAttributeKey>(header, out var attributeKey))
+                {
+                    AddAttributeParser(i, new Attribute(attributeKey));
                 }
                 // Metric without aggregation
                 else if (System.Enum.TryParse<WeatherHistoryMetricKey>(header, out var metricKey))
                 {
-                    this.metricIndex[metricKey] = metricIndex;
-                    metricIndex++;
-                    AddMeasureParser(new Metric(metricKey, AggregationKey.D_COUNT));
+                    AddMeasureParser(i, new Metric(metricKey, AggregationKey.D_COUNT));
                 }
                 // Metric with aggregation
                 else if (TryParseMetric(header, out var metric))
                 {
-                    this.metricIndex[metric.key] = metricIndex;
-                    metricIndex++;
-                    AddMeasureParser(metric);
+                    AddMeasureParser(i, metric);
                 }
                 else
                 {
                     throw new System.Exception($"Unknown header {header}");
                 }
+            }
+            if(geoHeaderIndexes.Count == 2)
+            {
+                AddGeoDimensionParser(geoHeaderIndexes);
             }
         }
 
@@ -64,32 +73,37 @@ namespace Assets.Scripts.Foenn.Engine.Execution
             return false;
         }
 
-        private void AddMeasureParser(Metric metric)
+        private void AddMeasureParser(int index, Metric metric)
         {
-            columnParser.Add((Row row, object value) => AddMeasure(row, metric, value));
+            columnParsers[index] = (Row row, object value) => AddMeasure(row, metric, value);
         }
 
-        private void ParseIfExists(Row row, Attribute attribute, object value, System.Action<Row, Attribute, string> parser)
+        private void AddGeoDimensionParser(Dictionary<WeatherHistoryGeoAttributeKey, int> geoAttributeIndexes)
+        {
+            lineParsers.Add((Row row, object[] rawLine) => {
+                row.geo = new GeoDimension(new GeoPoint(
+                    float.Parse((string)rawLine[geoAttributeIndexes[WeatherHistoryGeoAttributeKey.LAT]], CultureInfo.InvariantCulture),
+                    float.Parse((string)rawLine[geoAttributeIndexes[WeatherHistoryGeoAttributeKey.LON]], CultureInfo.InvariantCulture)
+                ));
+            });
+        }
+
+        private void AddTimeDimensionParser(int index)
+        {
+            columnParsers[index] = (Row row, object value) => AddTimeDimension(row, (string)value);
+        }
+
+        private void AddAttributeParser(int index, Attribute attribute)
+        {
+            columnParsers[index] = (Row row, object value) => ParseIfExists(value, (strValue) => AddAttributeValue(row, attribute, strValue));
+        }
+
+        private void ParseIfExists(object value, System.Action<string> existsParser)
         {
             var strValue = value as string;
             if (!string.IsNullOrEmpty(strValue))
             {
-                parser(row, attribute, strValue);
-            }
-        }
-
-        private void AddDimensionParser(Attribute attribute) {
-            if (attribute.key.Equals(WeatherHistoryAttributeKey.AAAAMMJJHH))
-            {
-                columnParser.Add((Row row, object value) => ParseIfExists(row, attribute, value, AddTimeDimension));
-            }
-            else if (attribute.key.Equals(WeatherHistoryAttributeKey.NUM_POSTE))
-            {
-                columnParser.Add((Row row, object value) => ParseIfExists(row, attribute, value, AddGeoDimension));
-            }
-            else
-            {
-                columnParser.Add((Row row, object value) => ParseIfExists(row, attribute, value, AddAttributeValue));
+                existsParser.Invoke(strValue);
             }
         }
 
@@ -126,21 +140,16 @@ namespace Assets.Scripts.Foenn.Engine.Execution
                     break;
             }
 
-            row.measures.Add(new Measure(metric, fval));
+            row.measures.Add(metric.key, new Measure(metric, fval));
         }
 
-        private void AddTimeDimension(Row row, Attribute attribute, string value)
+        private void AddTimeDimension(Row row, string value)
         {
-            row.time = TimeDimension.AAAAMMJJHH((string)value);
-        }
-
-        private void AddGeoDimension(Row row, Attribute attribute, string value)
-        {
-            row.geo = new GeoDimension() { numPost = value.ToString() };
+            row.time = TimeDimension.AAAAMMJJHH(value);
         }
 
         private void AddAttributeValue(Row row, Attribute attribute, string value) { 
-            row.attributes.Add(new AttributeValue(attribute, (string)value));
+            row.attributes.Add(attribute.key, new AttributeValue(attribute, (string)value));
         }
 
         public void ParseLine(object[] rawLine)
@@ -148,8 +157,9 @@ namespace Assets.Scripts.Foenn.Engine.Execution
             Row row = new Row();
             for (int i = 0; i < rawLine.Length; i++)
             {
-                columnParser[i].Invoke(row, rawLine[i]);
+                columnParsers[i]?.Invoke(row, rawLine[i]);
             }
+            lineParsers.ForEach(parser => parser.Invoke(row, rawLine));
             rows.Add(row);
         }
     }

@@ -47,7 +47,7 @@ namespace Assets.Editor.Tests.Atlas.Models
         {
             var c = new MetricRangeCondition(WeatherHistoryMetricKey.T, 20, 25);
             var row = new Row();
-            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 20));
+            row.measures.Add(WeatherHistoryMetricKey.T, new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 20));
             Assert.IsTrue(c.IsMatch(row));
         }
         [Test]
@@ -55,7 +55,7 @@ namespace Assets.Editor.Tests.Atlas.Models
         {
             var c = new MetricRangeCondition(WeatherHistoryMetricKey.T, 20, 25);
             var row = new Row();
-            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 30));
+            row.measures.Add(WeatherHistoryMetricKey.T, new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 30));
             Assert.IsFalse(c.IsMatch(row));
         }
 
@@ -117,8 +117,8 @@ namespace Assets.Editor.Tests.Atlas.Models
         {
             var c = new GroupAllCondition(new MetricGroup("Test", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10), 10, 20);
             var row = new Row();
-            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 15));
-            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T10, AggregationKey.AVG), 15));
+            row.measures.Add(WeatherHistoryMetricKey.T, new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 15));
+            row.measures.Add(WeatherHistoryMetricKey.T10, new Measure(new Metric(WeatherHistoryMetricKey.T10, AggregationKey.AVG), 15));
             Assert.IsTrue(c.IsMatch(row));
         }
         [Test]
@@ -126,8 +126,8 @@ namespace Assets.Editor.Tests.Atlas.Models
         {
             var c = new GroupAllCondition(new MetricGroup("Test", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10), 10, 20);
             var row = new Row();
-            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 15));
-            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T10, AggregationKey.AVG), 35));
+            row.measures.Add(WeatherHistoryMetricKey.T, new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 15));
+            row.measures.Add(WeatherHistoryMetricKey.T10, new Measure(new Metric(WeatherHistoryMetricKey.T10, AggregationKey.AVG), 35));
             Assert.IsFalse(c.IsMatch(row));
         }
 
@@ -137,8 +137,8 @@ namespace Assets.Editor.Tests.Atlas.Models
         {
             var c = new GroupAnyCondition(new MetricGroup("Test", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10), 10, 20);
             var row = new Row();
-            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 15));
-            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T10, AggregationKey.AVG), 15));
+            row.measures.Add(WeatherHistoryMetricKey.T, new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 15));
+            row.measures.Add(WeatherHistoryMetricKey.T10, new Measure(new Metric(WeatherHistoryMetricKey.T10, AggregationKey.AVG), 15));
             Assert.IsTrue(c.IsMatch(row));
         }
         [Test]
@@ -146,8 +146,8 @@ namespace Assets.Editor.Tests.Atlas.Models
         {
             var c = new GroupAnyCondition(new MetricGroup("Test", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10), 10, 20);
             var row = new Row();
-            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 15));
-            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T10, AggregationKey.AVG), 35));
+            row.measures.Add(WeatherHistoryMetricKey.T, new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 15));
+            row.measures.Add(WeatherHistoryMetricKey.T10, new Measure(new Metric(WeatherHistoryMetricKey.T10, AggregationKey.AVG), 35));
             Assert.IsTrue(c.IsMatch(row));
         }
     }

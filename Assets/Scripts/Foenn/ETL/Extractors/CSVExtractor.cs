@@ -64,10 +64,5 @@ namespace Assets.Scripts.Foenn.ETL.Extractors
                 throw new System.Exception($"Unknown field type for {field}");
             }
         }
-
-        public override string ExtractionID()
-        {
-            return fileName;
-        }
     }
 }

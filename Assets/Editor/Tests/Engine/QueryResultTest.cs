@@ -26,7 +26,7 @@ namespace Assets.Editor.Tests.Engine
             var queryResult = new QueryResult(headers);
             rawResult.ForEach(line => queryResult.ParseLine(line));
             Assert.AreEqual(queryResult.rows.Count, 2);
-            Assert.AreEqual(queryResult.rows[0].geo.numPost, "Station météo Plomelin");
+            Assert.AreEqual(queryResult.rows[0].attributes[WeatherHistoryAttributeKey.NUM_POSTE].value, "Station météo Plomelin");
             Assert.AreEqual(queryResult.rows[0].attributes.Count, 1);
             Assert.AreEqual(queryResult.rows[0].time.start.Hour, 18);
             Assert.AreEqual(queryResult.rows[0].attributes[0].attribute.key, WeatherHistoryAttributeKey.DPT);
@@ -34,7 +34,7 @@ namespace Assets.Editor.Tests.Engine
             Assert.AreEqual(queryResult.rows[0].measures.Count, 1);
             Assert.AreEqual(queryResult.rows[0].measures[0].metric.key, WeatherHistoryMetricKey.T);
             Assert.AreEqual(queryResult.rows[0].measures[0].value, 20);
-            Assert.AreEqual(queryResult.rows[1].geo.numPost, "Station météo Brest");
+            Assert.AreEqual(queryResult.rows[1].attributes[WeatherHistoryAttributeKey.NUM_POSTE].value, "Station météo Brest");
             Assert.AreEqual(queryResult.rows[1].attributes.Count, 1);
             Assert.AreEqual(queryResult.rows[1].time.start.Hour, 18);
             Assert.AreEqual(queryResult.rows[1].attributes[0].attribute.key, WeatherHistoryAttributeKey.DPT);

@@ -3,16 +3,15 @@
     public enum WeatherHistoryAttributeKey
     {
         ID,
+        NUM_POSTE,
         NOM_USUEL,
+        DPT,
+
+        // Geo
         LAT,
         LON,
-        DAY_OF_WEEK,
-        DAY_OF_MONTH,
-        DAY_OF_YEAR,
-        MONTH,
-        YEAR,
-        DPT,
-        AAAAMMJJHH,
-        NUM_POSTE
+
+        // Time
+        AAAAMMJJHH
     }
 }

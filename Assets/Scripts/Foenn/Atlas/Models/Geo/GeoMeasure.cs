@@ -1,14 +1,16 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Geo
+﻿using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
+
+namespace Assets.Scripts.Foenn.Atlas.Models.Geo
 {
     public class GeoMeasure
     {
         public GeoPoint point;
-        public float value;
+        public Measure measure;
 
-        public GeoMeasure(GeoPoint point, float value)
+        public GeoMeasure(GeoPoint point, Measure measure)
         {
             this.point = point;
-            this.value = value;
+            this.measure = measure;
         }
     }
 }

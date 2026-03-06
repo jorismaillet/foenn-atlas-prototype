@@ -5,6 +5,7 @@ using Assets.Scripts.Unity;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using UnityEngine.UIElements;
@@ -40,13 +41,24 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
         public abstract void DropStagingTable(SchemaDefinition schema);
         public abstract string FieldToSql(Datafield field, bool skipPK = false);
 
+
+        public IDataReader ExecuteRawQuery(string sql)
+        {
+            OpenSession();
+            var command = connection.CreateCommand();
+            command.CommandText = sql;
+            return command.ExecuteReader();
+        }
+
         public QueryResult ExecuteQuery(QueryRequest request)
         {
             var sql = request.ToSql(dialect);
             UnityEngine.Debug.Log($"Executing query : {sql}");
+            var queryTime = new Stopwatch();
+            queryTime.Start();
             OpenSession();
             var command = connection.CreateCommand();
-            
+
             command.CommandText = sql;
             using (var reader = command.ExecuteReader())
             {
@@ -64,6 +76,8 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
                     res.ParseLine(row);
                 }
                 CloseSession();
+                queryTime.Stop();
+                MainThreadLog.Log($"Query completed in {queryTime.ElapsedMilliseconds}ms");
                 return res;
             }
         }

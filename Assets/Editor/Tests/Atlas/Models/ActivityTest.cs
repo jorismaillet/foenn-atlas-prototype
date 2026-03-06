@@ -20,8 +20,8 @@ namespace Assets.Editor.Tests.Atlas.Models
             var rainCondition = new MetricRangeCondition(WeatherHistoryMetricKey.RR1, 0, 0);
             var activity = new Activity("Beach", hourCondition, tempCondition, rainCondition);
             var row = new Row() { time = TimeDimension.AAAAMMJJHH("2023091515") };
-            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.RR1, AggregationKey.MAX), 0));
-            row.measures.Add(new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 25));
+            row.measures.Add(WeatherHistoryMetricKey.RR1, new Measure(new Metric(WeatherHistoryMetricKey.RR1, AggregationKey.MAX), 0));
+            row.measures.Add(WeatherHistoryMetricKey.T, new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 25));
             Assert.IsTrue(activity.conditions.IsMatch(row));
         }
     }

@@ -10,16 +10,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
     {
         public TimeDimension time;
         public GeoDimension geo;
-        public List<AttributeValue> attributes = new List<AttributeValue>();
-        public List<Measure> measures = new List<Measure>();
-
-        public Measure Measure(WeatherHistoryMetricKey key)
-        {
-            return measures.Find(measure => measure.metric.key.Equals(key));
-        }
-        public AttributeValue Attribute(WeatherHistoryAttributeKey key)
-        {
-            return attributes.Find(attributeValue => attributeValue.attribute.key.Equals(key));
-        }
+        public Dictionary<WeatherHistoryAttributeKey, AttributeValue> attributes = new Dictionary<WeatherHistoryAttributeKey, AttributeValue>();
+        public Dictionary<WeatherHistoryMetricKey, Measure> measures = new Dictionary<WeatherHistoryMetricKey, Measure>();
     }
 }

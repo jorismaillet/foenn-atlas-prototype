@@ -6,7 +6,6 @@ using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using Assets.Scripts.Foenn.ETL.Extractors;
 using Assets.Scripts.Foenn.ETL.Loaders;
 using Assets.Scripts.Foenn.ETL.Models;
-using Assets.Scripts.Foenn.ETL.Transformers;
 using Assets.Scripts.Foenn.Utils;
 using NUnit.Framework;
 using System;
@@ -23,12 +22,11 @@ namespace Assets.Editor.Tests.ETL
         public void TestETLProcessor()
         {
             Env.SetDatabasePath(SqliteConnector.DATABASE_TEST_PATH);
-            var datasource = new WeatherHistoryDatasource();
+            var datasource = new WeatherHistoryDatasource("29");
             var fileName = "Tests/Weathers/H_29_latest-2023-2024.csv";
             var processor = new ETLProcessor(
                     datasource,
                     new CSVExtractor(fileName),
-                    new Transformer(datasource),
                     new SqliteLoader(datasource)
                 );
             processor.ProcessETL();

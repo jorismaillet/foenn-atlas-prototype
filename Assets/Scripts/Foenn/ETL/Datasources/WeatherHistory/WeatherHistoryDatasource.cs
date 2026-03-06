@@ -10,29 +10,32 @@ namespace Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory
     {
         public static string tableName = "weather_data";
         public override string TableName() => tableName;
-        public override string InsertIdColumn() => "INSERT_ID";
-        public override string Identifier(Dictionary<string, int> headerIndexes, string[] line)
+
+        private string[] extraColumns = new string[2];
+        private string dpt;
+
+        public WeatherHistoryDatasource(string dpt) : base()
         {
-            return line[headerIndexes["NUM_POSTE"]] + line[headerIndexes["AAAAMMJJHH"]];
+            this.dpt = dpt;
         }
 
-        private string[] extraColumns = new string[1];
-        private int numPostIndex;
-        private int dateIndex;
-
-        public WeatherHistoryDatasource() : base(1)
+        public override void PrepareSchema(SchemaDefinition schema)
         {
-        }
+            schema.columns.Add(new PrimaryKey("ID", DbType.Int64, true));
+            schema.columns.Add(new Datafield("DPT", DbType.String));
 
-        public override void PrepareTranformer(SchemaDefinition schema)
-        {
-            numPostIndex = schema.headersIndexes["NUM_POSTE"];
-            dateIndex = schema.headersIndexes["AAAAMMJJHH"];
+            schema.indexes.Add(new IndexDefinition(true, "ID"));
+            schema.indexes.Add(new IndexDefinition(false, "DPT"));
+            schema.indexes.Add(new IndexDefinition(false, "AAAAMMJJHH"));
+            schema.indexes.Add(new IndexDefinition(false, "NUM_POSTE"));
+            schema.indexes.Add(new IndexDefinition(false, "NOM_USUEL"));
+            schema.indexes.Add(new IndexDefinition(false, "LAT", "LON"));
+            schema.indexes.Add(new IndexDefinition(true, "NUM_POSTE", "AAAAMMJJHH"));
         }
 
         public override string[] GetExtraColumns(string[] columns)
         {
-            extraColumns[0] = columns[numPostIndex] + columns[dateIndex];
+            extraColumns[1] = dpt;
             return extraColumns;
         }
     }

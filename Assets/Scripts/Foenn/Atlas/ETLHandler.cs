@@ -4,17 +4,20 @@ using Assets.Scripts.Foenn.ETL.Datasources;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using Assets.Scripts.Foenn.ETL.Extractors;
 using Assets.Scripts.Foenn.ETL.Loaders;
-using Assets.Scripts.Foenn.ETL.Transformers;
+using Assets.Scripts.Foenn.ETL.Models;
 using Assets.Scripts.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Profiling.Memory.Experimental;
 
 namespace Assets.Scripts.Foenn.Atlas
 {
@@ -65,6 +68,8 @@ namespace Assets.Scripts.Foenn.Atlas
         public IEnumerator PrepareData()
         {
             MainThreadLog.Log("Initialize data");
+            var sw = new Stopwatch();
+            sw.Start();
 
             var weathersDir = Path.Combine(UnityEngine.Application.dataPath, "Resources", "Weathers");
             if (!Directory.Exists(weathersDir))
@@ -77,28 +82,25 @@ namespace Assets.Scripts.Foenn.Atlas
                 .Select(f => Path.Combine("Weathers", Path.GetFileName(f)))
                 .ToList();
 
-            foreach (var fileName in files)
+            var metadata = new MetadataDatasource(WeatherHistoryDatasource.tableName);
+            foreach (var fileName in metadata.FilesToLoad(files))
             {
-                MainThreadLog.Log(fileName);
-                var datasource = new WeatherHistoryDatasource();
-                yield return LoadFile(datasource, fileName);
+                MainThreadLog.Log($"Check {fileName}");
+                string dpt = fileName.Split('_')[1];
+                var datasource = new WeatherHistoryDatasource(dpt);
+                yield return LoadFile(datasource, fileName, metadata);
             }
-            MainThreadLog.Log("Done");
+            sw.Stop();
+            MainThreadLog.Log($"Data prepared in {sw.ElapsedMilliseconds}ms");
         }
 
-        public IEnumerator LoadFile(Datasource datasource, string file)
+        public IEnumerator LoadFile(Datasource datasource, string file, MetadataDatasource metadata)
         {
-            // Ensure we don't keep an old ETL task (and its SQLite lock) alive.
-            CleanupRunningWork();
-
             var processor = new ETLProcessor(
                     datasource,
                     new CSVExtractor(file),
-                    new Transformer(datasource),
                     new SqliteLoader(datasource)
                 );
-            if (!processor.ShouldProcess())
-                yield break;
             ct = new CancellationTokenSource();
             task = Task.Run(() => processor.ProcessETL(ct.Token), ct.Token);
 
@@ -107,8 +109,7 @@ namespace Assets.Scripts.Foenn.Atlas
 
             if (task.IsFaulted)
                 UnityEngine.Debug.LogException(task.Exception);
-
-            // Make sure the DB connection is not left open/locked between files.
+            metadata.FlagProcessed(file);
             CleanupRunningWork();
         }
     }
