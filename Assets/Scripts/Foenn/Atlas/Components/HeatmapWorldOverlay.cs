@@ -3,8 +3,10 @@ using Assets.Scripts.Foenn.Atlas.Models.Geo;
 using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap;
 using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage;
 using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
+using Assets.Scripts.Unity;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 namespace Assets.Scripts.Foenn.Atlas.Components
@@ -29,6 +31,9 @@ namespace Assets.Scripts.Foenn.Atlas.Components
         [SerializeField] float tempMax = 40f;
         [Min(1)] [SerializeField] int cellSizePx = 32;
 
+        [Header("Performance")]
+        [Min(0)] [SerializeField] int targetTextureSizePx = 512;
+
         [Header("Mask (optional)")]
         [SerializeField] Texture2D mask;
         [SerializeField] BBox maskBBox = new BBox(-5.5f, 41.0f, 20.0f, 51.5f);
@@ -47,11 +52,6 @@ namespace Assets.Scripts.Foenn.Atlas.Components
 
         Texture2D _texture;
 
-        int _lastZoom;
-        int _lastGridSize;
-        GeoPoint _lastCenter;
-        float _lastTileWorldSize;
-
         void Awake()
         {
             _meshFilter = GetComponent<MeshFilter>();
@@ -61,44 +61,15 @@ namespace Assets.Scripts.Foenn.Atlas.Components
             EnsureMaterial();
         }
 
-        void OnEnable()
-        {
-            RebuildAll();
-        }
-
         public void SetMeasures(List<GeoMeasure> measures)
         {
             _measures = measures;
-            RebuildTexture();
-        }
-
-        public void Clear()
-        {
-            _measures = null;
-            RebuildTexture();
-        }
-
-        void LateUpdate()
-        {
-            if (tileGridRenderer == null) return;
-
-            if (_lastZoom != tileGridRenderer.mapZoom ||
-                _lastGridSize != tileGridRenderer.gridSize ||
-                _lastTileWorldSize != tileGridRenderer.tileToWorldSize ||
-                !_lastCenter.Equals(tileGridRenderer.franceCenter))
-            {
-                RebuildAll();
-            }
+            RebuildAll();
         }
 
         void RebuildAll()
         {
             if (tileGridRenderer == null || _measures == null) return;
-
-            _lastZoom = tileGridRenderer.mapZoom;
-            _lastGridSize = tileGridRenderer.gridSize;
-            _lastCenter = tileGridRenderer.franceCenter;
-            _lastTileWorldSize = tileGridRenderer.tileToWorldSize;
 
             UpdateMeshToTileGrid();
             RebuildTexture();
@@ -197,6 +168,9 @@ namespace Assets.Scripts.Foenn.Atlas.Components
             var settings = new HeatmapSettings(idwPower, maxNeighbors, maxRadiusPx, cellSizePx);
             var rawImageSettings = new HeatmapDrawerSettings(alpha, tempMin, tempMax);
 
+
+            var sw = new Stopwatch();
+            sw.Start();
             var tex = HeatmapGenerator.BuildTileGridRawImageTexture(
                 _measures,
                 settings,
@@ -206,8 +180,11 @@ namespace Assets.Scripts.Foenn.Atlas.Components
                 rawImageSettings,
                 mapMask: mask,
                 maskBBox: maskBBox,
-                reprojectMaskToTileGrid: reprojectMaskToTileGrid
+                reprojectMaskToTileGrid: reprojectMaskToTileGrid,
+                targetTextureSizePx: targetTextureSizePx
             );
+            sw.Stop();
+            MainThreadLog.Log($"Heatmap texture generated in {sw.ElapsedMilliseconds}ms for {_measures.Count} measures");
 
             if (_texture != null)
                 Destroy(_texture);

@@ -2,8 +2,10 @@
 using Assets.Scripts.Foenn.Atlas.Models.Geo;
 using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage;
 using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
+using Assets.Scripts.Unity;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 
@@ -20,28 +22,86 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
             HeatmapDrawerSettings rawImageSettings,
             Texture2D mapMask = null,
             BBox maskBBox = default,
-            bool reprojectMaskToTileGrid = true
+            bool reprojectMaskToTileGrid = true,
+            int targetTextureSizePx = 0
         )
         {
             ValidateInputs(settings, rawImageSettings);
 
-            int sizePx = gridSize * TileGridHelper.TileSize;
+            var sw = new Stopwatch();
+            sw.Start();
+            int fullSizePx = gridSize * TileGridHelper.TileSize;
+            int sizePx = (targetTextureSizePx > 0) ? Mathf.Min(fullSizePx, targetTextureSizePx) : fullSizePx;
+            sizePx = Mathf.Max(16, sizePx);
+            sw.Stop();
+            MainThreadLog.Log($"1 {sw.ElapsedMilliseconds}");
+
+            sw.Start();
             var render = new RenderSettings(sizePx, sizePx, new BBox(0f, 0f, 1f, 1f));
 
-            var pixelMeasures = geoMeasures.ToTileGridPixelMeasures(mapCenter, zoom, gridSize).ToList();
-            if (pixelMeasures.Count < 3)
+            sw.Stop();
+            MainThreadLog.Log($"2 {sw.ElapsedMilliseconds}");
+            sw.Start();
+            var fullPixelMeasures = geoMeasures.ToTileGridPixelMeasures(mapCenter, zoom, gridSize).ToList();
+            if (fullPixelMeasures.Count < 3)
                 return RenderOperation.CreateTexture(new Color32[render.width * render.height], render);
 
-            int cellSize = Mathf.Max(4, settings.cellSizePx);
+            sw.Stop();
+            MainThreadLog.Log($"3 {sw.ElapsedMilliseconds}");
+            sw.Start();
+            // Downscale measures and pixel-based settings if we render at a lower resolution than the tile grid.
+            float scale = (fullSizePx <= 1 || sizePx == fullSizePx) ? 1f : (sizePx - 1) / (float)(fullSizePx - 1);
+
+            var pixelMeasures = (scale == 1f) ? fullPixelMeasures : DownscalePixelMeasures(fullPixelMeasures, scale);
+
+            sw.Stop();
+            MainThreadLog.Log($"4 {sw.ElapsedMilliseconds}");
+            sw.Start();
+            // Keep world-space look consistent: pixel distances must scale with the render resolution.
+            float invScale = (scale <= 0f) ? 1f : 1f / scale;
+            var scaledSettings = (scale == 1f)
+                ? settings
+                : new HeatmapSettings(settings.idwPower, settings.maxNeighbors, settings.maxRadiusPx * invScale, Mathf.Max(1, Mathf.RoundToInt(settings.cellSizePx * invScale)));
+
+            sw.Stop();
+            MainThreadLog.Log($"5 {sw.ElapsedMilliseconds}");
+            sw.Start();
+            int cellSize = Mathf.Max(2, scaledSettings.cellSizePx);
             int gridCols = Mathf.CeilToInt(render.width / (float)cellSize);
             int gridRows = Mathf.CeilToInt(render.height / (float)cellSize);
 
+            sw.Stop();
+            MainThreadLog.Log($"6 {sw.ElapsedMilliseconds}");
+            sw.Start();
             var spatialHash = BuildSpatialHash(pixelMeasures, cellSize, gridCols, gridRows);
-            var averageGrid = new TemperatureGrid(pixelMeasures, spatialHash, settings, render, cellSize, gridCols, gridRows);
             var maskPixels = ReadMaskPixelsForTileGrid(mapMask, render, mapCenter, zoom, gridSize, maskBBox, reprojectMaskToTileGrid);
-            var outPixels = HeatmapDrawer.ColorizeAverageGrid(averageGrid, render, settings, rawImageSettings, maskPixels);
 
-            return RenderOperation.CreateTexture(outPixels, render);
+            sw.Stop();
+            MainThreadLog.Log($"7 {sw.ElapsedMilliseconds}");
+            sw.Start();
+            // Direct render: compute IDW + color in one pass (no full-resolution TemperatureGrid buffers).
+            var outPixels = HeatmapDrawer.RenderHeatmapPixels(pixelMeasures, spatialHash, scaledSettings, rawImageSettings, render, cellSize, gridCols, gridRows, maskPixels);
+            sw.Stop();
+            MainThreadLog.Log($"8 {sw.ElapsedMilliseconds}");
+            sw.Start();
+            var texture = RenderOperation.CreateTexture(outPixels, render);
+            sw.Stop();
+            MainThreadLog.Log($"9 {sw.ElapsedMilliseconds}");
+            return texture;
+        }
+
+        
+        static List<PixelMeasure> DownscalePixelMeasures(List<PixelMeasure> fullPixelMeasures, float scale)
+        {
+            var scaled = new List<PixelMeasure>(fullPixelMeasures.Count);
+            for (int i = 0; i < fullPixelMeasures.Count; i++)
+            {
+                var pm = fullPixelMeasures[i];
+                int x = Mathf.RoundToInt(pm.point.x * scale);
+                int y = Mathf.RoundToInt(pm.point.y * scale);
+                scaled.Add(new PixelMeasure(new PixelPoint(x, y), pm.value));
+            }
+            return scaled;
         }
 
         private static void ValidateInputs(HeatmapSettings settings, HeatmapDrawerSettings rawImageSettings)
@@ -126,7 +186,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
             for (int y = 0; y < targetHeight; y++)
             {
                 int yFromTop = (targetHeight - 1) - y;
-                double tileY = topTileY + ((yFromTop + 0.5) / TileGridHelper.TileSize);
+                double tileY = topTileY + ((yFromTop + 0.5) * gridSize / (double)targetHeight);
 
                 double lat = TileGridHelper.TileYToLat(tileY, zoom);
                 float v = (float)((lat - maskBBox.minLat) / latDenom);
@@ -137,7 +197,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
 
                 for (int x = 0; x < targetWidth; x++)
                 {
-                    double tileX = leftTileX + ((x + 0.5) / TileGridHelper.TileSize);
+                    double tileX = leftTileX + ((x + 0.5) * gridSize / (double)targetWidth);
                     double lon = TileGridHelper.TileXToLon(tileX, zoom);
 
                     float u = (float)((lon - maskBBox.minLon) / lonDenom);

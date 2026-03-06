@@ -23,9 +23,13 @@ namespace Assets.Scripts.Foenn.Atlas.Components.Holders
             var sw2 = new Stopwatch();
             sw2.Start();
             heatmapContainer.SetMeasures(geoMeasures);
-            pointmapContainer.Initialize(geoMeasures);
+            UnityEngine.Debug.Log($"heatmapContainer initialized in {sw2.ElapsedMilliseconds} ms");
             sw2.Stop();
-            UnityEngine.Debug.Log($"MapComponent initialized in {sw2.ElapsedMilliseconds} ms");
+            var sw3 = new Stopwatch();
+            sw3.Start();
+            pointmapContainer.Initialize(geoMeasures);
+            sw3.Stop();
+            UnityEngine.Debug.Log($"pointmapContainer initialized in {sw3.ElapsedMilliseconds} ms");
         }
     }
 }
