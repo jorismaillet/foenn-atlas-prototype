@@ -9,7 +9,7 @@ namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
     public class SqlWhere
     {
         public readonly string clause;
-        public SqlWhere(List<Filter> filters, ISqlDialect dialect)
+        public SqlWhere(List<Filter> filters)
         {
             var whereParts = new List<string>();
             foreach (var filter in filters)
@@ -21,24 +21,23 @@ namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
                     if (df.selectedValues.Count > 1)
                     {
                         filterOperator = df.mode.Equals(DataFilterMode.INCLUDE) ? " IN" : " NOT IN";
-                        filteredAttributes = $"({string.Join(", ", df.selectedValues.Select(v => dialect.QuoteIdent(v)))})";
+                        filteredAttributes = $"({string.Join(", ", df.selectedValues.Select(v => $"\"{v}\""))})";
                     }
                     else
                     {
-                        filterOperator = df.mode.Equals(DataFilterMode.INCLUDE) ? dialect.Equals() : dialect.Different() + " ";
-                        filteredAttributes = dialect.QuoteIdent(df.selectedValues[0]);
+                        filterOperator = df.mode.Equals(DataFilterMode.INCLUDE) ? "=" : "!=" + " ";
+                        filteredAttributes = $"\"{df.selectedValues[0]}\"";
                     }
-                    whereParts.Add($"{dialect.QuoteIdent(df.filteredAttributeKey.ToString())}{filterOperator}{filteredAttributes}");
+                    whereParts.Add($"\"{df.filteredAttributeKey}\"{filterOperator}{filteredAttributes}");
                 }
-                else if (filter is TimeRangeFilter tf)
+                else if (filter is RangeFilter tf)
                 {
-                    whereParts.Add($"AAAAMMJJHH >= {TimeUtils.ToString(tf.startTime)} AND AAAAMMJJHH <= {TimeUtils.ToString(tf.endTime)}");
+                    whereParts.Add($"\"{tf.attributeName}\" >= {tf.minValue} AND \"{tf.attributeName}\" <= {tf.maxValue}");
                 }
                 else if (filter is ExcludeNullFilter enf)
                 {
-                    whereParts.Add($"{dialect.QuoteIdent(enf.metricKey.ToString())} IS NOT NULL");
+                    whereParts.Add($"\"{enf.metricKey}\" IS NOT NULL");
                 }
-                // TODO GeoFilter
                 else
                 {
                     throw new System.NotImplementedException($"Filter type {filter.GetType().Name} not supported in SQL generation yet.");

@@ -19,7 +19,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations
             var request = new QueryRequest(WeatherHistoryDatasource.tableName);
             request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.NOM_USUEL, city));
             request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.DPT, department.ToString()));
-            var result = new SqliteConnector().ExecuteQuery(request);
+            var result = new SqliteHelper().ExecuteQuery(request);
             var points = new List<int>();
             foreach (var ac in activities)
             {

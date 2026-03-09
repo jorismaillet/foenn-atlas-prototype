@@ -59,11 +59,11 @@ namespace Assets.Scripts.Foenn.Atlas
 
         static void ForceCloseSqlConnection()
         {
-            if (SqlConnector.connection == null) return;
+            if (DatabaseHelper.connection == null) return;
 
-            try { SqlConnector.connection.Close(); } catch { }
-            try { SqlConnector.connection.Dispose(); } catch { }
-            SqlConnector.connection = null;
+            try { DatabaseHelper.connection.Close(); } catch { }
+            try { DatabaseHelper.connection.Dispose(); } catch { }
+            DatabaseHelper.connection = null;
         }
 
         public IEnumerator PrepareData(List<string> filesToLoad)

@@ -1,7 +1,6 @@
 ﻿using Assets.Scripts.Foenn.Engine.OLAP;
 using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
 using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
-using Assets.Scripts.Foenn.Engine.Sql.Dialects;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,28 +9,28 @@ namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
     public class SqlSelect
     {
         public readonly string clause;
-        public SqlSelect(List<Metric> selectedMetrics, List<Attribute> selectedAttributes, ISqlDialect dialect)
+        public SqlSelect(List<Metric> selectedMetrics, List<Attribute> selectedAttributes)
         {
-            var selectParts = SelectedMetrics(selectedMetrics, dialect).Concat(SelectedAttributes(selectedAttributes, dialect)).ToList();
+            var selectParts = SelectedMetrics(selectedMetrics).Concat(SelectedAttributes(selectedAttributes)).ToList();
             clause = "SELECT " + (selectParts.Any() ? string.Join(", ", selectParts) : "*");
         }
-        public IEnumerable<string> SelectedMetrics(List<Metric> selectedMetrics, ISqlDialect dialect)
+        public IEnumerable<string> SelectedMetrics(List<Metric> selectedMetrics)
         {
             return selectedMetrics.Select(m =>
             {
                 if (m.aggregation == null)
                 {
-                    return $"{dialect.QuoteIdent(m.key.ToString())}";
+                    return $"\"{m.key}\"";
                 }
                 else
                 {
-                    return $"{m.aggregation}({dialect.QuoteIdent(m.key.ToString())})";
+                    return $"{m.aggregation}(\"{m.key}\")";
                 }
             });
         }
-        public IEnumerable<string> SelectedAttributes(List<Attribute> selectedAttributes, ISqlDialect dialect)
+        public IEnumerable<string> SelectedAttributes(List<Attribute> selectedAttributes)
         {
-            return selectedAttributes.Select(a => $"{dialect.QuoteIdent(a.key.ToString())}");
+            return selectedAttributes.Select(a => $"\"{a.key}\"");
         }
     }
 }

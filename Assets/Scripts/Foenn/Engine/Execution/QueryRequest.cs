@@ -1,12 +1,13 @@
-﻿using Assets.Scripts.Foenn.Engine.Connectors;
-using Assets.Scripts.Foenn.Engine.OLAP;
-using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
+﻿using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
 using Assets.Scripts.Foenn.Engine.OLAP.Filters;
 using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
 using Assets.Scripts.Foenn.Engine.Sql.Clauses;
-using Assets.Scripts.Foenn.Engine.Sql.Dialects;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+using Assets.Scripts.Unity;
+using Mono.Data.Sqlite;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Text;
 
 namespace Assets.Scripts.Foenn.Engine.Execution
@@ -51,7 +52,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
             return this;
         }
 
-        public string ToSql(ISqlDialect dialect)
+        public string ToSql()
         {
             StringBuilder sql = new StringBuilder();
             sql.Append(new SqlSelect(selectedMetrics, selectedAttributes, dialect).clause);
@@ -60,6 +61,31 @@ namespace Assets.Scripts.Foenn.Engine.Execution
             sql.Append(new SqlGroupBy(groups, dialect).clause);
             sql.Append(dialect.EndOfLine());
             return sql.ToString();
+        }
+
+        public QueryResult Execute(SqliteConnection connection) {
+            var sql = ToSql();
+            UnityEngine.Debug.Log($"Executing query : {sql}");
+            var queryTime = new Stopwatch();
+            queryTime.Start();
+            var command = connection.CreateCommand();
+            command.CommandText = sql;
+            using (var reader = command.ExecuteReader()) {
+                int nbColumns = reader.FieldCount;
+                string[] rawHeaders = new string[nbColumns];
+                for (int i = 0; i < nbColumns; i++) {
+                    rawHeaders[i] = reader.GetName(i);
+                }
+                var res = new QueryResult(rawHeaders);
+                while (reader.Read()) {
+                    var row = new object[nbColumns];
+                    reader.GetValues(row);
+                    res.ParseLine(row);
+                }
+                queryTime.Stop();
+                MainThreadLog.Log($"Query completed in {queryTime.ElapsedMilliseconds}ms");
+                return res;
+            }
         }
     }
 }

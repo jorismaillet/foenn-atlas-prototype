@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Assets.Scripts.Foenn.ETL.Extractors
 {
-    public class CSVExtractor : Extractor
+    public class CSVExtractor
     {
         public static char[] STRING_SPLIT = { ';' };
         private const string DECIMAL_SPLIT = ".";
@@ -20,17 +20,14 @@ namespace Assets.Scripts.Foenn.ETL.Extractors
             this.fileName = fileName;
         }
 
-        public override List<Datafield> ExtractHeaders()
+        public string[] ExtractFieldNames()
         {
             using var sr = GetStreamReader();
             var headerStr = sr.ReadLine();
-            return headerStr
-                .Split(STRING_SPLIT)
-                .Select((field) => new Datafield(field, GetDbType(field)))
-                .ToList();
+            return headerStr.Split(STRING_SPLIT);
         }
 
-        public override IEnumerable<string[]> ExtractContent(int headersCount)
+        public IEnumerable<string[]> ExtractValues()
         {
             using var sr = GetStreamReader();
             string line;
@@ -47,22 +44,6 @@ namespace Assets.Scripts.Foenn.ETL.Extractors
             var path = Path.Combine(UnityEngine.Application.dataPath, "Resources", fileName);
             var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 1 << 20);
             return new StreamReader(fs);
-        }
-
-        private DbType GetDbType(string field)
-        {
-            if (System.Enum.TryParse<WeatherHistoryAttributeKey>(field, out var attributeKey))
-            {
-                return DbType.String;
-            }
-            else if (System.Enum.TryParse<WeatherHistoryMetricKey>(field, out _))
-            {
-                return DbType.Single;
-            }
-            else
-            {
-                throw new System.Exception($"Unknown field type for {field}");
-            }
         }
     }
 }

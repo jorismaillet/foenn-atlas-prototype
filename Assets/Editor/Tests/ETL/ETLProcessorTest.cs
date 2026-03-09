@@ -21,7 +21,7 @@ namespace Assets.Editor.Tests.ETL
         [Test]
         public void TestETLProcessor()
         {
-            Env.SetDatabasePath(SqliteConnector.DATABASE_TEST_PATH);
+            Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
             var datasource = new WeatherHistoryDatasource("29");
             var fileName = "Tests/Weathers/H_29_latest-2023-2024.csv";
             var processor = new ETLProcessor(

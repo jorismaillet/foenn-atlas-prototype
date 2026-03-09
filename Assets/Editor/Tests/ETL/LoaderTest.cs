@@ -16,7 +16,7 @@ namespace Assets.Editor.Tests.ETL
         [Test]
         public void TestCreateTable()
         {
-            Env.SetDatabasePath(SqliteConnector.DATABASE_TEST_PATH);
+            Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
             var datasource = new WeatherHistoryDatasource("29");
             var loader = new SqliteLoader(datasource);
             var schema = new SchemaDefinition("weather_data");
@@ -32,7 +32,7 @@ namespace Assets.Editor.Tests.ETL
         [Test]
         public void TestLoad()
         {
-            Env.SetDatabasePath(SqliteConnector.DATABASE_TEST_PATH);
+            Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
             var datasource = new WeatherHistoryDatasource("29");
             var schema = new SchemaDefinition("weather_data");
             schema.AddColumns(new List<Datafield> { new Datafield("NUM_POSTE", DbType.String), new Datafield("AAAAMMJJHH", DbType.String) });

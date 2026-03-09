@@ -25,7 +25,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
                 .Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.DPT, dpt))
                 .Where(new ExcludeNullFilter(metricKey))
                 .Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.AAAAMMJJHH, AAAAMMJJHH));
-            var connector = new SqliteConnector();
+            var connector = new SqliteHelper();
             var result = connector.ExecuteQuery(query);
             var res = new List<GeoMeasure>();
             foreach (var row in result.rows)

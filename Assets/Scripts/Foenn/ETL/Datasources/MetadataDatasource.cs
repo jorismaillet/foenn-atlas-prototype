@@ -19,11 +19,11 @@ namespace Assets.Scripts.Foenn.ETL.Datasources
         private PrimaryKey metadataID = new PrimaryKey("ID", DbType.Int64, true);
         private Datafield metadataFile = new Datafield("File", DbType.String);
         private string metaDataTable;
-        private SqlConnector connector;
+        private DatabaseHelper connector;
 
         public MetadataDatasource(string tableName)
         {
-            this.connector = new SqliteConnector();
+            this.connector = new SqliteHelper();
             this.metaDataTable = $"{tableName}_metadata";
             var metadataSchema = new SchemaDefinition(metaDataTable);
             metadataSchema.columns = MetaDataFields();
@@ -34,7 +34,7 @@ namespace Assets.Scripts.Foenn.ETL.Datasources
 
         public static List<string> FilesToLoad()
         {
-            var connector = new SqliteConnector();
+            var connector = new SqliteHelper();
 
             var weathersDir = Path.Combine(UnityEngine.Application.dataPath, "Resources", "Weathers");
             if (!Directory.Exists(weathersDir))

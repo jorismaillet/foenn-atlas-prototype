@@ -24,7 +24,7 @@ namespace Assets.Scripts.Foenn.Atlas
 
         void Start()
         {
-            Env.SetDatabasePath(SqliteConnector.DATABASE_PATH);
+            Env.SetDatabasePath(SqliteHelper.DATABASE_PATH);
             StartCoroutine(Init(MetadataDatasource.FilesToLoad()));
         }
         IEnumerator Init(List<string> filesToLoad)
