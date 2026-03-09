@@ -16,7 +16,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
     {
         public static List<GeoMeasure> WeatherHistoryMeasures(string AAAAMMJJHH, string dpt, WeatherHistoryMetricKey metricKey)
         {
-            var query = new QueryRequest(WeatherHistoryDatasource.tableName)
+            var query = new QueryRequest("TOOD")
                 .Select(new Attribute(WeatherHistoryAttributeKey.LON))
                 .Select(new Attribute(WeatherHistoryAttributeKey.LAT))
                 .Select(new Attribute(WeatherHistoryAttributeKey.NOM_USUEL))
@@ -26,7 +26,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
                 .Where(new ExcludeNullFilter(metricKey))
                 .Where(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.AAAAMMJJHH, AAAAMMJJHH));
             var connector = new SqliteHelper();
-            var result = connector.ExecuteQuery(query);
+            var result = query.Execute(SqliteHelper.CreateConnection());
             var res = new List<GeoMeasure>();
             foreach (var row in result.rows)
             {

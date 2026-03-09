@@ -14,15 +14,12 @@ namespace Assets.Scripts.Foenn.ETL
 {
     public class WeatherHistoryProcessor
     {
-        private string databasePath;
         private CSVExtractor extractor;
         private List<SqliteTableLoader> loaders = new List<SqliteTableLoader>();
 
-        public WeatherHistoryProcessor(string databasePath, string fileName)
+        public WeatherHistoryProcessor(string fileName, WeatherHistoryDataset dataset)
         {
-            this.databasePath = databasePath;
             this.extractor = new CSVExtractor(fileName);
-            var dataset = new WeatherHistoryDataset();
             foreach (var dimension in dataset.Dimensions) {
                 loaders.Add(new SqliteTableLoader(dimension));
             }
@@ -36,7 +33,7 @@ namespace Assets.Scripts.Foenn.ETL
         {
             cancellationToken.ThrowIfCancellationRequested();
             var fieldNames = extractor.ExtractFieldNames();
-            var stageConnection = SqliteHelper.CreateConnection(databasePath);
+            var stageConnection = SqliteHelper.CreateConnection();
             SqliteHelper.ApplyStagingPragmas(stageConnection);
             var transaction = stageConnection.BeginTransaction();
             foreach (var loader in loaders) {
@@ -62,7 +59,7 @@ namespace Assets.Scripts.Foenn.ETL
             stageConnection.Dispose();
             MainThreadLog.Log($"Finished staging, total={loaded}");
             transaction.Dispose();
-            var mergeConnection = SqliteHelper.CreateConnection(databasePath);
+            var mergeConnection = SqliteHelper.CreateConnection();
             transaction = mergeConnection.BeginTransaction();
             foreach (var loader in loaders) {
                 SqliteHelper.MergeStagingTable(mergeConnection, loader.table);

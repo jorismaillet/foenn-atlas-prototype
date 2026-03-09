@@ -30,7 +30,7 @@ namespace Assets.Scripts.Foenn.ETL.Loaders
                 _p[i] = stage.Parameters[i];
                 _conv[i] = _p[i].DbType switch {
                     DbType.String => (s) => string.IsNullOrEmpty(s) ? DBNull.Value : s,
-                    DbType.Single => (s) => string.IsNullOrEmpty(s) ? DBNull.Value : float.Parse(s, CultureInfo.InvariantCulture),
+                    DbType.Single or DbType.Double => (s) => string.IsNullOrEmpty(s) ? DBNull.Value : float.Parse(s, CultureInfo.InvariantCulture),
                     DbType.Int64 or DbType.Int32 or DbType.Int16 => (s) => string.IsNullOrEmpty(s) ? DBNull.Value : int.Parse(s, CultureInfo.InvariantCulture),
                     _ => (s) => string.IsNullOrEmpty(s) ? DBNull.Value : s
                 };

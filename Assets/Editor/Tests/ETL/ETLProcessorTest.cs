@@ -2,41 +2,39 @@
 using Assets.Scripts.Foenn.Engine.Connectors;
 using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.ETL;
-using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
-using Assets.Scripts.Foenn.ETL.Extractors;
-using Assets.Scripts.Foenn.ETL.Loaders;
-using Assets.Scripts.Foenn.ETL.Models;
-using Assets.Scripts.Foenn.Utils;
+using Assets.Scripts.Foenn.ETL.Datasets;
+using Assets.Scripts.Foenn.ETL.Datasources;
+using Mono.Data.Sqlite;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using UnityEditor.MemoryProfiler;
 
 namespace Assets.Editor.Tests.ETL
 {
     public class ETLProcessorTest
     {
         [Test]
-        public void TestETLProcessor()
-        {
+        public void TestETLProcessor() {
             Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
-            var datasource = new WeatherHistoryDatasource("29");
-            var fileName = "Tests/Weathers/H_29_latest-2023-2024.csv";
-            var processor = new ETLProcessor(
-                    datasource,
-                    new CSVExtractor(fileName),
-                    new SqliteLoader(datasource)
-                );
-            processor.ProcessETL();
+            using (var connection = SqliteHelper.CreateConnection()) {
+                var dataset = new WeatherHistoryDataset();
+                dataset.InitTables(connection);
+                var fileName = "Tests/Weathers/H_29_latest-2023-2024.csv";
+                var processor = new WeatherHistoryProcessor(fileName, dataset);
+                processor.ProcessETL();
 
-            var res = processor.loader.Connector().ExecuteQuery(new QueryRequest("weather_data"));
-            Assert.AreEqual(res.rows.Count, 4);
+                var res = new QueryRequest(dataset.fact.Name).Execute(connection);
+                Assert.AreEqual(res.rows.Count, 4);
 
-            processor.loader.Connector().ExecuteOperation("DROP TABLE IF EXISTS weather_data;");
-            processor.loader.Connector().ExecuteOperation("DROP TABLE IF EXISTS weather_data_staging;");
-            processor.loader.Connector().ExecuteOperation("DROP TABLE IF EXISTS weather_data_metadata;");
+                CleanupDataset(connection, dataset);
+            }
+        }
+
+        private void CleanupDataset(SqliteConnection connection, WeatherHistoryDataset dataset) {
+            foreach (var table in dataset.Tables) {
+                SqliteHelper.DropStagingTable(connection, table);
+                SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {table.Name}");
+                SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {MetadataTable.TableName(table.Name)}");
+            }
         }
     }
 }

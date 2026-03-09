@@ -11,11 +11,10 @@ namespace Assets.Editor.Tests.ETL
         public void TestCSVExtraction()
         {
             var fileName = "Tests/Weathers/H_29_latest-2023-2024.csv";
-            var schema = new SchemaDefinition("weather_data");
             var extractor = new CSVExtractor(fileName);
             var headers = extractor.ExtractFieldNames();
-            Assert.AreEqual(204, headers.Count);
-            var lines = extractor.ExtractContent(headers.Count).ToList();
+            Assert.AreEqual(204, headers.Length);
+            var lines = extractor.ExtractValues().ToList();
             Assert.AreEqual(4, lines.Count);
             Assert.AreEqual(204, lines[0].Length);
         }

@@ -1,14 +1,11 @@
 ﻿using Assets.Scripts.Foenn.Atlas.Components.Holders;
-using Assets.Scripts.Foenn.Atlas.Models.Geo;
-using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap;
 using Assets.Scripts.Foenn.Engine.Connectors;
-using Assets.Scripts.Foenn.Engine.Execution;
+using Assets.Scripts.Foenn.ETL.Datasets;
 using Assets.Scripts.Foenn.ETL.Datasources;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
-using Assets.Scripts.Unity.Commons.Containers;
+using Mono.Data.Sqlite;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 
@@ -25,14 +22,20 @@ namespace Assets.Scripts.Foenn.Atlas
         void Start()
         {
             Env.SetDatabasePath(SqliteHelper.DATABASE_PATH);
-            StartCoroutine(Init(MetadataDatasource.FilesToLoad()));
+            using (var sqliteConnection = SqliteHelper.CreateConnection()) {
+                var weatherHistoryDataset = new WeatherHistoryDataset();
+                weatherHistoryDataset.InitTables(sqliteConnection);
+                var metadataTable = new MetadataTable(weatherHistoryDataset.Name);
+                metadataTable.InitTable(sqliteConnection);
+                StartCoroutine(Init(sqliteConnection, metadataTable.FilesToLoad(sqliteConnection), metadataTable, weatherHistoryDataset));
+            }
         }
-        IEnumerator Init(List<string> filesToLoad)
+        IEnumerator Init(SqliteConnection connection, List<string> filesToLoad, MetadataTable metadata, WeatherHistoryDataset dataset)
         {
             if (filesToLoad.Any())
             {
                 Application.runInBackground = true;
-                yield return StartCoroutine(etlHandler.PrepareData(filesToLoad));
+                yield return StartCoroutine(etlHandler.PrepareData(connection, filesToLoad, metadata, dataset));
                 Application.runInBackground = false;
             }
             map.Initialize(HourToLoad, department, key);

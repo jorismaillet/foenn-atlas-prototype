@@ -1,24 +1,18 @@
 ﻿using Assets.Scripts.Foenn.Engine.Connectors;
 using Assets.Scripts.Foenn.ETL;
+using Assets.Scripts.Foenn.ETL.Datasets;
 using Assets.Scripts.Foenn.ETL.Datasources;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using Assets.Scripts.Foenn.ETL.Extractors;
-using Assets.Scripts.Foenn.ETL.Loaders;
-using Assets.Scripts.Foenn.ETL.Models;
 using Assets.Scripts.Unity;
-using System;
+using Mono.Data.Sqlite;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Profiling.Memory.Experimental;
-using static UnityEngine.Mesh;
 
 namespace Assets.Scripts.Foenn.Atlas
 {
@@ -41,54 +35,38 @@ namespace Assets.Scripts.Foenn.Atlas
         {
             try { ct?.Cancel(); } catch { }
 
-            // Best-effort: wait a bit so the background ETL thread can hit cancellation
-            // and run its `finally` blocks (where it closes the SQLite session).
             if (task != null)
             {
                 try { task.Wait(2000); }
-                catch { /* ignore */ }
+                catch { }
             }
 
             task = null;
 
             ct?.Dispose();
             ct = null;
-
-            ForceCloseSqlConnection();
         }
 
-        static void ForceCloseSqlConnection()
-        {
-            if (DatabaseHelper.connection == null) return;
-
-            try { DatabaseHelper.connection.Close(); } catch { }
-            try { DatabaseHelper.connection.Dispose(); } catch { }
-            DatabaseHelper.connection = null;
-        }
-
-        public IEnumerator PrepareData(List<string> filesToLoad)
+        public IEnumerator PrepareData(SqliteConnection connection, List<string> filesToLoad, MetadataTable metadata, WeatherHistoryDataset dataset)
         {
             var sw = new Stopwatch();
             sw.Start();
             MainThreadLog.Log("Initialize data");
-            var metadata = new MetadataDatasource(WeatherHistoryDatasource.tableName);
             foreach (var fileName in filesToLoad)
             {
                 MainThreadLog.Log($"Check {fileName}");
                 string dpt = fileName.Split('_')[1];
-                var datasource = new WeatherHistoryDatasource(dpt);
-                yield return LoadFile(datasource, fileName, metadata);
+                yield return LoadFile(connection, dataset, fileName, metadata);
             }
             sw.Stop();
             MainThreadLog.Log($"Data prepared in {sw.ElapsedMilliseconds}ms");
         }
 
-        public IEnumerator LoadFile(Datasource datasource, string file, MetadataDatasource metadata)
+        public IEnumerator LoadFile(SqliteConnection connection, WeatherHistoryDataset dataset, string fileName, MetadataTable metadata)
         {
-            var processor = new ETLProcessor(
-                    datasource,
-                    new CSVExtractor(file),
-                    new SqliteLoader(datasource)
+            var processor = new WeatherHistoryProcessor(
+                    fileName,
+                    dataset
                 );
             ct = new CancellationTokenSource();
             task = Task.Run(() => processor.ProcessETL(ct.Token), ct.Token);
@@ -98,7 +76,7 @@ namespace Assets.Scripts.Foenn.Atlas
 
             if (task.IsFaulted)
                 UnityEngine.Debug.LogException(task.Exception);
-            metadata.FlagProcessed(file);
+            metadata.FlagProcessed(connection, fileName);
             CleanupRunningWork();
         }
     }

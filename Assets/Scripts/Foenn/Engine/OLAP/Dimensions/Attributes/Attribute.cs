@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.Foenn.Engine.Sql.Dialects;
-using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+﻿using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using System.Collections.Generic;
 
 namespace Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes

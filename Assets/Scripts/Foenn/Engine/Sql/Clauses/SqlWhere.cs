@@ -1,6 +1,4 @@
 ﻿using Assets.Scripts.Foenn.Engine.OLAP.Filters;
-using Assets.Scripts.Foenn.Engine.Sql.Dialects;
-using Assets.Scripts.Foenn.Utils;
 using System.Collections.Generic;
 using System.Linq;
 

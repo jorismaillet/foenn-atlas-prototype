@@ -5,6 +5,7 @@ using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.OLAP.Filters;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using Assets.Scripts.Foenn.Utils;
+using Mono.Data.Sqlite;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -16,10 +17,10 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations
     {
         public static Texture2D BuildCalendarHeatmapTexture(string city, int department, Dictionary<Activity, Color32> activities, RenderSettings settings)
         {
-            var request = new QueryRequest(WeatherHistoryDatasource.tableName);
+            var request = new QueryRequest("TODO");
             request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.NOM_USUEL, city));
             request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.DPT, department.ToString()));
-            var result = new SqliteHelper().ExecuteQuery(request);
+            var result = request.Execute(SqliteHelper.CreateConnection());
             var points = new List<int>();
             foreach (var ac in activities)
             {

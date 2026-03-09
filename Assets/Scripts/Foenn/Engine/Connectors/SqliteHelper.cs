@@ -13,8 +13,8 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
         public const string DATABASE_PATH = "Resources/sqlite/foenn.db";
         public const string DATABASE_TEST_PATH = "Resources/sqlite/foenn_test.db";
 
-        public static SqliteConnection CreateConnection(string databasePath) {
-            var path = DatabaseHelper.ResolveDatabasePath(databasePath);
+        public static SqliteConnection CreateConnection() {
+            var path = DatabaseHelper.ResolveDatabasePath(Env.DatabasePath());
             string connString = $"Data Source={path};Version=3;";
             return new SqliteConnection(connString);
         }
@@ -58,9 +58,9 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
         public static string FieldToSql(Datafield field, bool skipPK = false) {
             var res = field.dbType switch {
                 DbType.String => "TEXT",
-                DbType.Single => "REAL",
-                DbType.Int64 => "INTEGER",
-                _ => throw new System.NotImplementedException()
+                DbType.Single or DbType.Double => "REAL",
+                DbType.Int64 or DbType.Int32 or DbType.Int16 => "INTEGER",
+                _ => throw new System.NotImplementedException($"Database type not supported: {field.dbType}")
             };
             if (!skipPK && field is PrimaryKey pk) {
                 res += " PRIMARY KEY";
@@ -71,19 +71,15 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
         }
 
         public static bool Exists(SqliteConnection connection, string table, string column, string value) {
-            var command = connection.CreateCommand();
-            command.CommandText = $"SELECT COUNT(*) FROM \"{table}\" WHERE \"{column}\" = '{value}' LIMIT 1;";
-            var count = (long)command.ExecuteScalar();
-            return count > 0;
+            var sql = $"SELECT COUNT(*) FROM \"{table}\" WHERE \"{column}\" = '{value}' LIMIT 1;";
+            return ExecuteScalar(connection, sql) > 0;
         }
 
         public static void Insert(SqliteConnection connection, string table, List<Datafield> columns, List<string> values) {
-            var command = connection.CreateCommand();
             var columnsString = string.Join(", ", columns.Select(c => c.name));
             var valuesString = string.Join(", ", values.Select((val, i) => ValueToSql(val, columns[i].dbType)));
             var sql = $"INSERT INTO \"{table}\" ({columnsString}) VALUES ({valuesString});";
-            command.CommandText = sql;
-            command.ExecuteNonQuery();
+            Execute(connection, sql);
         }
 
         private static string ValueToSql(string rawValue, DbType type) {
@@ -92,7 +88,10 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
                 case DbType.String:
                     return $"\"{rawValue}\"";
                 case DbType.Single:
+                case DbType.Double:
                 case DbType.Int64:
+                case DbType.Int32:
+                case DbType.Int16:
                     return rawValue;
                 default:
                     throw new System.NotImplementedException();
@@ -110,9 +109,7 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
                 createTableSql += $"CREATE {unique}INDEX IF NOT EXISTS \"{index.name}\" ON \"{table.Name}\"({cols});";
             });
             UnityEngine.Debug.Log(createTableSql);
-            var command = connection.CreateCommand();
-            command.CommandText= createTableSql;
-            command.ExecuteNonQuery();
+            Execute(connection, createTableSql);
         }
 
         public static void CreateStagingTable(SqliteConnection connection, ITable table) {
@@ -122,17 +119,31 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             });
             var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{table.Name}_staging\" ({string.Join(", ", columns)});";
             UnityEngine.Debug.Log(createTableSql);
-            var command = connection.CreateCommand();
-            command.CommandText = createTableSql;
-            command.ExecuteNonQuery();
+            Execute(connection, createTableSql);
         }
 
         public static void DropStagingTable(SqliteConnection connection, ITable table) {
             var sql = $"DROP TABLE IF EXISTS {table.Name}_staging;";
             UnityEngine.Debug.Log(sql);
+            Execute(connection, sql);
+        }
+
+        public static void Execute(SqliteConnection connection, string sql) {
             var command = connection.CreateCommand();
             command.CommandText = sql;
             command.ExecuteNonQuery();
+        }
+
+        public static SqliteDataReader ExecuteReader(SqliteConnection connection, string sql) {
+            var command = connection.CreateCommand();
+            command.CommandText = sql;
+            return command.ExecuteReader();
+        }
+
+        public static int ExecuteScalar(SqliteConnection connection, string sql) {
+            var command = connection.CreateCommand();
+            command.CommandText = sql;
+            return (int)command.ExecuteScalar();
         }
     }
 }

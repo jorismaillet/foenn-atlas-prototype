@@ -13,7 +13,7 @@ namespace Assets.Editor.Tests.Engine
         [Test]
         public void TestQueryResultCreation()
         {
-            var queryRequest = new QueryRequest(WeatherHistoryDatasource.tableName)
+            var queryRequest = new QueryRequest("weathers_data")
                 .Select(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG))
                 .Select(new Attribute(WeatherHistoryAttributeKey.DPT))
                 .Select(new Attribute(WeatherHistoryAttributeKey.AAAAMMJJHH))

@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
+﻿using Assets.Scripts.Foenn.Engine.Connectors;
+using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
 using Assets.Scripts.Foenn.Engine.OLAP.Filters;
 using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
 using Assets.Scripts.Foenn.Engine.Sql.Clauses;
@@ -55,11 +56,10 @@ namespace Assets.Scripts.Foenn.Engine.Execution
         public string ToSql()
         {
             StringBuilder sql = new StringBuilder();
-            sql.Append(new SqlSelect(selectedMetrics, selectedAttributes, dialect).clause);
-            sql.Append(new SqlFrom(from, dialect).clause);
-            sql.Append(new SqlWhere(filters, dialect).clause);
-            sql.Append(new SqlGroupBy(groups, dialect).clause);
-            sql.Append(dialect.EndOfLine());
+            sql.Append(new SqlSelect(selectedMetrics, selectedAttributes).clause);
+            sql.Append(new SqlFrom(from).clause);
+            sql.Append(new SqlWhere(filters).clause);
+            sql.Append(new SqlGroupBy(groups).clause);
             return sql.ToString();
         }
 
@@ -68,9 +68,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
             UnityEngine.Debug.Log($"Executing query : {sql}");
             var queryTime = new Stopwatch();
             queryTime.Start();
-            var command = connection.CreateCommand();
-            command.CommandText = sql;
-            using (var reader = command.ExecuteReader()) {
+            using (var reader = SqliteHelper.ExecuteReader(connection, sql)) {
                 int nbColumns = reader.FieldCount;
                 string[] rawHeaders = new string[nbColumns];
                 for (int i = 0; i < nbColumns; i++) {
