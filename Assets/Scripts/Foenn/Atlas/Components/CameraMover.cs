@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.EventSystems;
-
-namespace Assets.Scripts.Unity
+﻿namespace Assets.Scripts.Unity
 {
+    using UnityEngine;
+    using UnityEngine.EventSystems;
+
     public class CameraMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler, IScrollHandler
     {
         [Header("References")]
@@ -13,17 +13,24 @@ namespace Assets.Scripts.Unity
 
         [Header("Pan")]
         [SerializeField] bool enablePan = true;
+
         [SerializeField] PointerEventData.InputButton mouseButton = PointerEventData.InputButton.Left;
 
         [Header("Zoom")]
         [SerializeField] bool enableZoom = true;
+
         [SerializeField] float zoomSpeed = 0.15f;
+
         [SerializeField] float minOrthoSize = 0.5f;
+
         [SerializeField] float maxOrthoSize = 50f;
+
         [SerializeField] float perspectiveDollySpeed = 5f;
 
         bool _dragging;
+
         Vector2 _lastScreenPos;
+
         int _activePointerId;
 
         void Awake()

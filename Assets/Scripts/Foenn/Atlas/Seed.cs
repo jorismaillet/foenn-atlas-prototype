@@ -1,39 +1,48 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Activities;
-using Assets.Scripts.Foenn.Atlas.Models.Condition;
-using Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions;
-using Assets.Scripts.Foenn.Atlas.Models.Geo;
-using Assets.Scripts.Foenn.Atlas.Models.Locations;
-using Assets.Scripts.Foenn.Atlas.Models.Plannings;
-using Assets.Scripts.Foenn.Datasets.Facts;
-using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
-using Assets.Scripts.Foenn.ETL.Datasets;
-using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
-
-namespace Assets.Scripts.Foenn.Atlas
+﻿namespace Assets.Scripts.Foenn.Atlas
 {
+    using Assets.Scripts.Foenn.Atlas.Models.Activities;
+    using Assets.Scripts.Foenn.Atlas.Models.Condition;
+    using Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions;
+    using Assets.Scripts.Foenn.Atlas.Models.Geo;
+    using Assets.Scripts.Foenn.Atlas.Models.Locations;
+    using Assets.Scripts.Foenn.Atlas.Models.Plannings;
+    using Assets.Scripts.Foenn.Datasets.Facts;
+    using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
+
     public class Seed
     {
         public static MetricGroup temp = new MetricGroup("Temperature", WeatherFact.temperature, WeatherFact.temperature_10, WeatherFact.temperature_20, WeatherFact.temperature_100);
+
         public static MetricGroup rain = new MetricGroup("Pluie", WeatherFact.rain_1);
+
         public static MetricGroup wind = new MetricGroup("Vent", WeatherFact.wind_1, WeatherFact.wind_2);
+
         public static MetricGroup gust = new MetricGroup("Rafales", WeatherFact.gust_1, WeatherFact.gust_2, WeatherFact.gust_3s);
 
         public static GroupAllCondition pasDePluie = new GroupAllCondition(rain, 0, 0);
+
         public static GroupAnyCondition peuDeVent = new GroupAnyCondition(wind, 0, 50);
+
         public static GroupAnyCondition peuDeRafales = new GroupAnyCondition(gust, 0, 30);
 
         public static NamedCondition beauTemps = new NamedCondition("Beau temps", new AllCondition(pasDePluie, peuDeRafales, peuDeVent));
 
         public static PointLocation brest = new PointLocation("Brest", 48.3874F, -4.4952F);
 
-        public static PointLocation tcQuimper = new PointLocation("TC Quimper",47.9729F, -4.0982F);
+        public static PointLocation tcQuimper = new PointLocation("TC Quimper", 47.9729F, -4.0982F);
+
         public static PointLocation tcPontLabbe = new PointLocation("TC Pont l'Abbé", 47.8708F, -4.2192F);
+
         public static PointLocation maison = new PointLocation("Maison", 47.9369F, -4.1544F);
+
         public static CircleLocation procheMaison = new CircleLocation("Proche Maison", maison, 5000);
+
         public static PolygonLocation plageIleTudy = new PolygonLocation("Plage Ile Tudy", new GeoPoint(47.8518F, -4.1495F), new GeoPoint(47.8465F, -4.1617F), new GeoPoint(47.8383F, -4.1661F), new GeoPoint(47.8412F, -4.1726F), new GeoPoint(47.8515F, -4.1682F));
 
         public static Activity piscine = new Activity("Piscine", beauTemps, new GroupAllCondition(temp, 25, 33));
+
         public static Activity kayak = new Activity("Kayak", beauTemps);
+
         public static Activity plage = new Activity("Plage", beauTemps, new GroupAllCondition(temp, 25, 33), new HourRangeCondition(14, 18));
 
         public static Activity velo = new Activity("Vélo", new GroupAllCondition(temp, 17, 24),
@@ -66,6 +75,7 @@ namespace Assets.Scripts.Foenn.Atlas
             new PlannedActivity(velo, procheMaison),
             new PlannedActivity(kayak, plageIleTudy)
         );
+
         public static Planning ideesDeSorties = new Planning("Idées de sorties",
             new PlannedActivity(plage, plageIleTudy),
             new PlannedActivity(jardin, maison),

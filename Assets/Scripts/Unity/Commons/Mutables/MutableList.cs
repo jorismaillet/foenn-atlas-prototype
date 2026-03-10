@@ -1,18 +1,18 @@
-﻿using System.Collections.Generic;
-
-namespace Assets.Scripts.Unity.Commons.Mutables
+﻿namespace Assets.Scripts.Unity.Commons.Mutables
 {
+    using System.Collections.Generic;
 
     public class MutableList<T> : List<T>
     {
         public GameEvent<List<T>> onChange = new GameEvent<List<T>>();
+
         public GameEvent<T> onElementAdded = new GameEvent<T>();
+
         public GameEvent<T> onElementRemoved = new GameEvent<T>();
 
         /*public List<T> Value {
             get { return this; }
         }*/
-
         public void Replace(List<T> newList)
         {
             Clear();

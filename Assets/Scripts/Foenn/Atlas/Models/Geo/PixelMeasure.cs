@@ -3,6 +3,7 @@
     public readonly struct PixelMeasure
     {
         public readonly PixelPoint point;
+
         public readonly float value;
 
         public PixelMeasure(PixelPoint point, float value)

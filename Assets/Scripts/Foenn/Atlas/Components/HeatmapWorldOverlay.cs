@@ -1,16 +1,15 @@
-using Assets.Scripts.Foenn.Atlas.Layers;
-using Assets.Scripts.Foenn.Atlas.Models.Geo;
-using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap;
-using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage;
-using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
-using Assets.Scripts.Unity;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using UnityEngine;
-
 namespace Assets.Scripts.Foenn.Atlas.Components
 {
+    using Assets.Scripts.Foenn.Atlas.Layers;
+    using Assets.Scripts.Foenn.Atlas.Models.Geo;
+    using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap;
+    using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage;
+    using Assets.Scripts.Unity;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using UnityEngine;
+
     [DisallowMultipleComponent]
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
@@ -24,19 +23,27 @@ namespace Assets.Scripts.Foenn.Atlas.Components
 
         [Header("Heatmap")]
         [SerializeField] float idwPower = 2f;
-        [Min(1)] [SerializeField] int maxNeighbors = 16;
-        [Min(1f)] [SerializeField] float maxRadiusPx = 120f;
-        [Range(0f, 1f)] [SerializeField] float alpha = 0.85f;
+
+        [Min(1)][SerializeField] int maxNeighbors = 16;
+
+        [Min(1f)][SerializeField] float maxRadiusPx = 120f;
+
+        [Range(0f, 1f)][SerializeField] float alpha = 0.85f;
+
         [SerializeField] float tempMin = -10f;
+
         [SerializeField] float tempMax = 40f;
-        [Min(1)] [SerializeField] int cellSizePx = 32;
+
+        [Min(1)][SerializeField] int cellSizePx = 32;
 
         [Header("Performance")]
-        [Min(0)] [SerializeField] int targetTextureSizePx = 512;
+        [Min(0)][SerializeField] int targetTextureSizePx = 512;
 
         [Header("Mask (optional)")]
         [SerializeField] Texture2D mask;
+
         [SerializeField] BBox maskBBox = new BBox(-5.5f, 41.0f, 20.0f, 51.5f);
+
         [SerializeField] bool reprojectMaskToTileGrid = true;
 
         [Header("Depth")]
@@ -45,7 +52,9 @@ namespace Assets.Scripts.Foenn.Atlas.Components
         List<GeoMeasure> _measures;
 
         MeshFilter _meshFilter;
+
         MeshRenderer _meshRenderer;
+
         Mesh _mesh;
 
         Material _runtimeMaterial;
@@ -172,7 +181,6 @@ namespace Assets.Scripts.Foenn.Atlas.Components
 
             var settings = new HeatmapSettings(idwPower, maxNeighbors, maxRadiusPx, cellSizePx);
             var rawImageSettings = new HeatmapDrawerSettings(alpha, tempMin, tempMax);
-
 
             var sw = new Stopwatch();
             sw.Start();

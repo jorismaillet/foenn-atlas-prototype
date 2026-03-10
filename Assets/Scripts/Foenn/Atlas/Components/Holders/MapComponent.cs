@@ -1,29 +1,32 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Activities;
-using Assets.Scripts.Foenn.Atlas.Models.Locations;
-using Assets.Scripts.Foenn.Atlas.Models.Plannings;
-using Assets.Scripts.Foenn.Engine.Execution;
-using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
-using Assets.Scripts.Unity;
-using Assets.Scripts.Unity.Commons.Containers;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using UnityEngine;
-
-namespace Assets.Scripts.Foenn.Atlas.Components.Holders
+﻿namespace Assets.Scripts.Foenn.Atlas.Components.Holders
 {
+    using Assets.Scripts.Foenn.Atlas.Models.Activities;
+    using Assets.Scripts.Foenn.Atlas.Models.Locations;
+    using Assets.Scripts.Foenn.Atlas.Models.Plannings;
+    using Assets.Scripts.Foenn.Engine.Execution;
+    using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+    using Assets.Scripts.Unity.Commons.Containers;
+    using System.Collections.Generic;
+    using UnityEngine;
+
     public class MapComponent : MonoBehaviour
     {
         public PrefabsContainer pointLocationContainer;
+
         public PrefabsContainer pointmapContainer;
+
         public PrefabsContainer activityContainer;
+
         public PrefabsContainer planningsContainer;
+
         public HeatmapWorldOverlay heatmapContainer;
-        
+
         [SerializeField]
         public int day = 01, month = 08, year = 2023;
-        [SerializeField] 
+
+        [SerializeField]
         public string department = "29";
+
         public WeatherHistoryMetricKey key;
 
         public void Initialize()

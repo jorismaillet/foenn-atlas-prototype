@@ -1,10 +1,9 @@
 ﻿namespace Assets.Scripts.Unity.Commons.Mutables
 {
-
     public class Mutable<T>
     {
-
         private T value;
+
         public GameEvent<T> onChange { get; } = new GameEvent<T>();
 
         public Mutable(T t = default(T))
@@ -17,7 +16,6 @@
             Mutable<T> result = new Mutable<T>(value);
             return result;
         }
-
         public T Value
         {
             get { return value; }

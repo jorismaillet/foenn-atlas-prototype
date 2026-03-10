@@ -1,12 +1,12 @@
-﻿using Assets.Scripts.Foenn.Engine.OLAP.Filters;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
+﻿namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
 {
+    using Assets.Scripts.Foenn.Engine.OLAP.Filters;
+    using System.Collections.Generic;
+
     public class SqlWhere
     {
         public readonly string clause;
+
         public SqlWhere(List<Filter> filters)
         {
             var whereParts = new List<string>();

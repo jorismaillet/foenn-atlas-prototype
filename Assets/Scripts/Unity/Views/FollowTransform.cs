@@ -1,12 +1,13 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using UnityEngine;
-
-namespace Assets.Scripts.Unity.Common.Views
+﻿namespace Assets.Scripts.Unity.Common.Views
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using UnityEngine;
+
     [ExecuteInEditMode]
     public class FollowTransform : BaseBehaviour
     {
         public Transform target { get; private set; }
+
         public Vector3 offset;
 
         private void Update()

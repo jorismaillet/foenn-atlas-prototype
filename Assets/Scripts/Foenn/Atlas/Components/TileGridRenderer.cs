@@ -1,19 +1,21 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using UnityEngine;
-using UnityEngine.Networking;
-
-namespace Assets.Scripts.Foenn.Atlas.Layers
+﻿namespace Assets.Scripts.Foenn.Atlas.Layers
 {
+    using Assets.Scripts.Foenn.Atlas.Models.Geo;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.IO;
+    using UnityEngine;
+    using UnityEngine.Networking;
+
     public class TileGridRenderer : MonoBehaviour
     {
         public GeoPoint franceCenter = new GeoPoint(46.50f, 2.00f);
 
         [Header("Slippy Tiles")]
         [Range(0, 19)] public int mapZoom = 6;
+
         [Range(1, 21)] public int gridSize = 7;
+
         public float tileToWorldSize = 1f;
 
         [Header("Tile Source")]
@@ -21,23 +23,30 @@ namespace Assets.Scripts.Foenn.Atlas.Layers
 
         [Header("Rendering")]
         public Material tileMaterial;
+
         public bool generateOnStart = true;
 
         [Header("Performance")]
         [Range(1, 16)] public int maxConcurrentDownloads = 6;
+
         public bool verboseLogs = false;
 
         private int TileTexturePropertyId = ShaderPropertyIds.MainTex;
 
         private readonly Dictionary<string, Texture2D> _texCache = new();
+
         private readonly Dictionary<string, TileInstance> _tileInstances = new();
+
         private readonly HashSet<string> _downloadsInFlight = new();
 
         private int _activeDownloads;
+
         private int _pendingTileLoads;
+
         private bool _ownsRuntimeMaterial;
 
         private Mesh _sharedQuadMesh;
+
         private Material _sharedRuntimeMaterial;
 
         private static class ShaderPropertyIds
@@ -48,7 +57,9 @@ namespace Assets.Scripts.Foenn.Atlas.Layers
         private sealed class TileInstance
         {
             public GameObject go;
+
             public MeshRenderer renderer;
+
             public MaterialPropertyBlock props;
         }
 

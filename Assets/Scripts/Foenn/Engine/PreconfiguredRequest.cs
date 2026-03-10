@@ -1,23 +1,19 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
-using Assets.Scripts.Foenn.Atlas.Models.Locations;
-using Assets.Scripts.Foenn.Datasets.Facts;
-using Assets.Scripts.Foenn.Engine.Connectors;
-using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
-using Assets.Scripts.Foenn.Engine.OLAP.Filters;
-using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
-using Assets.Scripts.Foenn.Engine.Sql;
-using Assets.Scripts.Foenn.Engine.Sql.Clauses;
-using Assets.Scripts.Foenn.ETL.Datasets;
-using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
-using Assets.Scripts.Foenn.ETL.Dimensions;
-using Assets.Scripts.Foenn.ETL.Models;
-using Assets.Scripts.Unity;
-using System.Collections.Generic;
-using System.Diagnostics;
-
-
-namespace Assets.Scripts.Foenn.Engine.Execution
+﻿namespace Assets.Scripts.Foenn.Engine.Execution
 {
+    using Assets.Scripts.Foenn.Atlas.Models.Geo;
+    using Assets.Scripts.Foenn.Atlas.Models.Locations;
+    using Assets.Scripts.Foenn.Datasets.Facts;
+    using Assets.Scripts.Foenn.Engine.Connectors;
+    using Assets.Scripts.Foenn.Engine.OLAP.Filters;
+    using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
+    using Assets.Scripts.Foenn.Engine.Sql;
+    using Assets.Scripts.Foenn.Engine.Sql.Clauses;
+    using Assets.Scripts.Foenn.ETL.Datasets;
+    using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+    using Assets.Scripts.Foenn.ETL.Dimensions;
+    using Assets.Scripts.Foenn.ETL.Models;
+    using System.Collections.Generic;
+
     public class PreconfiguredRequest
     {
         public static List<GeoMeasure> FieldMeasuresPerPostForDay(int dayOfMonth, int month, int year, string dpt, WeatherHistoryMetricKey key)
@@ -69,10 +65,12 @@ namespace Assets.Scripts.Foenn.Engine.Execution
                     new ExcludeNullFilter(new PrefixedField(
                         WeatherHistoryDataset.fact,
                         WeatherFact.temperature)));
-            using (var connection = SqliteHelper.CreateConnection()) {
+            using (var connection = SqliteHelper.CreateConnection())
+            {
                 var result = query.Execute(connection);
                 var res = new List<GeoMeasure>();
-                foreach (var row in result.rows) {
+                foreach (var row in result.rows)
+                {
                     string post = (string)row.values[LocationDimension.PostName];
                     var point = row.geo.point;
                     var measure = new Measure(factField, (float)row.values[avgFact]);
@@ -82,14 +80,14 @@ namespace Assets.Scripts.Foenn.Engine.Execution
             }
         }
 
-        private static Field FieldFor(WeatherHistoryMetricKey key) {
+        private static Field FieldFor(WeatherHistoryMetricKey key)
+        {
             return key switch
             {
                 WeatherHistoryMetricKey.T => WeatherFact.temperature,
                 WeatherHistoryMetricKey.R => WeatherFact.rain_1,
                 _ => throw new KeyNotFoundException($"No field found for metric {key}")
             };
-
         }
     }
 }

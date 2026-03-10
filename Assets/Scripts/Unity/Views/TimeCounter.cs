@@ -1,12 +1,13 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using System;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Unity.Scenes.Fights.Views
+﻿namespace Assets.Scripts.Unity.Scenes.Fights.Views
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using System;
+    using UnityEngine.UI;
+
     public class TimeCounter : BaseBehaviour
     {
         private DateTime startTime = DateTime.UtcNow;
+
         private Text duration;
 
         private void Awake()

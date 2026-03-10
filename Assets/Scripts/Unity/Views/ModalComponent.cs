@@ -1,15 +1,17 @@
-﻿using Assets.Scripts.Unity.Common.Utils;
-using Assets.Scripts.Unity.Commons.Behaviours;
-using Assets.Scripts.Unity.Commons.Utils;
-using System;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Unity.Common.Views
+﻿namespace Assets.Scripts.Unity.Common.Views
 {
+    using Assets.Scripts.Unity.Common.Utils;
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using Assets.Scripts.Unity.Commons.Utils;
+    using System;
+    using UnityEngine.UI;
+
     public class ModalComponent : BaseBehaviour
     {
         public Text header, message;
+
         public Button confirmButton, cancelButton;
+
         private Action OnConfirm;
 
         public static void Show(string header, string message, Action OnConfirm = null)

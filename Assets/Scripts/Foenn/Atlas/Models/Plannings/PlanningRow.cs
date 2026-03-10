@@ -1,11 +1,12 @@
-﻿using Assets.Scripts.Foenn.Engine.Execution;
-using System.Collections.Generic;
-
-namespace Assets.Scripts.Foenn.Atlas.Models.Plannings
+﻿namespace Assets.Scripts.Foenn.Atlas.Models.Plannings
 {
+    using Assets.Scripts.Foenn.Engine.Execution;
+    using System.Collections.Generic;
+
     public class PlanningRow
     {
         public Row row;
+
         public List<ActivitySuit> activitySuits;
 
         public PlanningRow(Row row, List<ActivitySuit> activitySuits)

@@ -1,10 +1,10 @@
-﻿using Assets.Scripts.Common.Utils;
-using Assets.Scripts.Unity.Commons.Behaviours;
-using System;
-using UnityEngine;
-
-namespace Assets.Scripts.Unity.Environment
+﻿namespace Assets.Scripts.Unity.Environment
 {
+    using Assets.Scripts.Common.Utils;
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using System;
+    using UnityEngine;
+
     public class LightCycleController : BaseBehaviour
     {
         public bool pauseCycle = false, pauseRotation = false, pauseIntensity = false;
@@ -12,10 +12,12 @@ namespace Assets.Scripts.Unity.Environment
         public float riseStart, riseEnd, fallStart, fallEnd, cycleOffset, minIntensity, maxIntensity;
 
         public float cycleInSeconds = 30F;
+
         [Range(0, 1)]
         public float cycle = 0;
 
         private new Light light;
+
         private DateTime startTime = DateTime.UtcNow;
 
         private void Start()

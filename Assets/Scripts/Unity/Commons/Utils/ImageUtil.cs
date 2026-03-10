@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Unity.Commons.Utils
+﻿namespace Assets.Scripts.Unity.Commons.Utils
 {
+    using System.Collections.Generic;
+    using UnityEngine;
+    using UnityEngine.UI;
+
     public class ImageUtil
     {
         private static readonly string ImagesFolder = "Images/{0}";
+
         private static Dictionary<string, Sprite> spritesCache = new Dictionary<string, Sprite>();
 
         public static Sprite Get(string spritePath)

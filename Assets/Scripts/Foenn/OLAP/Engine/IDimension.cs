@@ -1,7 +1,7 @@
-﻿using Assets.Scripts.Foenn.Datasets;
-
-namespace Assets.Scripts.Foenn.ETL.Dimensions
+﻿namespace Assets.Scripts.Foenn.ETL.Dimensions
 {
+    using Assets.Scripts.Foenn.Datasets;
+
     public interface IDimension : ITable
     {
     }

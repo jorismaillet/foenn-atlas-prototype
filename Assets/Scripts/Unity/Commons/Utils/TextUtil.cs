@@ -1,7 +1,7 @@
-﻿using UnityEngine.UI;
-
-namespace Assets.Scripts.Unity.Commons.Utils
+﻿namespace Assets.Scripts.Unity.Commons.Utils
 {
+    using UnityEngine.UI;
+
     public class TextUtil
     {
         public static void TrySet(Text property, string value)
@@ -11,6 +11,7 @@ namespace Assets.Scripts.Unity.Commons.Utils
                 property.text = value;
             }
         }
+
         public static void Set(Text property, string value)
         {
             property.text = value;

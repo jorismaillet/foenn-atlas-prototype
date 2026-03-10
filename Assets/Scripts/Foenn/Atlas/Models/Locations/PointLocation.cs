@@ -1,8 +1,7 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
-using UnityEngine;
-
-namespace Assets.Scripts.Foenn.Atlas.Models.Locations
+﻿namespace Assets.Scripts.Foenn.Atlas.Models.Locations
 {
+    using Assets.Scripts.Foenn.Atlas.Models.Geo;
+
     public class PointLocation : GeoPoint, ILocation
     {
         public string name;

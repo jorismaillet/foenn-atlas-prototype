@@ -1,12 +1,13 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Assets.Scripts.Foenn.Atlas.Models.Locations
+﻿namespace Assets.Scripts.Foenn.Atlas.Models.Locations
 {
+    using Assets.Scripts.Foenn.Atlas.Models.Geo;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class PolygonLocation : ILocation
     {
-        public string name; 
+        public string name;
+
         public List<GeoPoint> points;
 
         public PolygonLocation(string name, params GeoPoint[] points)

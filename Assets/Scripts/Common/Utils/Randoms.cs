@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Assets.Scripts.Common.Utils
+﻿namespace Assets.Scripts.Common.Utils
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public static class Randoms
     {
-
         //Function to get random number
         private static readonly Random random = new Random();
 
         private static readonly object syncLock = new object();
+
         public static int Get(int min, int max)
         {
             lock (syncLock)

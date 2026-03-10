@@ -1,18 +1,21 @@
-﻿using Assets.Scripts.Common.Utils;
-using Assets.Scripts.Unity.Commons.UIAnimations.Interpolations;
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Assets.Scripts.Unity.Commons.UIAnimations
+﻿namespace Assets.Scripts.Unity.Commons.UIAnimations
 {
+    using Assets.Scripts.Common.Utils;
+    using Assets.Scripts.Unity.Commons.UIAnimations.Interpolations;
+    using System;
+    using System.Collections.Generic;
+    using UnityEngine;
+
     public class UIAnimation
     {
         private readonly List<Interpolation> interpolations;
 
         private GameObject from;
+
         private int durationMillis;
+
         private float elapsedTime = 0.0F;
+
         public Action callback;
 
         public UIAnimation(GameObject from, Interpolation interpolation, int durationMillis, Action callback = null)

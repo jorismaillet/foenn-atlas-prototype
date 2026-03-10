@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-
-namespace Assets.Scripts.Unity.Sounds
+﻿namespace Assets.Scripts.Unity.Sounds
 {
+    using System.Collections.Generic;
+    using UnityEngine;
+
     public class InterfaceAudioSource : MonoBehaviour
     {
         private static AudioSource source;
+
         private static Dictionary<string, AudioClip> clips = new Dictionary<string, AudioClip>();
+
         private const string interfaceAudioClipsPrefix = "Sounds/Interface/{0}";
 
         private static Dictionary<InterfaceSoundKey, string> fileName = new Dictionary<InterfaceSoundKey, string>() {

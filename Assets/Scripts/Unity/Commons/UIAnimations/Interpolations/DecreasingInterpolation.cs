@@ -1,10 +1,12 @@
-﻿using System;
-
-namespace Assets.Scripts.Unity.Commons.UIAnimations.Interpolations
+﻿namespace Assets.Scripts.Unity.Commons.UIAnimations.Interpolations
 {
+    using System;
+
     public class DecreasingInterpolation : Interpolation
     {
-        public DecreasingInterpolation() : base(null, 0, 0) { }
+        public DecreasingInterpolation() : base(null, 0, 0)
+        {
+        }
 
         public DecreasingInterpolation(Action<float> action, float startValue, float endValue) : base(action, startValue, endValue)
         {

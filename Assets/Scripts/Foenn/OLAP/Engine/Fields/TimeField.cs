@@ -1,10 +1,11 @@
-﻿using System;
-
-namespace Assets.Scripts.Foenn.Engine.OLAP.Dimensions
+﻿namespace Assets.Scripts.Foenn.Engine.OLAP.Dimensions
 {
+    using System;
+
     public class TimeField
     {
         public DateTime start;
+
         public int durationHours;
 
         public static TimeField AAAAMMJJHH(string AAAAMMJJHH)

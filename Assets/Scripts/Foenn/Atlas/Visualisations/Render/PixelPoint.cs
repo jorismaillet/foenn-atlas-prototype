@@ -3,6 +3,7 @@
     public readonly struct PixelPoint
     {
         public readonly int x, y;
+
         public PixelPoint(int x, int y)
         {
             this.x = x;

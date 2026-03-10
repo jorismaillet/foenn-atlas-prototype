@@ -1,13 +1,15 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Unity.Common.Utils.Toggles
+﻿namespace Assets.Scripts.Unity.Common.Utils.Toggles
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using UnityEngine;
+    using UnityEngine.UI;
+
     public class SelectedToggle : BaseBehaviour
     {
         public Color selectedColor;
+
         private Toggle toggle;
+
         private Image toggleImage;
 
         private void Awake()

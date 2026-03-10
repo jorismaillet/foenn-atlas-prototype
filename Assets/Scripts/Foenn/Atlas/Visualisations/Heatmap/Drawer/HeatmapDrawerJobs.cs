@@ -116,30 +116,45 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
         private struct CoarseFieldJob : IJobParallelFor
         {
             [ReadOnly] public NativeArray<int> xs;
+
             [ReadOnly] public NativeArray<int> ys;
+
             [ReadOnly] public NativeArray<float> vals;
 
             [ReadOnly] public NativeArray<int> bucketStart;
+
             [ReadOnly] public NativeArray<int> bucketItems;
 
             public int gridCols;
+
             public int gridRows;
 
             public int cellSize;
+
             public int w;
+
             public int h;
+
             public int coarseW;
+
             public int coarseH;
+
             public int sampleStep;
 
             public float maxR2;
+
             public float maxRadiusPx;
+
             public float pwr;
+
             public int k;
+
             public int rangeCells;
+
             public byte baseAlpha;
 
             [WriteOnly] public NativeArray<float> outTemp;
+
             [WriteOnly] public NativeArray<byte> outAlpha;
 
             public void Execute(int index)

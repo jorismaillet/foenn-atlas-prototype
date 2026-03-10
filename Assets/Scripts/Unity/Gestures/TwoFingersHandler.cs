@@ -1,24 +1,28 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using UnityEngine;
-using UnityEngine.EventSystems;
-
-namespace Assets.Scripts.Unity.Scenes.Home.World.Views
+﻿namespace Assets.Scripts.Unity.Scenes.Home.World.Views
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using UnityEngine;
+    using UnityEngine.EventSystems;
+
     public abstract class TwoFingersHandler : BaseBehaviour, IDragHandler
     {
         const float pinchTurnRatio = Mathf.PI / 2;
+
         const float minTurnAngle = 0;
 
         const float pinchRatio = 1;
+
         const float minPinchDistance = 0;
 
         const float panRatio = 1;
+
         const float minPanDistance = 0;
 
         /// <summary>
         ///   The delta of the angle between two touch points
         /// </summary>
         static public float turnAngleDelta;
+
         /// <summary>
         ///   The angle between two touch points
         /// </summary>
@@ -28,6 +32,7 @@ namespace Assets.Scripts.Unity.Scenes.Home.World.Views
         ///   The delta of the distance between two touch points that were distancing from each other
         /// </summary>
         static public float pinchDistanceDelta;
+
         /// <summary>
         ///   The distance between two touch points that were distancing from each other
         /// </summary>

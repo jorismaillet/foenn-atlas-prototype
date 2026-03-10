@@ -1,12 +1,14 @@
-﻿using System;
-
-namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage
+﻿namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage
 {
+    using System;
+
     public class HeatmapDrawerSettings
     {
-        public readonly float alpha;          // 0..1 overlay alpha
-        public readonly float tempMin;        // for color mapping
-        public readonly float tempMax;        // for color mapping
+        public readonly float alpha;// 0..1 overlay alpha
+
+        public readonly float tempMin;// for color mapping
+
+        public readonly float tempMax;// for color mapping
 
         public HeatmapDrawerSettings(float alpha, float tempMin, float tempMax)
         {

@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-
-namespace Assets.Scripts.Foenn.ETL.Models
+﻿namespace Assets.Scripts.Foenn.ETL.Models
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+
     public class IndexDefinition
     {
         public readonly string name;
+
         public readonly IReadOnlyList<Field> fields;
+
         public readonly bool unique;
 
         public IndexDefinition(bool unique, params Field[] fields)

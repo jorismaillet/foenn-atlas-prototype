@@ -1,10 +1,11 @@
-﻿using System;
-
-namespace Assets.Scripts.Unity.Commons.UIAnimations.Interpolations
+﻿namespace Assets.Scripts.Unity.Commons.UIAnimations.Interpolations
 {
+    using System;
+
     public abstract class Interpolation
     {
         public Action<float> action;
+
         public float startValue, endValue;
 
         protected Interpolation(Action<float> action, float startValue, float endValue)

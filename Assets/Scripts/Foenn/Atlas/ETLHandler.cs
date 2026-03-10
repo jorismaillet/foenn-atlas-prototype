@@ -1,24 +1,20 @@
-﻿using Assets.Scripts.Foenn.Engine.Connectors;
-using Assets.Scripts.Foenn.ETL;
-using Assets.Scripts.Foenn.ETL.Datasets;
-using Assets.Scripts.Foenn.ETL.Datasources;
-using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
-using Assets.Scripts.Foenn.ETL.Extractors;
-using Assets.Scripts.Unity;
-using Mono.Data.Sqlite;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-using UnityEngine;
-
-namespace Assets.Scripts.Foenn.Atlas
+﻿namespace Assets.Scripts.Foenn.Atlas
 {
+    using Assets.Scripts.Foenn.ETL;
+    using Assets.Scripts.Foenn.ETL.Datasources;
+    using Assets.Scripts.Unity;
+    using Mono.Data.Sqlite;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using UnityEngine;
+
     public class ETLHandler : MonoBehaviour
     {
         private CancellationTokenSource ct;
+
         private Task task;
 
         void OnDisable()
@@ -62,7 +58,7 @@ namespace Assets.Scripts.Foenn.Atlas
             MainThreadLog.Log($"Data prepared in {sw.ElapsedMilliseconds}ms");
         }
 
-        public IEnumerator LoadFile(SqliteConnection connection,  string fileName, MetadataTable metadata)
+        public IEnumerator LoadFile(SqliteConnection connection, string fileName, MetadataTable metadata)
         {
             var processor = new WeatherHistoryProcessor(
                     fileName

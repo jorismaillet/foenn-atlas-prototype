@@ -1,23 +1,25 @@
-﻿using Assets.Scripts.Foenn.Datasets;
-using Assets.Scripts.Foenn.ETL.Models;
-using System.Collections.Generic;
-using Unity.Jobs.LowLevel.Unsafe;
-
-namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
+﻿namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
 {
+    using System.Collections.Generic;
+
     public class SqlJoin
     {
         public readonly string clause;
-        public SqlJoin(List<JoinDefinition> joins) {
+
+        public SqlJoin(List<JoinDefinition> joins)
+        {
             var statement = new List<string>();
-            foreach (var join in joins) {
+            foreach (var join in joins)
+            {
                 statement.Add($"{JoinTypeToSql(join.joinType)} ON {join.leftField.ToSql()} = {join.rightField.ToSql()}");
             }
             clause = string.Join("", statement);
         }
 
-        private string JoinTypeToSql(JoinType joinType) {
-            switch (joinType) {
+        private string JoinTypeToSql(JoinType joinType)
+        {
+            switch (joinType)
+            {
                 case JoinType.INNER:
                     return "INNER JOIN";
                 case JoinType.OUTER:

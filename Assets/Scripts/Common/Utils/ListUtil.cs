@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Assets.Scripts.Common.Utils
+﻿namespace Assets.Scripts.Common.Utils
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public static class ListUtil
     {
         public static List<T> IntersectAll<T>(IEnumerable<IEnumerable<T>> lists)

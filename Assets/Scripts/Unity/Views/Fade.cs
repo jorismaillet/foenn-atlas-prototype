@@ -1,14 +1,15 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using Assets.Scripts.Unity.Commons.UIAnimations;
-using Assets.Scripts.Unity.Commons.UIAnimations.Interpolations;
-using Assets.Scripts.Unity.Commons.Utils;
-using UnityEngine;
-
-namespace Assets.Scripts.Unity.Common.Views
+﻿namespace Assets.Scripts.Unity.Common.Views
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using Assets.Scripts.Unity.Commons.UIAnimations;
+    using Assets.Scripts.Unity.Commons.UIAnimations.Interpolations;
+    using Assets.Scripts.Unity.Commons.Utils;
+    using UnityEngine;
+
     public class Fade : BaseBehaviour
     {
         public int fadeMillis;
+
         [Range(0, 1)]
         public float from, to;
 

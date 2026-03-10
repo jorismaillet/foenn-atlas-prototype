@@ -1,13 +1,14 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using System;
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Unity.Scenes.Home.World.Views
+﻿namespace Assets.Scripts.Unity.Scenes.Home.World.Views
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using System;
+    using UnityEngine;
+    using UnityEngine.UI;
+
     public class TextTimer : BaseBehaviour
     {
         private float remainingSec = 0;
+
         public Text text;
 
         public void SetTimer(int secs)

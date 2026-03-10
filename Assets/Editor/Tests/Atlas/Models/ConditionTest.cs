@@ -1,15 +1,13 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Condition;
-using Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions;
-using Assets.Scripts.Foenn.Datasets.Facts;
-using Assets.Scripts.Foenn.Engine.Execution;
-using Assets.Scripts.Foenn.Engine.OLAP.Dimensions;
-using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
-using Assets.Scripts.Foenn.ETL.Datasets;
-using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
-using NUnit.Framework;
-
-namespace Assets.Editor.Tests.Atlas.Models
+﻿namespace Assets.Editor.Tests.Atlas.Models
 {
+    using Assets.Scripts.Foenn.Atlas.Models.Condition;
+    using Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions;
+    using Assets.Scripts.Foenn.Datasets.Facts;
+    using Assets.Scripts.Foenn.Engine.Execution;
+    using Assets.Scripts.Foenn.Engine.OLAP.Dimensions;
+    using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
+    using NUnit.Framework;
+
     public class CustomCondition : ICondition
     {
         private bool overrideCondition;
@@ -35,6 +33,7 @@ namespace Assets.Editor.Tests.Atlas.Models
             var row = new Row() { time = TimeField.AAAAMMJJHH("2023091508") };
             Assert.IsTrue(c.IsMatch(row));
         }
+
         [Test]
         public void TestOutsideHourRangeCondition()
         {
@@ -52,6 +51,7 @@ namespace Assets.Editor.Tests.Atlas.Models
             row.values.Add(WeatherFact.temperature, new Measure(WeatherFact.temperature, 20));
             Assert.IsTrue(c.IsMatch(row));
         }
+
         [Test]
         public void TestOutsideMetricRangeCondition()
         {
@@ -68,18 +68,21 @@ namespace Assets.Editor.Tests.Atlas.Models
             var c = new AllCondition(new CustomCondition(true), new CustomCondition(true));
             Assert.IsTrue(c.IsMatch(new Row()));
         }
+
         [Test]
         public void TestOneTrueAllCondition()
         {
             var c = new AllCondition(new CustomCondition(true), new CustomCondition(false));
             Assert.IsFalse(c.IsMatch(new Row()));
         }
+
         [Test]
         public void TestNoneTrueAllCondition()
         {
             var c = new AllCondition(new CustomCondition(false), new CustomCondition(false));
             Assert.IsFalse(c.IsMatch(new Row()));
         }
+
         [Test]
         public void TestEmptyAllCondition()
         {
@@ -94,18 +97,21 @@ namespace Assets.Editor.Tests.Atlas.Models
             var c = new AnyCondition(new CustomCondition(true), new CustomCondition(true));
             Assert.IsTrue(c.IsMatch(new Row()));
         }
+
         [Test]
         public void TestOneTrueAnyCondition()
         {
             var c = new AnyCondition(new CustomCondition(true), new CustomCondition(false));
             Assert.IsTrue(c.IsMatch(new Row()));
         }
+
         [Test]
         public void TestNoneTrueAnyCondition()
         {
             var c = new AnyCondition(new CustomCondition(false), new CustomCondition(false));
             Assert.IsFalse(c.IsMatch(new Row()));
         }
+
         [Test]
         public void TestEmptyAnyCondition()
         {
@@ -123,6 +129,7 @@ namespace Assets.Editor.Tests.Atlas.Models
             row.values.Add(WeatherFact.temperature_10, new Measure(WeatherFact.temperature_10, 15));
             Assert.IsTrue(c.IsMatch(row));
         }
+
         [Test]
         public void TestNoMatchGroupAllCondition()
         {
@@ -143,6 +150,7 @@ namespace Assets.Editor.Tests.Atlas.Models
             row.values.Add(WeatherFact.temperature_10, new Measure(WeatherFact.temperature_10, 15));
             Assert.IsTrue(c.IsMatch(row));
         }
+
         [Test]
         public void TestNoMatchGroupAnyondition()
         {

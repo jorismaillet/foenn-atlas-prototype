@@ -1,7 +1,7 @@
-﻿using Assets.Scripts.Foenn.Engine.Execution;
-
-namespace Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions
+﻿namespace Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions
 {
+    using Assets.Scripts.Foenn.Engine.Execution;
+
     public class HourRangeCondition : ICondition
     {
         public int minHour, maxHour;

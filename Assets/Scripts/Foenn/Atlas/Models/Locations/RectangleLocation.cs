@@ -1,11 +1,13 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
-
-namespace Assets.Scripts.Foenn.Atlas.Models.Locations
+﻿namespace Assets.Scripts.Foenn.Atlas.Models.Locations
 {
+    using Assets.Scripts.Foenn.Atlas.Models.Geo;
+
     public class RectangleLocation : ILocation
     {
-        public string name; 
+        public string name;
+
         public GeoPoint center;
+
         public float widthMeters, heightMeters;
 
         public RectangleLocation(string name, GeoPoint center, float widthMeters, float heightMeters)

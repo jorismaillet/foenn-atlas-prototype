@@ -1,25 +1,28 @@
-﻿using Assets.Scripts.Common.Extensions;
-using Assets.Scripts.Foenn.Datasets;
-using Assets.Scripts.Foenn.ETL.Models;
-using Mono.Data.Sqlite;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-
-namespace Assets.Scripts.Foenn.Engine.Connectors
+﻿namespace Assets.Scripts.Foenn.Engine.Connectors
 {
+    using Assets.Scripts.Common.Extensions;
+    using Assets.Scripts.Foenn.Datasets;
+    using Assets.Scripts.Foenn.ETL.Models;
+    using Mono.Data.Sqlite;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Linq;
+
     public class SqliteHelper
     {
         public const string DATABASE_PATH = "Resources/sqlite/foenn.db";
+
         public const string DATABASE_TEST_PATH = "Resources/sqlite/foenn_test.db";
 
-        public static SqliteConnection CreateConnection() {
+        public static SqliteConnection CreateConnection()
+        {
             var path = DatabaseHelper.ResolveDatabasePath(Env.DatabasePath());
             string connString = $"Data Source={path};Version=3;";
             return new SqliteConnection(connString);
         }
 
-        public static void ApplyStagingPragmas(SqliteConnection connection) {
+        public static void ApplyStagingPragmas(SqliteConnection connection)
+        {
             var command = connection.CreateCommand();
             command.CommandText = @"
                 PRAGMA journal_mode=OFF;
@@ -34,19 +37,22 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             command.ExecuteNonQuery();
         }
 
-        public static SqliteCommand GetStageCommand(SqliteConnection connection, ITable table) {
+        public static SqliteCommand GetStageCommand(SqliteConnection connection, ITable table)
+        {
             var command = connection.CreateCommand();
             command.CommandText = @$"
             INSERT INTO {table.Name}_staging({string.Join(", ", table.Columns.Select(column => column.name))})
             VALUES ({string.Join(", ", table.Columns.Select(column => $"@{column.name}"))})
             ";
-            table.Columns.Each(column => {
+            table.Columns.Each(column =>
+            {
                 command.Parameters.Add(new SqliteParameter($"@{column.name}", column.dbType));
             });
             return command;
         }
 
-        public static void MergeStagingTable(SqliteConnection connection, ITable table) {
+        public static void MergeStagingTable(SqliteConnection connection, ITable table)
+        {
             var command = connection.CreateCommand();
             command.CommandText = @$"
                 INSERT OR IGNORE INTO {table.Name}
@@ -55,14 +61,17 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             command.ExecuteNonQuery();
         }
 
-        public static string FieldToSql(Field field, bool skipPK = false) {
-            var res = field.dbType switch {
+        public static string FieldToSql(Field field, bool skipPK = false)
+        {
+            var res = field.dbType switch
+            {
                 DbType.String => "TEXT",
                 DbType.Single or DbType.Double => "REAL",
                 DbType.Int64 or DbType.Int32 or DbType.Int16 => "INTEGER",
                 _ => throw new System.NotImplementedException($"Database type not supported: {field.dbType}")
             };
-            if (!skipPK && field is PrimaryKey pk) {
+            if (!skipPK && field is PrimaryKey pk)
+            {
                 res += " PRIMARY KEY";
                 if (pk.autoIncrement)
                     res += " AUTOINCREMENT";
@@ -70,21 +79,25 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             return res;
         }
 
-        public static bool Exists(SqliteConnection connection, string table, string column, string value) {
+        public static bool Exists(SqliteConnection connection, string table, string column, string value)
+        {
             var sql = $"SELECT COUNT(*) FROM \"{table}\" WHERE \"{column}\" = '{value}' LIMIT 1;";
             return ExecuteScalar(connection, sql) > 0;
         }
 
-        public static void Insert(SqliteConnection connection, string table, List<Field> columns, List<string> values) {
+        public static void Insert(SqliteConnection connection, string table, List<Field> columns, List<string> values)
+        {
             var columnsString = string.Join(", ", columns.Select(c => c.name));
             var valuesString = string.Join(", ", values.Select((val, i) => ValueToSql(val, columns[i].dbType)));
             var sql = $"INSERT INTO \"{table}\" ({columnsString}) VALUES ({valuesString});";
             Execute(connection, sql);
         }
 
-        private static string ValueToSql(string rawValue, DbType type) {
+        private static string ValueToSql(string rawValue, DbType type)
+        {
             if (string.IsNullOrEmpty(rawValue)) return "NULL";
-            switch (type) {
+            switch (type)
+            {
                 case DbType.String:
                     return $"\"{rawValue}\"";
                 case DbType.Single:
@@ -98,12 +111,14 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             }
         }
 
-        public static void CreateTable(SqliteConnection connection, ITable table) {
+        public static void CreateTable(SqliteConnection connection, ITable table)
+        {
             var columns = table.Columns.Select(column => $"\"{column.name}\" {FieldToSql(column)}");
 
             var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{table.Name}\" ({string.Join(", ", columns)});";
 
-            table.Indexes.ForEach(index => {
+            table.Indexes.ForEach(index =>
+            {
                 string cols = string.Join(", ", index.fields.Select(field => $"\"{field.name}\""));
                 string unique = index.unique ? "UNIQUE " : string.Empty;
                 createTableSql += $"CREATE {unique}INDEX IF NOT EXISTS \"{index.name}\" ON \"{table.Name}\"({cols});";
@@ -112,9 +127,11 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             Execute(connection, createTableSql);
         }
 
-        public static void CreateStagingTable(SqliteConnection connection, ITable table) {
+        public static void CreateStagingTable(SqliteConnection connection, ITable table)
+        {
             var columns = new List<string>();
-            table.Columns.ForEach(column => {
+            table.Columns.ForEach(column =>
+            {
                 columns.Add($"{column.name} {FieldToSql(column, skipPK: true)}");
             });
             var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{table.Name}_staging\" ({string.Join(", ", columns)});";
@@ -122,25 +139,29 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             Execute(connection, createTableSql);
         }
 
-        public static void DropStagingTable(SqliteConnection connection, ITable table) {
+        public static void DropStagingTable(SqliteConnection connection, ITable table)
+        {
             var sql = $"DROP TABLE IF EXISTS {table.Name}_staging;";
             UnityEngine.Debug.Log(sql);
             Execute(connection, sql);
         }
 
-        public static void Execute(SqliteConnection connection, string sql) {
+        public static void Execute(SqliteConnection connection, string sql)
+        {
             var command = connection.CreateCommand();
             command.CommandText = sql;
             command.ExecuteNonQuery();
         }
 
-        public static SqliteDataReader ExecuteReader(SqliteConnection connection, string sql) {
+        public static SqliteDataReader ExecuteReader(SqliteConnection connection, string sql)
+        {
             var command = connection.CreateCommand();
             command.CommandText = sql;
             return command.ExecuteReader();
         }
 
-        public static int ExecuteScalar(SqliteConnection connection, string sql) {
+        public static int ExecuteScalar(SqliteConnection connection, string sql)
+        {
             var command = connection.CreateCommand();
             command.CommandText = sql;
             return (int)command.ExecuteScalar();

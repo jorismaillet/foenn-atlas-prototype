@@ -1,31 +1,34 @@
-﻿using Assets.Scripts.Unity.Common.Utils;
-using Assets.Scripts.Unity.Common.Views;
-using Assets.Scripts.Unity.Commons.Containers;
-using Assets.Scripts.Unity.Commons.Holders;
-using Assets.Scripts.Unity.Commons.Mutables;
-using Assets.Scripts.Unity.Commons.UIAnimations;
-using Assets.Scripts.Unity.Commons.UIAnimations.Interpolations;
-using Assets.Scripts.Unity.Commons.Utils;
-using Assets.Scripts.Unity.Sounds;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Unity.Commons.Behaviours
+﻿namespace Assets.Scripts.Unity.Commons.Behaviours
 {
+    using Assets.Scripts.Unity.Common.Utils;
+    using Assets.Scripts.Unity.Common.Views;
+    using Assets.Scripts.Unity.Commons.Containers;
+    using Assets.Scripts.Unity.Commons.Holders;
+    using Assets.Scripts.Unity.Commons.Mutables;
+    using Assets.Scripts.Unity.Commons.UIAnimations;
+    using Assets.Scripts.Unity.Commons.UIAnimations.Interpolations;
+    using Assets.Scripts.Unity.Commons.Utils;
+    using Assets.Scripts.Unity.Sounds;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using UnityEngine;
+    using UnityEngine.Events;
+    using UnityEngine.UI;
+
     public class BaseBehaviour : MonoBehaviour
     {
         private List<Action> removeListenerActions = new List<Action>();
+
         private List<UIAnimation> animations = new List<UIAnimation>();
+
         private List<UIAnimationList> animationsLists = new List<UIAnimationList>();
 
         public void AddListener<T>(GameEvent<T> listenedEvent, UnityEvent<T> calledAction)
         {
             AddListener(listenedEvent, calledAction.Invoke);
         }
+
         public void AddListener(GameEvent listenedEvent, UnityEvent calledAction)
         {
             AddListener(listenedEvent, calledAction.Invoke);
@@ -50,6 +53,7 @@ namespace Assets.Scripts.Unity.Commons.Behaviours
             AddListener(mutable.onChange, Action);
             Action.Invoke(mutable.Value);
         }
+
         protected void Set<Element>(BaseHolder holder, Element element)
         {
             //if (element != null) {
@@ -62,13 +66,8 @@ namespace Assets.Scripts.Unity.Commons.Behaviours
                 Debug.LogError($"Error in gameobject {name}, component {GetType().Name}. Holder expects {holder.GetType()} but received {element.GetType()}", gameObject);
                 throw e;
             }
-            /*}
-            else if(!skipNull) {
-                var e = $"{transform.name} - {GetType()}: Can't set null element";
-                Debug.LogError(e, gameObject);
-                throw new Exception(e);
-            }*/
         }
+
         protected void SetMutable<Element>(BaseHolder holder, Mutable<Element> element)
         {
             OnMutation(element, (e) => Set(holder, e));
@@ -79,15 +78,18 @@ namespace Assets.Scripts.Unity.Commons.Behaviours
             AddListener(mutable.onChange, Action);
             Action.Invoke(mutable);
         }
+
         protected void Set<Element>(AbstractPrefabsContainer container, List<Element> list)
         {
             container.Initialize(list);
         }
+
         protected void Set<Element>(AbstractPrefabsContainer container, IEnumerable<Element> list)
         {
             var res = list.ToList();
             Set(container, res);
         }
+
         protected void SetMutable<Element>(AbstractPrefabsContainer container, MutableList<Element> mutableList)
         {
             OnMutation(mutableList, (l) => Set(container, l));
@@ -97,10 +99,12 @@ namespace Assets.Scripts.Unity.Commons.Behaviours
         {
             ImageUtil.Set(image, path);
         }
+
         protected void Set(string modalHeader, string modalContent, Action onConfirm)
         {
             ModalComponent.Show(modalHeader, modalContent, onConfirm);
         }
+
         public void SetText(string text)
         {
             GetComponent<Text>().text = text;
@@ -129,6 +133,7 @@ namespace Assets.Scripts.Unity.Commons.Behaviours
             });
             removeListenerActions.Clear();
         }
+
         protected void Behave(BehaviourAction action, string message = null)
         {
             switch (action)
@@ -283,10 +288,12 @@ namespace Assets.Scripts.Unity.Commons.Behaviours
             Color currentColor = graphic.color;
             Animate(new UIAnimation(gameObject, new LinearInterpolation(time => graphic.color = Color.Lerp(currentColor, newColor, time), 0, 1), (int)(fadeDuration * 1000F)));
         }
+
         protected void SetGroupAlpha(float alpha)
         {
             GetComponent<CanvasGroup>().alpha = alpha;
         }
+
         protected void SetAlpha(Transform transform, float alpha)
         {
             ColorUtil.SetAlpha(transform.GetComponent<CanvasGroup>(), alpha);
@@ -330,6 +337,7 @@ namespace Assets.Scripts.Unity.Commons.Behaviours
             });
             animations.Clear();
         }
+
         public GameObject AddGameObject(string prefabPath, string name = null)
         {
             return PrefabUtil.AddGameObject(prefabPath, name, transform);

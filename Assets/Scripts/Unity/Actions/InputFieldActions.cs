@@ -1,8 +1,8 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Unity.Common.Actions
+﻿namespace Assets.Scripts.Unity.Common.Actions
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using UnityEngine.UI;
+
     public class InputFieldActions : BaseBehaviour
     {
         public void Clear(InputField input)

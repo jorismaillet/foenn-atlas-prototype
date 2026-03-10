@@ -6,11 +6,9 @@
         NUM_POSTE,
         NOM_USUEL,
         DPT,
-
         // Geo
         LAT,
         LON,
-
         // Time
         AAAAMMJJHH
     }

@@ -1,11 +1,12 @@
-﻿using Assets.Scripts.Unity.Commons.UIAnimations;
-using System.Collections.Generic;
-
-namespace Assets.Scripts.Unity.Common.Utils
+﻿namespace Assets.Scripts.Unity.Common.Utils
 {
+    using Assets.Scripts.Unity.Commons.UIAnimations;
+    using System.Collections.Generic;
+
     public class UIAnimator : UnityEngine.MonoBehaviour
     {
         private static List<UIAnimation> animations = new List<UIAnimation>();
+
         private static List<UIAnimationList> animationsLists = new List<UIAnimationList>();
 
         //TODO Dictionary with target object as a key, to automatically cancel previous animation
@@ -14,6 +15,7 @@ namespace Assets.Scripts.Unity.Common.Utils
             animations.Add(newAnimation);
             return newAnimation;
         }
+
         public static UIAnimationList Animate(UIAnimationList newAnimationsList)
         {
             animationsLists.Add(newAnimationsList);

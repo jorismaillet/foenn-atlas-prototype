@@ -1,17 +1,19 @@
-﻿using System.IO;
-using UnityEngine;
-
-namespace Assets.Scripts.Foenn.Engine.Connectors
+﻿namespace Assets.Scripts.Foenn.Engine.Connectors
 {
+    using System.IO;
+    using UnityEngine;
+
     public abstract class DatabaseHelper
     {
-        public static string ResolveDatabasePath(string databasePath) {
+        public static string ResolveDatabasePath(string databasePath)
+        {
             return Path.IsPathRooted(databasePath)
                 ? databasePath
                 : Path.Combine(Application.dataPath, databasePath);
         }
 
-        public static void CreateDb(string databasePath) {
+        public static void CreateDb(string databasePath)
+        {
             var fullPath = ResolveDatabasePath(databasePath);
             var dir = Path.GetDirectoryName(fullPath);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))

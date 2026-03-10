@@ -1,18 +1,14 @@
-﻿using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
-using Assets.Scripts.Foenn.ETL.Models;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-
-namespace Assets.Scripts.Foenn.ETL.Extractors
+﻿namespace Assets.Scripts.Foenn.ETL.Extractors
 {
+    using System.Collections.Generic;
+    using System.IO;
+
     public class CSVExtractor
     {
         public static char[] STRING_SPLIT = { ';' };
+
         private const string DECIMAL_SPLIT = ".";
+
         private string fileName;
 
         public CSVExtractor(string fileName)

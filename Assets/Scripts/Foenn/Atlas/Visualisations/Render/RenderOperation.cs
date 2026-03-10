@@ -1,11 +1,10 @@
-﻿using System;
-using UnityEngine;
-
-namespace Assets.Scripts.Foenn.Atlas.Models.Geo
+﻿namespace Assets.Scripts.Foenn.Atlas.Models.Geo
 {
+    using System;
+    using UnityEngine;
+
     public static class RenderOperation
     {
-
         public static float LonToX(float lon, Visualisations.RenderSettings settings)
         {
             float denom = settings.bBox.maxLon - settings.bBox.minLon;

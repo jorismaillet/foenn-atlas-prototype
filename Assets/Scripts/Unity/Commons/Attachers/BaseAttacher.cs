@@ -1,12 +1,13 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using Assets.Scripts.Unity.Commons.Holders;
-using UnityEngine.Events;
-
-namespace Assets.Scripts.Unity.Commons.Attachers
+﻿namespace Assets.Scripts.Unity.Commons.Attachers
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using Assets.Scripts.Unity.Commons.Holders;
+    using UnityEngine.Events;
+
     public abstract class BaseAttacher : BaseBehaviour
     {
         public UnityEvent onInitialize;
+
         public BaseHolder holder;
 
         protected virtual void Awake()

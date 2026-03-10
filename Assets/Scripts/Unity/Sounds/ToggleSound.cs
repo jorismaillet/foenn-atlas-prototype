@@ -1,8 +1,8 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Unity.Sounds
+﻿namespace Assets.Scripts.Unity.Sounds
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using UnityEngine.UI;
+
     public class ToggleSound : BaseBehaviour
     {
         public InterfaceSoundKey onSoundKey, offSoundKey;

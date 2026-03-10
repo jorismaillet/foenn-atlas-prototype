@@ -1,12 +1,13 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using UnityEngine;
-using UnityEngine.EventSystems;
-
-namespace Assets.Scripts.Unity.Common.Utils
+﻿namespace Assets.Scripts.Unity.Common.Utils
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using UnityEngine;
+    using UnityEngine.EventSystems;
+
     public class DragCorrector : BaseBehaviour
     {
         private static readonly int preferredScreenTH = 6;
+
         private static readonly int preferredScreenPPI = 210;
 
         void Start()

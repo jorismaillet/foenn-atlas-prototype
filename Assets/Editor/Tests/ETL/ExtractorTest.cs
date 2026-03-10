@@ -1,10 +1,9 @@
-﻿using Assets.Scripts.Foenn.ETL.Extractors;
-using Assets.Scripts.Foenn.ETL.Models;
-using NUnit.Framework;
-using System.Linq;
-
-namespace Assets.Editor.Tests.ETL
+﻿namespace Assets.Editor.Tests.ETL
 {
+    using Assets.Scripts.Foenn.ETL.Extractors;
+    using NUnit.Framework;
+    using System.Linq;
+
     public class ExtractorTest
     {
         [Test]

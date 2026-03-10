@@ -1,17 +1,20 @@
-﻿using Assets.Scripts.Common.Extensions;
-using Assets.Scripts.Unity.Commons.Behaviours;
-using Assets.Scripts.Unity.Sounds;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Unity.Common.Utils.RadioButton
+﻿namespace Assets.Scripts.Unity.Common.Utils.RadioButton
 {
+    using Assets.Scripts.Common.Extensions;
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using Assets.Scripts.Unity.Sounds;
+    using System.Collections.Generic;
+    using UnityEngine;
+    using UnityEngine.UI;
+
     public class RadioButtonSelector : BaseBehaviour
     {
         public RadioButtonGroup group;
+
         public List<GameObject> contents = new List<GameObject>();
+
         public Color selectedColor, unselectedColor;
+
         public InterfaceSoundKey sound;
 
         public static Dictionary<RadioButtonGroup, List<RadioButtonSelector>> radios = new Dictionary<RadioButtonGroup, List<RadioButtonSelector>>();

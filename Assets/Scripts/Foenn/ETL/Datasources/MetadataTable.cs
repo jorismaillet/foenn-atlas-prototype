@@ -1,17 +1,17 @@
-﻿using Assets.Scripts.Foenn.Atlas.Datasets.Common;
-using Assets.Scripts.Foenn.Atlas.Datasets.Common.Schema;
-using Assets.Scripts.Foenn.Datasets;
-using Assets.Scripts.Foenn.Engine.Connectors;
-using Assets.Scripts.Foenn.ETL.Models;
-using Mono.Data.Sqlite;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
-
-namespace Assets.Scripts.Foenn.ETL.Datasources
+﻿namespace Assets.Scripts.Foenn.ETL.Datasources
 {
+    using Assets.Scripts.Foenn.Atlas.Datasets.Common;
+    using Assets.Scripts.Foenn.Atlas.Datasets.Common.Schema;
+    using Assets.Scripts.Foenn.Datasets;
+    using Assets.Scripts.Foenn.Engine.Connectors;
+    using Assets.Scripts.Foenn.ETL.Models;
+    using Mono.Data.Sqlite;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.IO;
+    using System.Linq;
+
     public class MetadataTable : ITable
     {
         private string metadataTableName;
@@ -20,7 +20,8 @@ namespace Assets.Scripts.Foenn.ETL.Datasources
 
         private Field fileName = new Field("File", DbType.String, ColumnType.ATTRIBUTE);
 
-        public MetadataTable(string table) {
+        public MetadataTable(string table)
+        {
             metadataTableName = TableName(table);
         }
 

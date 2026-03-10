@@ -1,16 +1,19 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Unity.Scenes.Home.World.Views
+﻿namespace Assets.Scripts.Unity.Scenes.Home.World.Views
 {
+    using System;
+    using UnityEngine;
+    using UnityEngine.UI;
+
     public class ImageMove : OneFingerHandler
     {
         public Image image;
+
         private RectTransform imageTransform;
+
         private RectTransform containerTransform;
 
         public Vector3 initialPos;
+
         public Vector3 pressedPoint, dragPoint;
 
         private void Awake()
@@ -29,7 +32,6 @@ namespace Assets.Scripts.Unity.Scenes.Home.World.Views
         {
             dragPoint = GamePoint(screenPoint);
             Vector3 offsetPosition = initialPos + (dragPoint - pressedPoint);
-
         }
 
         private void SetPosition(Vector3 position)
@@ -50,7 +52,9 @@ namespace Assets.Scripts.Unity.Scenes.Home.World.Views
             );
         }
 
-        public override void OneFingerReleased(Vector3 screenPoint) { }
+        public override void OneFingerReleased(Vector3 screenPoint)
+        {
+        }
 
         private Vector3 LocalPosition(RectTransform rectTransform)
         {

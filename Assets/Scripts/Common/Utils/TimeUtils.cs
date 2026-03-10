@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-
-namespace Assets.Scripts.Foenn.Utils
+﻿namespace Assets.Scripts.Foenn.Utils
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+
     public class TimeUtils
     {
         public static int Hour(string AAAAMMJJHH)

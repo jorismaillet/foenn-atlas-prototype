@@ -1,10 +1,11 @@
-﻿using Assets.Scripts.Unity.Commons.Attachers;
-
-namespace Assets.Scripts.Unity.Commons.Holders
+﻿namespace Assets.Scripts.Unity.Commons.Holders
 {
+    using Assets.Scripts.Unity.Commons.Attachers;
+
     public abstract class Holder<Element> : BaseHolder, IElementInitializer<Element>
     {
         public Element element;
+
         private bool set = false;
 
         public override void Attach(BaseAttacher attacher)

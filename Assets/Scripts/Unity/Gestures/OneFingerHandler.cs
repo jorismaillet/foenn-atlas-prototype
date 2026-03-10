@@ -1,9 +1,9 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using UnityEngine;
-using UnityEngine.EventSystems;
-
-namespace Assets.Scripts.Unity.Scenes.Home.World.Views
+﻿namespace Assets.Scripts.Unity.Scenes.Home.World.Views
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using UnityEngine;
+    using UnityEngine.EventSystems;
+
     public abstract class OneFingerHandler : BaseBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
         private bool pressed;
@@ -41,7 +41,9 @@ namespace Assets.Scripts.Unity.Scenes.Home.World.Views
         }
 
         public abstract void OneFingerPressed(Vector3 screenPoint);
+
         public abstract void OneFingerReleased(Vector3 screenPoint);
+
         public abstract void OneFingerMoved(Vector3 screenPoint);
     }
 }

@@ -1,15 +1,19 @@
-using System;
-
 namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
 {
+    using System;
+
     // Compact CSR-like spatial index for a uniform grid.
     // bucketStart has length (gridCols*gridRows + 1) and bucketItems contains measure indices.
     public readonly struct CsrSpatialIndex
     {
         public readonly int gridCols;
+
         public readonly int gridRows;
+
         public readonly int cellCount;
+
         public readonly int[] bucketStart;
+
         public readonly int[] bucketItems;
 
         public CsrSpatialIndex(int gridCols, int gridRows, int[] bucketStart, int[] bucketItems)

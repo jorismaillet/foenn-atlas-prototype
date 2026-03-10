@@ -1,11 +1,10 @@
-﻿using Assets.Scripts.App.Translations;
-using System.Globalization;
-
-namespace Assets.Scripts.Common.Utils
+﻿namespace Assets.Scripts.Common.Utils
 {
+    using Assets.Scripts.App.Translations;
+    using System.Globalization;
+
     public class FloatUtil
     {
-
         private static readonly NumberFormatInfo defaultFormatter = new NumberFormatInfo()
         {
             NumberDecimalSeparator = Locale.Get(StringId.DECIMAL_SEPARATOR),

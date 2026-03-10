@@ -1,8 +1,8 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using UnityEngine;
-
-namespace Assets.Scripts.Unity.Common.Views
+﻿namespace Assets.Scripts.Unity.Common.Views
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using UnityEngine;
+
     public class FollowMouse : BaseBehaviour
     {
         private void OnEnable()

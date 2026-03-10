@@ -6,7 +6,8 @@
 
     public class ActivityHolder : Holder<Activity>
     {
-        public void SetName(TMP_Text text) {
+        public void SetName(TMP_Text text)
+        {
             text.text = element.name;
         }
     }

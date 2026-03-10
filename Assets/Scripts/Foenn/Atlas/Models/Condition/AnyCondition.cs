@@ -1,9 +1,9 @@
-﻿using Assets.Scripts.Foenn.Engine.Execution;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Assets.Scripts.Foenn.Atlas.Models.Condition
+﻿namespace Assets.Scripts.Foenn.Atlas.Models.Condition
 {
+    using Assets.Scripts.Foenn.Engine.Execution;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class AnyCondition : ICondition
     {
         public List<ICondition> conditions;

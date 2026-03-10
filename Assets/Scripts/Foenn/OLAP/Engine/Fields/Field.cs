@@ -1,13 +1,15 @@
-﻿using Assets.Scripts.Foenn.Atlas.Datasets.Common.Schema;
-using Assets.Scripts.Foenn.OLAP.Engine.Sql;
-using System.Data;
-
-namespace Assets.Scripts.Foenn.ETL.Models
+﻿namespace Assets.Scripts.Foenn.ETL.Models
 {
+    using Assets.Scripts.Foenn.Atlas.Datasets.Common.Schema;
+    using Assets.Scripts.Foenn.OLAP.Engine.Sql;
+    using System.Data;
+
     public class Field : IDataField
     {
         public string name;
+
         public DbType dbType { get; }
+
         public ColumnType columnType;
 
         public Field(string name, DbType type, ColumnType columnType)
@@ -17,8 +19,8 @@ namespace Assets.Scripts.Foenn.ETL.Models
             this.columnType = columnType;
         }
 
-
-        public string ToSql() {
+        public string ToSql()
+        {
             return $"\"{name}\"";
         }
     }

@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-
-namespace Assets.Scripts.Unity.Commons.Containers
+﻿namespace Assets.Scripts.Unity.Commons.Containers
 {
+    using UnityEngine;
+
     public abstract class CustomPrefabContainer<Element> : AbstractPrefabContainer where Element : class
     {
         protected override GameObject ElementPrefab<BaseElement>(BaseElement element)

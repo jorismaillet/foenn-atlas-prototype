@@ -3,7 +3,9 @@
     public class CircleLocation : ILocation
     {
         public string name;
+
         public PointLocation center;
+
         public float radiusMeters;
 
         public CircleLocation(string name, PointLocation center, float radiusMeters)

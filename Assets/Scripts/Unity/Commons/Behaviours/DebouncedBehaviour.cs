@@ -1,10 +1,11 @@
-﻿using System;
-
-namespace Assets.Scripts.Unity.Commons.Behaviours
+﻿namespace Assets.Scripts.Unity.Commons.Behaviours
 {
+    using System;
+
     public abstract class DebouncedBehaviour : BaseBehaviour
     {
         private DateTime startedAt = DateTime.MinValue;
+
         public abstract double debounceTimeMillis { get; }
 
         public virtual void OnDebounceAttemp()
@@ -13,6 +14,7 @@ namespace Assets.Scripts.Unity.Commons.Behaviours
         }
 
         public abstract void OnDebounceSuccess();
+
         public abstract void OnDebounceProgress(double elapsedTime);
 
         private void Update()

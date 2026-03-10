@@ -1,7 +1,7 @@
-﻿using Assets.Scripts.Unity.Commons.Mutables;
-
-namespace Assets.Scripts.App.Translations
+﻿namespace Assets.Scripts.App.Translations
 {
+    using Assets.Scripts.Unity.Commons.Mutables;
+
     public class Locale
     {
         public static Mutable<Language> language = new Mutable<Language>(Language.ENGLISH);

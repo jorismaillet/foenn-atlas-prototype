@@ -1,12 +1,11 @@
-﻿using System;
-using UnityEngine;
-
-namespace Assets.Scripts.Unity.Commons.Attachers
+﻿namespace Assets.Scripts.Unity.Commons.Attachers
 {
+    using System;
+    using UnityEngine;
+
     public abstract class Attacher<Element> : BaseAttacher, IElementInitializer<Element> where Element : class
     {
         public Element element;
-
 
         public override void Set<BaseElement>(BaseElement element)
         {

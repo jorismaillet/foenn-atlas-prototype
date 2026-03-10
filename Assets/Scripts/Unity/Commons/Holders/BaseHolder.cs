@@ -1,10 +1,10 @@
-﻿using Assets.Scripts.Unity.Commons.Attachers;
-using Assets.Scripts.Unity.Commons.Behaviours;
-using System.Collections.Generic;
-using UnityEngine.Events;
-
-namespace Assets.Scripts.Unity.Commons.Holders
+﻿namespace Assets.Scripts.Unity.Commons.Holders
 {
+    using Assets.Scripts.Unity.Commons.Attachers;
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using System.Collections.Generic;
+    using UnityEngine.Events;
+
     public abstract class BaseHolder : BaseBehaviour
     {
         protected List<BaseAttacher> attachers = new List<BaseAttacher>();

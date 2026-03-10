@@ -1,18 +1,15 @@
-﻿using Assets.Scripts.Foenn.Engine.Sql;
-using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Assets.Scripts.Foenn.Engine.OLAP.Filters
+﻿namespace Assets.Scripts.Foenn.Engine.OLAP.Filters
 {
+    using Assets.Scripts.Foenn.Engine.Sql;
+
     public class ExcludeNullFilter : Filter
     {
         public ExcludeNullFilter(PrefixedField column) : base(column)
         {
-
         }
 
-        public override string ToSql() {
+        public override string ToSql()
+        {
             return $"{filteredField.ToSql()} IS NOT NULL";
         }
     }

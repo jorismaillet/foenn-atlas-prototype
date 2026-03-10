@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Assets.Scripts.Common.Utils
+﻿namespace Assets.Scripts.Common.Utils
 {
+    using System;
+
     public static class MathUtil
     {
         public static float Coef(float firstLimit, float secondLimit, float value)

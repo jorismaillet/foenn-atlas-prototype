@@ -1,10 +1,11 @@
-﻿using System;
-
-namespace Assets.Scripts.Unity.Commons.Behaviours
+﻿namespace Assets.Scripts.Unity.Commons.Behaviours
 {
+    using System;
+
     public abstract class TickedBehaviour : BaseBehaviour
     {
         private DateTime lastTick = DateTime.UtcNow;
+
         public abstract double tickTimeMillis { get; }
 
         private void Update()

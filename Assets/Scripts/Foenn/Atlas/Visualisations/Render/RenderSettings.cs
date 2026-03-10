@@ -1,12 +1,14 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
-using System;
-
-namespace Assets.Scripts.Foenn.Atlas.Visualisations
+﻿namespace Assets.Scripts.Foenn.Atlas.Visualisations
 {
+    using Assets.Scripts.Foenn.Atlas.Models.Geo;
+    using System;
+
     public readonly struct RenderSettings
     {
         public readonly int width;
+
         public readonly int height;
+
         public readonly BBox bBox;
 
         public static readonly RenderSettings franceHDRender = new RenderSettings(1024, 1024, BBox.France);

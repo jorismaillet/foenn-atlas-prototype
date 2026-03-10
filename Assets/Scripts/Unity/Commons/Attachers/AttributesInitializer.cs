@@ -1,11 +1,14 @@
-﻿using Assets.Scripts.Common.Extensions;
-using Assets.Scripts.Unity.Commons.Holders;
-using UnityEditor;
-using UnityEngine;
-
-namespace Assets.Scripts.Unity.Commons.Attachers
+﻿namespace Assets.Scripts.Unity.Commons.Attachers
 {
-    public class AttributesInitializer : MonoBehaviour { }
+    using Assets.Scripts.Common.Extensions;
+    using Assets.Scripts.Unity.Commons.Holders;
+    using UnityEditor;
+    using UnityEngine;
+
+    public class AttributesInitializer : MonoBehaviour
+    {
+    }
+
     [CustomEditor(typeof(AttributesInitializer))]
     public class AttributesInitializerEditor : Editor
     {

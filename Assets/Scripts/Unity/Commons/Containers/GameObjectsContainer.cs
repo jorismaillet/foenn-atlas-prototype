@@ -1,14 +1,16 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using Assets.Scripts.Unity.Commons.Mutables;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Assets.Scripts.Unity.Commons.Containers
+﻿namespace Assets.Scripts.Unity.Commons.Containers
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using Assets.Scripts.Unity.Commons.Mutables;
+    using System.Collections.Generic;
+    using UnityEngine;
+
     public class GameObjectsContainer : BaseBehaviour
     {
         public bool clearPreviousElements = true;
+
         public MutableList<GameObject> elements = new MutableList<GameObject>();
+
         public IEnumerable<GameObject> Instantiate(IEnumerable<GameObject> prefabs)
         {
             if (clearPreviousElements)

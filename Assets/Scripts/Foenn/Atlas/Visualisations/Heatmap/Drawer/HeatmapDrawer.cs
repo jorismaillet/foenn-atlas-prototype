@@ -1,14 +1,14 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
-using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage;
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
+﻿namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
 {
+    using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage;
+    using System;
+    using UnityEngine;
+    using RenderSettings = Assets.Scripts.Foenn.Atlas.Visualisations.RenderSettings;
+
     internal static class HeatmapDrawer
     {
         private const float ExactHitEpsilon = 1e-6f;
+
         private const double WeightEpsilon = 1e-6;
 
         public static Color32[] RenderHeatmapPixels(

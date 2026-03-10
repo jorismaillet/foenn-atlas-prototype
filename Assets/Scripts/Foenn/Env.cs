@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Assets.Scripts.Foenn
+﻿namespace Assets.Scripts.Foenn
 {
+    using System;
+
     public class Env
     {
         private static string DATABASE_PATH = null;
@@ -16,6 +12,7 @@ namespace Assets.Scripts.Foenn
                 throw new Exception("Database path not set. Please set it using SetDatabasePath before calling DatabasePath.");
             return DATABASE_PATH;
         }
+
         public static void SetDatabasePath(string path)
         {
             DATABASE_PATH = path;

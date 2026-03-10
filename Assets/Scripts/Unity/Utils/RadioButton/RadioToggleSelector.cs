@@ -1,10 +1,11 @@
-﻿using Assets.Scripts.Unity.Sounds;
-
-namespace Assets.Scripts.Unity.Common.Utils.RadioButton
+﻿namespace Assets.Scripts.Unity.Common.Utils.RadioButton
 {
+    using Assets.Scripts.Unity.Sounds;
+
     public class RadioToggleSelector : RadioButtonSelector
     {
         public bool isOn = false;
+
         public InterfaceSoundKey offSound;
 
         public override void Select()

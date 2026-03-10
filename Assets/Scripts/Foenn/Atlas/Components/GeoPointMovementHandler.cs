@@ -1,27 +1,30 @@
-using Assets.Scripts.Common.Extensions;
-using Assets.Scripts.Foenn.Atlas.Layers;
-using Assets.Scripts.Foenn.Atlas.Models.Geo;
-using Assets.Scripts.Unity.Commons.Containers;
-using Assets.Scripts.Unity.Commons.Holders;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-
 namespace Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap
 {
+    using Assets.Scripts.Common.Extensions;
+    using Assets.Scripts.Foenn.Atlas.Layers;
+    using Assets.Scripts.Foenn.Atlas.Models.Geo;
+    using Assets.Scripts.Unity.Commons.Containers;
+    using Assets.Scripts.Unity.Commons.Holders;
+    using System.Collections.Generic;
+    using System.Linq;
+    using UnityEngine;
+
     public class GeoPointMovementHandler : MonoBehaviour
     {
         [Header("References")]
         [SerializeField] TileGridRenderer tileGridRenderer;
+
         [SerializeField] Camera worldCamera;
+
         [SerializeField] Canvas canvas;
+
         [SerializeField] PrefabsContainer container;
 
         [Header("Settings")]
         public float zOffset = -0.01f;
 
-
         private List<Holder<GeoPoint>> pointHolders = new List<Holder<GeoPoint>>();
+
         private void Awake()
         {
             container.elements.onChange.AddListener(elements =>
@@ -43,6 +46,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap
         }
 
         private float cameraZoom;
+
         private Vector3 cameraPosition;
 
         void LateUpdate()
@@ -55,7 +59,9 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap
             this.cameraPosition = worldCamera.transform.position;
             UpdatePositions();
         }
-        private void UpdatePositions() {
+
+        private void UpdatePositions()
+        {
             int mapZoom = tileGridRenderer.mapZoom;
             GeoPoint mapCenter = tileGridRenderer.franceCenter;
             float tileWorldSize = tileGridRenderer.tileToWorldSize;

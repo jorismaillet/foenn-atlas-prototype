@@ -1,15 +1,14 @@
-﻿using Assets.Scripts.Foenn.Atlas.Layers;
-using Assets.Scripts.Foenn.Atlas.Models.Geo;
-using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage;
-using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
-using Assets.Scripts.Unity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-
-namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
+﻿namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
 {
+    using Assets.Scripts.Foenn.Atlas.Layers;
+    using Assets.Scripts.Foenn.Atlas.Models.Geo;
+    using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using UnityEngine;
+    using RenderSettings = Assets.Scripts.Foenn.Atlas.Visualisations.RenderSettings;
+
     public class HeatmapGenerator
     {
         public static Texture2D BuildTileGridRawImageTexture(
@@ -61,7 +60,6 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
             return texture;
         }
 
-        
         static List<PixelMeasure> DownscalePixelMeasures(List<PixelMeasure> fullPixelMeasures, float scale)
         {
             var scaled = new List<PixelMeasure>(fullPixelMeasures.Count);

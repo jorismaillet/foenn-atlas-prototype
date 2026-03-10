@@ -1,11 +1,11 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using Assets.Scripts.Unity.Commons.Utils;
-using System;
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Unity.Common.Views
+﻿namespace Assets.Scripts.Unity.Common.Views
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using Assets.Scripts.Unity.Commons.Utils;
+    using System;
+    using UnityEngine;
+    using UnityEngine.UI;
+
     public class SquareImage : BaseBehaviour
     {
         public Image children;

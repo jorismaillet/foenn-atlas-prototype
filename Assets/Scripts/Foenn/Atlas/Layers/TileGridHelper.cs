@@ -1,22 +1,21 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-
-namespace Assets.Scripts.Foenn.Atlas.Layers
+﻿namespace Assets.Scripts.Foenn.Atlas.Layers
 {
+    using Assets.Scripts.Foenn.Atlas.Models.Geo;
+    using System;
+    using UnityEngine;
 
     public static class TileGridHelper
     {
         public const int TileSize = 256;
 
         const double Deg2Rad = Math.PI / 180.0;
+
         const double Inv360 = 1.0 / 360.0;
+
         const double InvPi = 1.0 / Math.PI;
+
         const double Half = 0.5;
+
         const double QuarterPi = Math.PI / 4.0;
 
         // Clamp used by WebMercator (avoid Inf near the poles)

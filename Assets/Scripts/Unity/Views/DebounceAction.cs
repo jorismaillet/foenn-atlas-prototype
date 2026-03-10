@@ -1,12 +1,13 @@
-﻿using Assets.Scripts.Unity.Commons.Behaviours;
-using UnityEngine.Events;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Unity.Scenes.Home.World.Actions
+﻿namespace Assets.Scripts.Unity.Scenes.Home.World.Actions
 {
+    using Assets.Scripts.Unity.Commons.Behaviours;
+    using UnityEngine.Events;
+    using UnityEngine.UI;
+
     public class DebounceAction : DebouncedBehaviour
     {
         public UnityEvent DebounceSuccessActions;
+
         public Image debounceImage;
 
         public override double debounceTimeMillis { get; } = 1000;

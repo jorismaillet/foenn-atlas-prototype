@@ -1,8 +1,8 @@
-﻿using System.Collections.Concurrent;
-using UnityEngine;
-
-namespace Assets.Scripts.Unity
+﻿namespace Assets.Scripts.Unity
 {
+    using System.Collections.Concurrent;
+    using UnityEngine;
+
     public static class MainThreadLog
     {
         private static readonly ConcurrentQueue<string> _q = new();

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Assets.Scripts.Common.Extensions
+﻿namespace Assets.Scripts.Common.Extensions
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public static class IEnumerableExtensions
     {
         public static void Each<T>(this IEnumerable<T> enumerable, Action<T> action) where T : class

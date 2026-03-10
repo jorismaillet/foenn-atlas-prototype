@@ -1,11 +1,11 @@
-﻿using Assets.Scripts.Foenn.Engine.Sql;
-using Assets.Scripts.Foenn.ETL.Models;
-
-namespace Assets.Scripts.Foenn.Engine.OLAP.Metrics
+﻿namespace Assets.Scripts.Foenn.Engine.OLAP.Metrics
 {
+    using Assets.Scripts.Foenn.ETL.Models;
+
     public class Measure
     {
         public Field metric;
+
         public float? value;
 
         public Measure(Field metric, float? value)

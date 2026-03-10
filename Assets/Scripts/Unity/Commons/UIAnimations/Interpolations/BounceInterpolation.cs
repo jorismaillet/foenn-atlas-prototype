@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Assets.Scripts.Unity.Commons.UIAnimations.Interpolations
+﻿namespace Assets.Scripts.Unity.Commons.UIAnimations.Interpolations
 {
+    using System;
+
     public class BounceInterpolation : Interpolation
     {
         public BounceInterpolation(Action<float> action, float startValue, float endValue) : base(action, startValue, endValue)

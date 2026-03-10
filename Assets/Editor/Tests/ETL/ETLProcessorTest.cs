@@ -1,21 +1,22 @@
-﻿using Assets.Scripts.Foenn;
-using Assets.Scripts.Foenn.Engine.Connectors;
-using Assets.Scripts.Foenn.Engine.Execution;
-using Assets.Scripts.Foenn.ETL;
-using Assets.Scripts.Foenn.ETL.Datasets;
-using Assets.Scripts.Foenn.ETL.Datasources;
-using Mono.Data.Sqlite;
-using NUnit.Framework;
-using UnityEditor.MemoryProfiler;
-
-namespace Assets.Editor.Tests.ETL
+﻿namespace Assets.Editor.Tests.ETL
 {
+    using Assets.Scripts.Foenn;
+    using Assets.Scripts.Foenn.Engine.Connectors;
+    using Assets.Scripts.Foenn.Engine.Execution;
+    using Assets.Scripts.Foenn.ETL;
+    using Assets.Scripts.Foenn.ETL.Datasets;
+    using Assets.Scripts.Foenn.ETL.Datasources;
+    using Mono.Data.Sqlite;
+    using NUnit.Framework;
+
     public class ETLProcessorTest
     {
         [Test]
-        public void TestETLProcessor() {
+        public void TestETLProcessor()
+        {
             Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
-            using (var connection = SqliteHelper.CreateConnection()) {
+            using (var connection = SqliteHelper.CreateConnection())
+            {
                 WeatherHistoryDataset.InitTables(connection);
                 var fileName = "Tests/Weathers/H_29_latest-2023-2024.csv";
                 var processor = new WeatherHistoryProcessor(fileName);
@@ -28,8 +29,10 @@ namespace Assets.Editor.Tests.ETL
             }
         }
 
-        private void CleanupDataset(SqliteConnection connection) {
-            foreach (var table in WeatherHistoryDataset.Tables) {
+        private void CleanupDataset(SqliteConnection connection)
+        {
+            foreach (var table in WeatherHistoryDataset.Tables)
+            {
                 SqliteHelper.DropStagingTable(connection, table);
                 SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {table.Name}");
                 SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {MetadataTable.TableName(table.Name)}");

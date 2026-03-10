@@ -1,10 +1,11 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Condition;
-
-namespace Assets.Scripts.Foenn.Atlas.Models.Activities
+﻿namespace Assets.Scripts.Foenn.Atlas.Models.Activities
 {
+    using Assets.Scripts.Foenn.Atlas.Models.Condition;
+
     public class Activity
     {
         public string name;
+
         public AllCondition conditions;
 
         public Activity(string name, params ICondition[] conditions)

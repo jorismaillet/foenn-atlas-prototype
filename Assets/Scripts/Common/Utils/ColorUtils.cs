@@ -1,10 +1,9 @@
-﻿using UnityEngine;
-
-namespace Assets.Scripts.Foenn.Utils
+﻿namespace Assets.Scripts.Foenn.Utils
 {
+    using UnityEngine;
+
     public class ColorUtils
     {
-
         public UnityEngine.Color defaultActivityColor;
 
         public static UnityEngine.Color

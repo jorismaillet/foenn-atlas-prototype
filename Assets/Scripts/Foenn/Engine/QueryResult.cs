@@ -1,23 +1,20 @@
-﻿using Assets.Scripts.Foenn.Atlas.Models.Geo;
-using Assets.Scripts.Foenn.Engine.OLAP.Dimensions;
-using Assets.Scripts.Foenn.Engine.OLAP.Dimensions.Attributes;
-using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
-using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
-using Assets.Scripts.Foenn.OLAP.Engine.Sql;
-using Assets.Scripts.Unity;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Globalization;
-using System.Text.RegularExpressions;
-
-namespace Assets.Scripts.Foenn.Engine.Execution
+﻿namespace Assets.Scripts.Foenn.Engine.Execution
 {
+    using Assets.Scripts.Foenn.Atlas.Models.Geo;
+    using Assets.Scripts.Foenn.Engine.OLAP.Dimensions;
+    using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+    using Assets.Scripts.Foenn.OLAP.Engine.Sql;
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Text.RegularExpressions;
+
     public class QueryResult
     {
         public List<Row> rows;
+
         private System.Action<Row, object>[] columnParsers;
+
         private List<System.Action<Row, object[]>> lineParsers = new List<System.Action<Row, object[]>>();
 
         static readonly Regex AggregationRegex = new Regex(
@@ -35,7 +32,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
             this.rows = new List<Row>();
             this.columnParsers = new System.Action<Row, object>[rawHeaders.Length];
             var geoHeaderIndexes = new Dictionary<WeatherHistoryGeoAttributeKey, int>();
-            for (int i = 0; i < rawHeaders.Length; i++) 
+            for (int i = 0; i < rawHeaders.Length; i++)
             {
                 var rawHeader = rawHeaders[i];
 
@@ -51,7 +48,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
                     geoHeaderIndexes[geoAttributeKey] = i;
                 }
             }
-            if(geoHeaderIndexes.Count == 2)
+            if (geoHeaderIndexes.Count == 2)
             {
                 AddGeoDimensionParser(geoHeaderIndexes);
             }
@@ -106,7 +103,8 @@ namespace Assets.Scripts.Foenn.Engine.Execution
 
         private void AddGeoDimensionParser(Dictionary<WeatherHistoryGeoAttributeKey, int> geoAttributeIndexes)
         {
-            lineParsers.Add((Row row, object[] rawLine) => {
+            lineParsers.Add((Row row, object[] rawLine) =>
+            {
                 row.geo = new GeoField(new GeoPoint(
                     float.Parse((string)rawLine[geoAttributeIndexes[WeatherHistoryGeoAttributeKey.LAT]], CultureInfo.InvariantCulture),
                     float.Parse((string)rawLine[geoAttributeIndexes[WeatherHistoryGeoAttributeKey.LON]], CultureInfo.InvariantCulture)
@@ -114,8 +112,10 @@ namespace Assets.Scripts.Foenn.Engine.Execution
             });
         }
 
-        private void AddValueParser(int index, IDataField field) {
-            columnParsers[index] = (Row row, object value) => {
+        private void AddValueParser(int index, IDataField field)
+        {
+            columnParsers[index] = (Row row, object value) =>
+            {
                 if (value == null || value is System.DBNull) return;
                 row.values[field] = value;
             };
