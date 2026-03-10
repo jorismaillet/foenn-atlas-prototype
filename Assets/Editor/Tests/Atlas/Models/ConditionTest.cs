@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Foenn.Atlas.Models.Condition;
 using Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions;
+using Assets.Scripts.Foenn.Datasets.Facts;
 using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.OLAP.Dimensions;
 using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
@@ -46,17 +47,17 @@ namespace Assets.Editor.Tests.Atlas.Models
         [Test]
         public void TestInsideMetricRangeCondition()
         {
-            var c = new MetricRangeCondition(WeatherHistoryDataset.fact.temperature, 20, 25);
+            var c = new MetricRangeCondition(WeatherFact.temperature, 20, 25);
             var row = new Row();
-            row.measures.Add("T", new Measure(new Metric("T", AggregationKey.AVG), 20));
+            row.values.Add(WeatherFact.temperature, new Measure(WeatherFact.temperature, 20));
             Assert.IsTrue(c.IsMatch(row));
         }
         [Test]
         public void TestOutsideMetricRangeCondition()
         {
-            var c = new MetricRangeCondition(WeatherHistoryDataset.fact.temperature, 20, 25);
+            var c = new MetricRangeCondition(WeatherFact.temperature, 20, 25);
             var row = new Row();
-            row.measures.Add("T", new Measure(new Metric("T", AggregationKey.AVG), 30));
+            row.values.Add(WeatherFact.temperature, new Measure(WeatherFact.temperature, 30));
             Assert.IsFalse(c.IsMatch(row));
         }
 
@@ -116,19 +117,19 @@ namespace Assets.Editor.Tests.Atlas.Models
         [Test]
         public void TestMatchGroupAllCondition()
         {
-            var c = new GroupAllCondition(new MetricGroup("Test", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10), 10, 20);
+            var c = new GroupAllCondition(new MetricGroup("Test", WeatherFact.temperature, WeatherFact.temperature_10), 10, 20);
             var row = new Row();
-            row.measures.Add("T", new Measure(new Metric("T", AggregationKey.AVG), 15));
-            row.measures.Add(WeatherHistoryMetricKey.T10, new Measure(new Metric("T10", AggregationKey.AVG), 15));
+            row.values.Add(WeatherFact.temperature, new Measure(WeatherFact.temperature, 15));
+            row.values.Add(WeatherFact.temperature_10, new Measure(WeatherFact.temperature_10, 15));
             Assert.IsTrue(c.IsMatch(row));
         }
         [Test]
         public void TestNoMatchGroupAllCondition()
         {
-            var c = new GroupAllCondition(new MetricGroup("Test", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10), 10, 20);
+            var c = new GroupAllCondition(new MetricGroup("Test", WeatherFact.temperature, WeatherFact.temperature_10), 10, 20);
             var row = new Row();
-            row.measures.Add("T", new Measure(new Metric("T", AggregationKey.AVG), 15));
-            row.measures.Add("T10", new Measure(new Metric("T10", AggregationKey.AVG), 35));
+            row.values.Add(WeatherFact.temperature, new Measure(WeatherFact.temperature, 15));
+            row.values.Add(WeatherFact.temperature_10, new Measure(WeatherFact.temperature_10, 35));
             Assert.IsFalse(c.IsMatch(row));
         }
 
@@ -136,19 +137,19 @@ namespace Assets.Editor.Tests.Atlas.Models
         [Test]
         public void TestMatchGroupAnyCondition()
         {
-            var c = new GroupAnyCondition(new MetricGroup("Test", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10), 10, 20);
+            var c = new GroupAnyCondition(new MetricGroup("Test", WeatherFact.temperature, WeatherFact.temperature_10), 10, 20);
             var row = new Row();
-            row.measures.Add("T", new Measure(new Metric("T", AggregationKey.AVG), 15));
-            row.measures.Add("T10", new Measure(new Metric("T10", AggregationKey.AVG), 15));
+            row.values.Add(WeatherFact.temperature, new Measure(WeatherFact.temperature, 15));
+            row.values.Add(WeatherFact.temperature_10, new Measure(WeatherFact.temperature_10, 15));
             Assert.IsTrue(c.IsMatch(row));
         }
         [Test]
         public void TestNoMatchGroupAnyondition()
         {
-            var c = new GroupAnyCondition(new MetricGroup("Test", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10), 10, 20);
+            var c = new GroupAnyCondition(new MetricGroup("Test", WeatherFact.temperature, WeatherFact.temperature_10), 10, 20);
             var row = new Row();
-            row.measures.Add("T", new Measure(new Metric("T", AggregationKey.AVG), 15));
-            row.measures.Add("T10", new Measure(new Metric("T10", AggregationKey.AVG), 35));
+            row.values.Add(WeatherFact.temperature, new Measure(WeatherFact.temperature, 15));
+            row.values.Add(WeatherFact.temperature_10, new Measure(WeatherFact.temperature_10, 35));
             Assert.IsTrue(c.IsMatch(row));
         }
     }

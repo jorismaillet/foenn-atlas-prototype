@@ -18,16 +18,16 @@ namespace Assets.Editor.Tests.Engine
         public void TestQueryResultCreation()
         {
             var queryRequest = new QueryRequest(WeatherHistoryDataset.fact)
-                .Select(AggregationKey.AVG, WeatherHistoryDataset.fact, WeatherFact.temperature)
+                .Select(AggregationKey.AVG, WeatherFact.temperature)
                 .Select(WeatherHistoryDataset.location, LocationDimension.Department)
                 .Select(WeatherHistoryDataset.time, TimeDimension.yyyymmddhh)
                 .Where(new DataFilter(new PrefixedField(WeatherHistoryDataset.location, LocationDimension.Department), DataFilterMode.INCLUDE, "29"))
-                .GroupBy(WeatherHistoryDataset.location, LocationDimension.PostName);
+                .GroupBy(LocationDimension.PostName);
             var headers = new string[] { "T", "DPT", "AAAAMMJJHH", "NUM_POSTE" };
             List<string[]> rawResult = new List<string[]>();
             rawResult.Add(new string[] { "20", "29", "2025013018", "Station météo Plomelin"});
             rawResult.Add(new string[] { "20", "29", "2025013018", "Station météo Brest" });
-            var queryResult = new QueryResult(headers);
+            var queryResult = new QueryResult(headers, queryRequest.selectedColumns);
             rawResult.ForEach(line => queryResult.ParseLine(line));
             Assert.AreEqual(queryResult.rows.Count, 2);
             Assert.AreEqual(queryResult.rows[0].values.Count, 1);

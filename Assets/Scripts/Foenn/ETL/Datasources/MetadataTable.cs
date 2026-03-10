@@ -15,7 +15,9 @@ namespace Assets.Scripts.Foenn.ETL.Datasources
     public class MetadataTable : ITable
     {
         private string metadataTableName;
-        private PrimaryKey id = new PrimaryKey("ID", DbType.Int64, ColumnType.ATTRIBUTE, true);
+
+        public PrimaryKey PrimaryKey => new PrimaryKey("ID", DbType.Int64, ColumnType.ATTRIBUTE, true);
+
         private Field fileName = new Field("File", DbType.String, ColumnType.ATTRIBUTE);
 
         public MetadataTable(string table) {
@@ -35,7 +37,7 @@ namespace Assets.Scripts.Foenn.ETL.Datasources
             new IndexDefinition(true, fileName),
         };
 
-        public List<Field> Columns => new List<Field>() { id, fileName };
+        public List<Field> Columns => new List<Field>() { PrimaryKey, fileName };
 
         public List<Reference> References => new List<Reference>();
 

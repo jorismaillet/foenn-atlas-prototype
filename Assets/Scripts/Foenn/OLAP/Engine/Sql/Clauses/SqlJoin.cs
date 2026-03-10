@@ -11,7 +11,7 @@ namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
         public SqlJoin(List<JoinDefinition> joins) {
             var statement = new List<string>();
             foreach (var join in joins) {
-                statement.Add($"{JoinTypeToSql(join.joinType)} ON {join.leftColumn.ToSql()} = {join.rightColumn.ToSql()}");
+                statement.Add($"{JoinTypeToSql(join.joinType)} ON {join.leftField.ToSql()} = {join.rightField.ToSql()}");
             }
             clause = string.Join("", statement);
         }

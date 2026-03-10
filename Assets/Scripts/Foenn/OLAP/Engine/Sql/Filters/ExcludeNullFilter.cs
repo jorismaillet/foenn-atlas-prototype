@@ -13,7 +13,7 @@ namespace Assets.Scripts.Foenn.Engine.OLAP.Filters
         }
 
         public override string ToSql() {
-            return $"{column.ToSql()} IS NOT NULL";
+            return $"{filteredField.ToSql()} IS NOT NULL";
         }
     }
 }

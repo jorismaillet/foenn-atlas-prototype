@@ -27,7 +27,7 @@ namespace Assets.Scripts.Foenn.Engine.OLAP.Filters
                 filterOperator = mode.Equals(DataFilterMode.INCLUDE) ? "=" : "!=" + " ";
                 filteredAttributes = ValueToSql(selectedValues[0]);
             }
-            return $"{column.ToSql()}{filterOperator}{filteredAttributes}";
+            return $"{filteredField.ToSql()}{filterOperator}{filteredAttributes}";
         }
 
         private string ValueToSql(object value) {

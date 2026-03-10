@@ -2,6 +2,7 @@
 using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
 using Assets.Scripts.Foenn.ETL.Models;
 using Assets.Scripts.Foenn.OLAP.Engine.Sql;
+using System.Data;
 
 namespace Assets.Scripts.Foenn.Engine.Sql
 {
@@ -14,6 +15,8 @@ namespace Assets.Scripts.Foenn.Engine.Sql
             this.field = field;
             this.aggregation = aggregation;
         }
+
+        public DbType dbType => field.dbType;
 
         public string ToSql() {
             return $"{aggregation}({field.ToSql()})";

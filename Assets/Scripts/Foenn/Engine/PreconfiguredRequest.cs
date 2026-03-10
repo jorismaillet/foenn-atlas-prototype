@@ -24,16 +24,13 @@ namespace Assets.Scripts.Foenn.Engine.Execution
         {
             var factField = FieldFor(key);
             var postName = new PrefixedField(WeatherHistoryDataset.location, LocationDimension.PostName);
-            var avgFact = new PrefixedField(WeatherHistoryDataset.fact, factField, AggregationKey.AVG);
-            var minFact = new PrefixedField(WeatherHistoryDataset.fact, factField, AggregationKey.MIN);
-            var maxFact = new PrefixedField(WeatherHistoryDataset.fact, factField, AggregationKey.MAX);
+            var avgFact = new PrefixedAggregatedField(WeatherHistoryDataset.fact, factField, AggregationKey.AVG);
             var query = new QueryRequest(WeatherHistoryDataset.fact)
                 .Select(
-                    WeatherHistoryDataset.location,
                     LocationDimension.Longitude,
                     LocationDimension.Latitude,
-                    LocationDimension.PostName)
-                .Select(postNumber, avgFact, minFact, maxFact)
+                    LocationDimension.PostName,
+                    avgFact)
                 .Join(
                     WeatherHistoryDataset.fact,
                     WeatherHistoryDataset.fact.locationReference,
@@ -43,7 +40,6 @@ namespace Assets.Scripts.Foenn.Engine.Execution
                     WeatherHistoryDataset.fact.timeReference,
                     JoinType.INNER)
                 .GroupBy(
-                    WeatherHistoryDataset.location,
                     LocationDimension.PostName)
                 .Where(
                     new DataFilter(new PrefixedField(
@@ -77,16 +73,10 @@ namespace Assets.Scripts.Foenn.Engine.Execution
                 var result = query.Execute(connection);
                 var res = new List<GeoMeasure>();
                 foreach (var row in result.rows) {
-                    string station = (string)row.values[LocationDimension.PostNumber];
+                    string post = (string)row.values[LocationDimension.PostName];
                     var point = row.geo.point;
-                    var value = (float)row.values[factField];
-                    var measures = new List<Measure>() {
-                        new Measure(avgFact, value),
-                        new Measure(minFact, (float)row.values[minFact]),
-                        new Measure(maxFact, (float)row.values[maxFact])
-                    }
-
-                    res.Add(new GeoMeasure(new PointLocation(station, point.lat, point.lon), new Measure(factField, value));
+                    var measure = new Measure(factField, (float)row.values[avgFact]);
+                    res.Add(new GeoMeasure(new PointLocation(post, point.lat, point.lon), measure));
                 }
                 return res;
             }
@@ -96,7 +86,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
             return key switch
             {
                 WeatherHistoryMetricKey.T => WeatherFact.temperature,
-                WeatherHistoryMetricKey.R => WeatherFact.rain,
+                WeatherHistoryMetricKey.R => WeatherFact.rain_1,
                 _ => throw new KeyNotFoundException($"No field found for metric {key}")
             };
 

@@ -1,6 +1,7 @@
 using Assets.Scripts.Foenn.Atlas.Models.Activities;
 using Assets.Scripts.Foenn.Atlas.Models.Condition;
 using Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions;
+using Assets.Scripts.Foenn.Datasets.Facts;
 using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.Engine.OLAP.Dimensions;
 using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
@@ -15,13 +16,13 @@ namespace Assets.Editor.Tests.Atlas.Models
         public void TestActivityCreation()
         {
             var hourCondition = new HourRangeCondition(14, 16);
-            var temp = new MetricGroup("Temperature", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10, WeatherHistoryMetricKey.T20);
+            var temp = new MetricGroup("Temperature", WeatherFact.temperature, WeatherFact.temperature_10, WeatherFact.temperature_20);
             var tempCondition = new GroupAnyCondition(temp, 25, 30);
-            var rainCondition = new MetricRangeCondition(WeatherHistoryMetricKey.RR1, 0, 0);
+            var rainCondition = new MetricRangeCondition(WeatherFact.rain_1, 0, 0);
             var activity = new Activity("Beach", hourCondition, tempCondition, rainCondition);
             var row = new Row() { time = TimeField.AAAAMMJJHH("2023091515") };
-            row.measures.Add(WeatherHistoryMetricKey.RR1, new Measure(new Metric(WeatherHistoryMetricKey.RR1, AggregationKey.MAX), 0));
-            row.measures.Add(WeatherHistoryMetricKey.T, new Measure(new Metric(WeatherHistoryMetricKey.T, AggregationKey.AVG), 25));
+            row.values.Add(WeatherFact.rain_1, new Measure(WeatherFact.rain_1, 0));
+            row.values.Add(WeatherFact.temperature, new Measure(WeatherFact.temperature, 25));
             Assert.IsTrue(activity.conditions.IsMatch(row));
         }
     }

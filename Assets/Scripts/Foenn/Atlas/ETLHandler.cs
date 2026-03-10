@@ -47,7 +47,7 @@ namespace Assets.Scripts.Foenn.Atlas
             ct = null;
         }
 
-        public IEnumerator PrepareData(SqliteConnection connection, List<string> filesToLoad, MetadataTable metadata, WeatherHistoryDataset dataset)
+        public IEnumerator PrepareData(SqliteConnection connection, List<string> filesToLoad, MetadataTable metadata)
         {
             var sw = new Stopwatch();
             sw.Start();
@@ -56,17 +56,16 @@ namespace Assets.Scripts.Foenn.Atlas
             {
                 MainThreadLog.Log($"Check {fileName}");
                 string dpt = fileName.Split('_')[1];
-                yield return LoadFile(connection, dataset, fileName, metadata);
+                yield return LoadFile(connection, fileName, metadata);
             }
             sw.Stop();
             MainThreadLog.Log($"Data prepared in {sw.ElapsedMilliseconds}ms");
         }
 
-        public IEnumerator LoadFile(SqliteConnection connection, WeatherHistoryDataset dataset, string fileName, MetadataTable metadata)
+        public IEnumerator LoadFile(SqliteConnection connection,  string fileName, MetadataTable metadata)
         {
             var processor = new WeatherHistoryProcessor(
-                    fileName,
-                    dataset
+                    fileName
                 );
             ct = new CancellationTokenSource();
             task = Task.Run(() => processor.ProcessETL(ct.Token), ct.Token);

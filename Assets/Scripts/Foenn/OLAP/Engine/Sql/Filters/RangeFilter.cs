@@ -14,7 +14,7 @@ namespace Assets.Scripts.Foenn.Engine.OLAP.Filters
         }
 
         public override string ToSql() {
-            return $"{column.ToSql()} >= {minValue} AND {column.ToSql()} <= {maxValue}";
+            return $"{filteredField.ToSql()} >= {minValue} AND {filteredField.ToSql()} <= {maxValue}";
         }
     }
 }

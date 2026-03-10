@@ -8,6 +8,7 @@ using Assets.Scripts.Foenn.Engine.Sql;
 using Assets.Scripts.Foenn.Engine.Sql.Clauses;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 using Assets.Scripts.Foenn.ETL.Models;
+using Assets.Scripts.Foenn.OLAP.Engine.Sql;
 using Assets.Scripts.Unity;
 using Mono.Data.Sqlite;
 using System.Collections.Generic;
@@ -20,9 +21,9 @@ namespace Assets.Scripts.Foenn.Engine.Execution
 {
     public class QueryRequest
     {
-        public List<PrefixedField> selectedColumns = new List<PrefixedField>();
+        public List<IDataField> selectedColumns = new List<IDataField>();
         public List<ITable> selectedTables = new List<ITable>();
-        public List<PrefixedField> groups = new List<PrefixedField>();
+        public List<IDataField> groups = new List<IDataField>();
         public List<JoinDefinition> joins = new List<JoinDefinition>();
         public List<Filter> filters = new List<Filter>();
         public ITable from;
@@ -32,38 +33,34 @@ namespace Assets.Scripts.Foenn.Engine.Execution
             this.from = from;
         }
 
+        public QueryRequest Select(params IDataField[] fields) {
+            selectedColumns.AddRange(fields);
+            return this;
+        }
+
         public QueryRequest Select(ITable table, params Field[] fields) {
-            return Select(null, table, fields);
+            foreach (var field in fields) {
+                selectedColumns.Add(new PrefixedField(table, field));
+            }
+            return this;
+        }
+
+        public QueryRequest Select(AggregationKey aggregation, params Field[] fields) {
+            foreach (var field in fields) {
+                selectedColumns.Add(new AggregatedField(field, aggregation));
+            }
+            return this;
         }
 
         public QueryRequest Select(ITable table, Field field, params AggregationKey[] aggregations) {
             foreach (var aggregation in aggregations) {
-                Select(aggregation, table, field);
+                selectedColumns.Add(new PrefixedAggregatedField(table, field, aggregation));
             }
             return this;
         }
 
-        public QueryRequest Select(params PrefixedField[] tableColumns) {
-            selectedColumns.AddRange(tableColumns);
-            return this;
-        }
-
-        public QueryRequest Select(AggregationKey? aggregation, ITable table, params Field[] fields) {
-            if (fields.Any()) {
-                foreach (var field in fields) {
-                    selectedColumns.Add(new PrefixedField(table, field, aggregation));
-                }
-            }
-            else {
-                selectedTables.Add(table);
-            }
-            return this;
-        }
-
-        public QueryRequest GroupBy(ITable table, params Field[] fields) {
-            foreach (var field in fields) {
-                groups.Add(new PrefixedField(table, field));
-            }
+        public QueryRequest GroupBy(params Field[] fields) {
+            groups.AddRange(fields);
             return this;
         }
 
@@ -100,7 +97,7 @@ namespace Assets.Scripts.Foenn.Engine.Execution
                 for (int i = 0; i < nbColumns; i++) {
                     rawHeaders[i] = reader.GetName(i);
                 }
-                var res = new QueryResult(rawHeaders);
+                var res = new QueryResult(rawHeaders, selectedColumns);
                 while (reader.Read()) {
                     var row = new object[nbColumns];
                     reader.GetValues(row);

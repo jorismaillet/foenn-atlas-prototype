@@ -7,7 +7,7 @@ namespace Assets.Scripts.Foenn.ETL.Models
     public class Field : IDataField
     {
         public string name;
-        public DbType dbType;
+        public DbType dbType { get; }
         public ColumnType columnType;
 
         public Field(string name, DbType type, ColumnType columnType)
@@ -16,6 +16,7 @@ namespace Assets.Scripts.Foenn.ETL.Models
             this.dbType = type;
             this.columnType = columnType;
         }
+
 
         public string ToSql() {
             return $"\"{name}\"";

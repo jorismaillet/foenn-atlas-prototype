@@ -6,12 +6,12 @@ namespace Assets.Scripts.Foenn.Atlas.Models.Geo
     public class GeoMeasure
     {
         public GeoPoint point;
-        public List<Measure> measures;
+        public Measure measure;
 
-        public GeoMeasure(GeoPoint point, List<Measure> measures)
+        public GeoMeasure(GeoPoint point, Measure measure)
         {
             this.point = point;
-            this.measures = measures;
+            this.measure = measure;
         }
     }
 }

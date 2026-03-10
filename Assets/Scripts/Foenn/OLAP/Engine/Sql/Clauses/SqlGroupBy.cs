@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+using Assets.Scripts.Foenn.OLAP.Engine.Sql;
 using System.Collections.Generic;
 
 namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
@@ -6,7 +7,7 @@ namespace Assets.Scripts.Foenn.Engine.Sql.Clauses
     public class SqlGroupBy
     {
         public readonly string clause;
-        public SqlGroupBy(List<PrefixedField> groups)
+        public SqlGroupBy(List<IDataField> groups)
         {
             var groupByParts = new List<string>();
             foreach (var column in groups)

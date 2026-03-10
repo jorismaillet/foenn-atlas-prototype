@@ -19,8 +19,8 @@ namespace Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions
 
         public bool IsMatch(Row row)
         {
-            var measure = row.measures[field.name];
-            return min <= measure.value && max >= measure.value;
+            var measure = (float)row.values[field];
+            return min <= measure && max >= measure;
         }
     }
 }

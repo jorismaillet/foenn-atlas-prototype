@@ -4,6 +4,7 @@ using Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions;
 using Assets.Scripts.Foenn.Atlas.Models.Geo;
 using Assets.Scripts.Foenn.Atlas.Models.Locations;
 using Assets.Scripts.Foenn.Atlas.Models.Plannings;
+using Assets.Scripts.Foenn.Datasets.Facts;
 using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
 using Assets.Scripts.Foenn.ETL.Datasets;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
@@ -12,10 +13,10 @@ namespace Assets.Scripts.Foenn.Atlas
 {
     public class Seed
     {
-        public static MetricGroup temp = new MetricGroup("Temperature", WeatherHistoryDataset.fact.temperature);
-        public static MetricGroup rain = new MetricGroup("Pluie", WeatherHistoryMetricKey.RR1);
-        public static MetricGroup wind = new MetricGroup("Vent", WeatherHistoryMetricKey.FF, WeatherHistoryMetricKey.FF2);
-        public static MetricGroup gust = new MetricGroup("Rafales", WeatherHistoryMetricKey.FXI, WeatherHistoryMetricKey.FXI2, WeatherHistoryMetricKey.FXI3S);
+        public static MetricGroup temp = new MetricGroup("Temperature", WeatherFact.temperature, WeatherFact.temperature_10, WeatherFact.temperature_20, WeatherFact.temperature_100);
+        public static MetricGroup rain = new MetricGroup("Pluie", WeatherFact.rain_1);
+        public static MetricGroup wind = new MetricGroup("Vent", WeatherFact.wind_1, WeatherFact.wind_2);
+        public static MetricGroup gust = new MetricGroup("Rafales", WeatherFact.gust_1, WeatherFact.gust_2, WeatherFact.gust_3s);
 
         public static GroupAllCondition pasDePluie = new GroupAllCondition(rain, 0, 0);
         public static GroupAnyCondition peuDeVent = new GroupAnyCondition(wind, 0, 50);
