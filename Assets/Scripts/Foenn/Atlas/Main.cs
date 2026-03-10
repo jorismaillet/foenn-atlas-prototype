@@ -14,9 +14,6 @@ namespace Assets.Scripts.Foenn.Atlas
     public class Main : MonoBehaviour
     {
         public ETLHandler etlHandler;
-        public string HourToLoad = "2023080110";
-        [SerializeField] public string department = "29";
-        public WeatherHistoryMetricKey key;
         public MapComponent map;
 
         void Start()
@@ -38,7 +35,7 @@ namespace Assets.Scripts.Foenn.Atlas
                 yield return StartCoroutine(etlHandler.PrepareData(connection, filesToLoad, metadata, dataset));
                 Application.runInBackground = false;
             }
-            map.Initialize(HourToLoad, department, key);
+            map.Initialize();
         }
     }
 }

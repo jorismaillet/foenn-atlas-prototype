@@ -19,10 +19,16 @@ namespace Assets.Scripts.Foenn.Atlas.Components.Holders
         public PrefabsContainer activityContainer;
         public PrefabsContainer planningsContainer;
         public HeatmapWorldOverlay heatmapContainer;
+        
+        [SerializeField]
+        public int day = 01, month = 08, year = 2023;
+        [SerializeField] 
+        public string department = "29";
+        public WeatherHistoryMetricKey key;
 
-        public void Initialize(string hourToLoad, string department, WeatherHistoryMetricKey key)
+        public void Initialize()
         {
-            var geoMeasures = PreconfiguredRequest.WeatherHistoryMeasures(hourToLoad, department, WeatherHistoryMetricKey.T);
+            var geoMeasures = PreconfiguredRequest.FieldMeasuresPerPostForDay(day, month, year, department, key);
             heatmapContainer.SetMeasures(geoMeasures);
             pointmapContainer.Initialize(geoMeasures);
             pointLocationContainer.Initialize(new List<PointLocation>()

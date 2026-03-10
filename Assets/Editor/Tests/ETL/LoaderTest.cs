@@ -21,13 +21,12 @@ namespace Assets.Editor.Tests.ETL
         public void TestInsert() {
             Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
             using (var connection = SqliteHelper.CreateConnection()) {
-                var dataset = new WeatherHistoryDataset();
-                dataset.InitTables(connection);
-                var loader = new SqliteTableLoader(dataset.fact);
-                SqliteHelper.Execute(connection, $"INSERT INTO \"{dataset.fact.Name}\" (ID) VALUES (1);");
-                var res = new QueryRequest(dataset.fact.Name).Execute(connection);
+                WeatherHistoryDataset.InitTables(connection);
+                var loader = new SqliteTableLoader(WeatherHistoryDataset.fact);
+                SqliteHelper.Execute(connection, $"INSERT INTO \"{WeatherHistoryDataset.fact.Name}\" (ID) VALUES (1);");
+                var res = new QueryRequest(WeatherHistoryDataset.fact).Execute(connection);
                 Assert.AreEqual(res.rows.Count, 1);
-                CleanupDataset(connection, dataset);
+                CleanupDataset(connection);
             }
         }
 
@@ -36,8 +35,8 @@ namespace Assets.Editor.Tests.ETL
 
         }
 
-        private void CleanupDataset(SqliteConnection connection, WeatherHistoryDataset dataset) {
-            foreach (var table in dataset.Tables) {
+        private void CleanupDataset(SqliteConnection connection) {
+            foreach (var table in WeatherHistoryDataset.Tables) {
                 SqliteHelper.DropStagingTable(connection, table);
                 SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {table.Name}");
                 SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {MetadataTable.TableName(table.Name)}");

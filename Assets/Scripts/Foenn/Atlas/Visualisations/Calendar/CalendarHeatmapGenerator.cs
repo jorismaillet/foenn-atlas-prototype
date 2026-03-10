@@ -17,28 +17,7 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations
     {
         public static Texture2D BuildCalendarHeatmapTexture(string city, int department, Dictionary<Activity, Color32> activities, RenderSettings settings)
         {
-            var request = new QueryRequest("TODO");
-            request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.NOM_USUEL, city));
-            request.filters.Add(new DataFilter(DataFilterMode.INCLUDE, WeatherHistoryAttributeKey.DPT, department.ToString()));
-            var result = request.Execute(SqliteHelper.CreateConnection());
-            var points = new List<int>();
-            foreach (var ac in activities)
-            {
-                var activity = ac.Key;
-                var color = ac.Value;
-                points.Add(result.rows.Sum(row => activity.conditions.IsMatch(row) ? 1 : 0));
-            }
-            Debug.Log(points);
-            var heatmap = result.rows.Select(row =>
-            {
-                var date = TimeUtils.Date(row.attributes[WeatherHistoryAttributeKey.AAAAMMJJHH].value);
-                var activity = activities.FirstOrDefault(a => a.Key.conditions.IsMatch(row));
-                return activity.Value;
-            }).ToArray();
-
-            var texture = new Texture2D(settings.width, settings.height);
-
-            return RenderOperation.CreateTexture(heatmap, settings);
+            return null;
         }
     }
 }

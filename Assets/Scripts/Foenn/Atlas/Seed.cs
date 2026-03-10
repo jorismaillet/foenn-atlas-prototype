@@ -5,13 +5,14 @@ using Assets.Scripts.Foenn.Atlas.Models.Geo;
 using Assets.Scripts.Foenn.Atlas.Models.Locations;
 using Assets.Scripts.Foenn.Atlas.Models.Plannings;
 using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
+using Assets.Scripts.Foenn.ETL.Datasets;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
 
 namespace Assets.Scripts.Foenn.Atlas
 {
     public class Seed
     {
-        public static MetricGroup temp = new MetricGroup("Temperature", WeatherHistoryMetricKey.T, WeatherHistoryMetricKey.T10, WeatherHistoryMetricKey.T20, WeatherHistoryMetricKey.T50, WeatherHistoryMetricKey.T100);
+        public static MetricGroup temp = new MetricGroup("Temperature", WeatherHistoryDataset.fact.temperature);
         public static MetricGroup rain = new MetricGroup("Pluie", WeatherHistoryMetricKey.RR1);
         public static MetricGroup wind = new MetricGroup("Vent", WeatherHistoryMetricKey.FF, WeatherHistoryMetricKey.FF2);
         public static MetricGroup gust = new MetricGroup("Rafales", WeatherHistoryMetricKey.FXI, WeatherHistoryMetricKey.FXI2, WeatherHistoryMetricKey.FXI3S);

@@ -55,7 +55,7 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             command.ExecuteNonQuery();
         }
 
-        public static string FieldToSql(Datafield field, bool skipPK = false) {
+        public static string FieldToSql(Field field, bool skipPK = false) {
             var res = field.dbType switch {
                 DbType.String => "TEXT",
                 DbType.Single or DbType.Double => "REAL",
@@ -75,7 +75,7 @@ namespace Assets.Scripts.Foenn.Engine.Connectors
             return ExecuteScalar(connection, sql) > 0;
         }
 
-        public static void Insert(SqliteConnection connection, string table, List<Datafield> columns, List<string> values) {
+        public static void Insert(SqliteConnection connection, string table, List<Field> columns, List<string> values) {
             var columnsString = string.Join(", ", columns.Select(c => c.name));
             var valuesString = string.Join(", ", values.Select((val, i) => ValueToSql(val, columns[i].dbType)));
             var sql = $"INSERT INTO \"{table}\" ({columnsString}) VALUES ({valuesString});";

@@ -1,24 +1,25 @@
 ﻿using Assets.Scripts.Foenn.Engine.Execution;
 using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+using Assets.Scripts.Foenn.ETL.Models;
 
 namespace Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions
 {
     public class MetricRangeCondition : ICondition
     {
-        public WeatherHistoryMetricKey metricKey;
+        public Field field;
         public float min;
         public float max;
 
-        public MetricRangeCondition(WeatherHistoryMetricKey metricKey, float min, float max)
+        public MetricRangeCondition(Field field, float min, float max)
         {
-            this.metricKey = metricKey;
+            this.field = field;
             this.min = min;
             this.max = max;
         }
 
         public bool IsMatch(Row row)
         {
-            var measure = row.measures[metricKey];
+            var measure = row.measures[field.name];
             return min <= measure.value && max >= measure.value;
         }
     }
