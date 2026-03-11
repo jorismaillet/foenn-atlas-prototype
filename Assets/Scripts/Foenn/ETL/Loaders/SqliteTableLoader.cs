@@ -24,48 +24,39 @@
 
         public virtual void StartStaging(SqliteConnection connection, SqliteTransaction transaction, string[] csvFieldNames)
         {
-            var columns = Table.Columns.Where(c => !c.autoIncrement).ToList();
             var mappings = Table.Mappings;
 
             _stageCommand = connection.CreateCommand();
             _stageCommand.Transaction = transaction;
-            var colNames = string.Join(", ", columns.Select(c => c.name));
-            var paramNames = string.Join(", ", columns.Select(c => $"@{c.name}"));
+            var colNames = string.Join(", ", mappings.Select(c => c.targetField.name));
+            var paramNames = string.Join(", ", mappings.Select(c => $"@{c.targetField.name}"));
             _stageCommand.CommandText = $"INSERT INTO \"{Table.TableName}_staging\" ({colNames}) VALUES ({paramNames})";
 
-            _stageParams = new SqliteParameter[columns.Count];
-            _valueResolvers = new List<Func<string[], object>>(columns.Count);
+            _stageParams = new SqliteParameter[mappings.Count];
+            _valueResolvers = new List<Func<string[], object>>(mappings.Count);
 
-            for (int i = 0; i < columns.Count; i++)
+            for (int i = 0; i < mappings.Count; i++)
             {
-                var col = columns[i];
-                _stageParams[i] = new SqliteParameter($"@{col.name}", col.dbType);
+                var mapping = mappings[i];
+                _stageParams[i] = new SqliteParameter($"@{mapping.targetField.name}", mapping.targetField.dbType);
                 _stageCommand.Parameters.Add(_stageParams[i]);
-
-                var mapping = mappings.FirstOrDefault(m => m.targetField == col);
-                if (mapping != null)
+                int csvIdx = FindCsvIndex(mapping.column.name, csvFieldNames);
+                var converter = mapping.column.GetConverter();
+                if (mapping.transform != null)
                 {
-                    int csvIdx = FindCsvIndex(mapping.csvColumn, csvFieldNames);
-                    if (mapping.transform != null)
-                    {
-                        _valueResolvers.Add(line => {
-                            var raw = csvIdx >= 0 ? line[csvIdx] : string.Empty;
-                            if (string.IsNullOrEmpty(raw)) return DBNull.Value;
-                            return mapping.transform(raw);
-                        });
-                    }
-                    else
-                    {
-                        var converter = GetConverter(col.dbType);
-                        _valueResolvers.Add(line => {
-                            var raw = csvIdx >= 0 ? line[csvIdx] : string.Empty;
-                            return converter(raw);
-                        });
-                    }
+                    _valueResolvers.Add(line => {
+                        var raw = csvIdx >= 0 ? line[csvIdx] : string.Empty;
+                        if (string.IsNullOrEmpty(raw)) return DBNull.Value;
+                        var transformed = mapping.transform(raw);
+                        return converter(transformed);
+                    });
                 }
                 else
                 {
-                    _valueResolvers.Add(_ => DBNull.Value);
+                    _valueResolvers.Add(line => {
+                        var raw = csvIdx >= 0 ? line[csvIdx] : string.Empty;
+                        return converter(raw);
+                    });
                 }
             }
         }
@@ -92,19 +83,6 @@
                     return i;
             }
             return -1;
-        }
-
-        protected Func<string, object> GetConverter(DbType dbType)
-        {
-            return dbType switch
-            {
-                DbType.String => s => string.IsNullOrEmpty(s) ? DBNull.Value : (object)s,
-                DbType.Single or DbType.Double => s => string.IsNullOrEmpty(s) ? DBNull.Value : (object)double.Parse(s, CultureInfo.InvariantCulture),
-                DbType.Int64 => s => string.IsNullOrEmpty(s) ? DBNull.Value : (object)long.Parse(s, CultureInfo.InvariantCulture),
-                DbType.Int32 => s => string.IsNullOrEmpty(s) ? DBNull.Value : (object)int.Parse(s, CultureInfo.InvariantCulture),
-                DbType.Int16 => s => string.IsNullOrEmpty(s) ? DBNull.Value : (object)short.Parse(s, CultureInfo.InvariantCulture),
-                _ => s => string.IsNullOrEmpty(s) ? DBNull.Value : (object)s
-            };
         }
 
         public void Dispose()

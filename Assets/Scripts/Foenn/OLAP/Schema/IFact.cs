@@ -5,6 +5,5 @@ namespace Assets.Scripts.Foenn.OLAP.Schema
     public interface IFact : ITable
     {
         List<IDimension> Dimensions { get; }
-        List<Field> References { get; }
     }
 }

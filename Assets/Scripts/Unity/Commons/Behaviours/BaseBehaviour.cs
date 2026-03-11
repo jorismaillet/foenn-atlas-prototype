@@ -1,17 +1,11 @@
 ﻿namespace Assets.Scripts.Unity.Commons.Behaviours
 {
-    using Assets.Scripts.Unity.Common.Utils;
-    using Assets.Scripts.Unity.Common.Views;
     using Assets.Scripts.Unity.Commons.Containers;
     using Assets.Scripts.Unity.Commons.Holders;
     using Assets.Scripts.Unity.Commons.Mutables;
-    using Assets.Scripts.Unity.Commons.UIAnimations;
-    using Assets.Scripts.Unity.Commons.UIAnimations.Interpolations;
     using Assets.Scripts.Unity.Commons.Utils;
-    using Assets.Scripts.Unity.Sounds;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using UnityEngine;
     using UnityEngine.Events;
     using UnityEngine.UI;
@@ -19,10 +13,6 @@
     public class BaseBehaviour : MonoBehaviour
     {
         private List<Action> removeListenerActions = new List<Action>();
-
-        private List<UIAnimation> animations = new List<UIAnimation>();
-
-        private List<UIAnimationList> animationsLists = new List<UIAnimationList>();
 
         public void AddListener<T>(GameEvent<T> listenedEvent, UnityEvent<T> calledAction)
         {
@@ -84,27 +74,6 @@
             container.Initialize(list);
         }
 
-        protected void Set<Element>(AbstractPrefabsContainer container, IEnumerable<Element> list)
-        {
-            var res = list.ToList();
-            Set(container, res);
-        }
-
-        protected void SetMutable<Element>(AbstractPrefabsContainer container, MutableList<Element> mutableList)
-        {
-            OnMutation(mutableList, (l) => Set(container, l));
-        }
-
-        protected void Set(Image image, string path)
-        {
-            ImageUtil.Set(image, path);
-        }
-
-        protected void Set(string modalHeader, string modalContent, Action onConfirm)
-        {
-            ModalComponent.Show(modalHeader, modalContent, onConfirm);
-        }
-
         public void SetText(string text)
         {
             GetComponent<Text>().text = text;
@@ -164,9 +133,6 @@
                 case BehaviourAction.ClearInputField:
                     GetComponent<InputField>().text = "";
                     break;
-                case BehaviourAction.PlayErrorSound:
-                    InterfaceAudioSource.Play(InterfaceSoundKey.ERROR);
-                    break;
                 case BehaviourAction.UnCheckToggle:
                     GetComponent<Toggle>().isOn = false;
                     break;
@@ -209,67 +175,6 @@
             });
         }
 
-        public void Animate(UIAnimation animation)
-        {
-            animations.Add(animation);
-            Action oldCallback = animation.callback;
-            animation.callback = () =>
-            {
-                animations.Remove(animation);
-                if (oldCallback != null)
-                {
-                    oldCallback.Invoke();
-                }
-            };
-            UIAnimator.Animate(animation);
-        }
-
-        public UIAnimationList Animate(params UIAnimation[] animations)
-        {
-            return Animate(new UIAnimationList(animations.ToList()));
-        }
-
-        public UIAnimationList Animate(UIAnimationList animationsList)
-        {
-            animationsLists.Add(animationsList);
-            Action oldCallback = animationsList.callback;
-            animationsList.callback = () =>
-            {
-                animationsLists.Remove(animationsList);
-                if (oldCallback != null)
-                {
-                    oldCallback.Invoke();
-                }
-            };
-            return UIAnimator.Animate(animationsList);
-        }
-
-        public UIAnimation ReplaceAnimation(UIAnimation oldAnimation, UIAnimation newAnimation)
-        {
-            if (oldAnimation != null)
-            {
-                RemoveAnimation(oldAnimation);
-            }
-            Animate(newAnimation);
-            return newAnimation;
-        }
-
-        public void RemoveAnimation(UIAnimation animation)
-        {
-            UIAnimator.CancelAnimation(animation);
-            animations.Remove(animation);
-        }
-
-        public void RemoveAnimationsList(UIAnimationList animationsList)
-        {
-            if (animationsList == null)
-            {
-                return;
-            }
-            UIAnimator.CancelAnimation(animationsList);
-            animationsLists.Remove(animationsList);
-        }
-
         public void AddListener<T>(UnityEvent<T> trigger, Action<T> process)
         {
             void unityAction(T _)
@@ -281,12 +186,6 @@
             {
                 trigger.RemoveListener(unityAction);
             });
-        }
-
-        public void SwitchColor(Graphic graphic, float fadeDuration, Color newColor)
-        {
-            Color currentColor = graphic.color;
-            Animate(new UIAnimation(gameObject, new LinearInterpolation(time => graphic.color = Color.Lerp(currentColor, newColor, time), 0, 1), (int)(fadeDuration * 1000F)));
         }
 
         protected void SetGroupAlpha(float alpha)
@@ -327,15 +226,6 @@
         protected virtual void OnDestroy()
         {
             ClearListeners();
-            animations.ForEach(animation =>
-            {
-                UIAnimator.CancelAnimation(animation);
-            });
-            animationsLists.ForEach(animationList =>
-            {
-                RemoveAnimationsList(animationList);
-            });
-            animations.Clear();
         }
 
         public GameObject AddGameObject(string prefabPath, string name = null)

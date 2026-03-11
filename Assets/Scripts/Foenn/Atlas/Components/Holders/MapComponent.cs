@@ -36,15 +36,15 @@
             pointmapContainer.Initialize(geoMeasures);
             pointLocationContainer.Initialize(new List<PointLocation>()
             {
-                Seed.brest, Seed.tcPontLabbe, Seed.tcQuimper, Seed.maison
+                Seeds.brest, Seeds.tcPontLabbe, Seeds.tcQuimper, Seeds.maison
             });
             activityContainer.Initialize(new List<Activity>()
             {
-                Seed.piscine, Seed.kayak, Seed.plage, Seed.velo, Seed.jardin, Seed.tennis, Seed.ville, Seed.randonee, Seed.dinner
+                Seeds.piscine, Seeds.kayak, Seeds.plage, Seeds.velo, Seeds.jardin, Seeds.tennis, Seeds.ville, Seeds.randonee, Seeds.dinner
             });
             planningsContainer.Initialize(new List<Planning>()
             {
-                Seed.planningSportif, Seed.ideesDeSorties
+                Seeds.planningSportif, Seeds.ideesDeSorties
             });
         }
     }

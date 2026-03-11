@@ -8,8 +8,8 @@ namespace Assets.Scripts.Foenn.OLAP.Schema
         string TableName { get; }
         Field PrimaryKey { get; }
         List<IndexDefinition> Indexes { get; }
-        List<FieldMapping> Mappings { get; }
-
-        List<Field> Columns => Mappings.Select(m => m.targetField).Prepend(PrimaryKey).Distinct().ToList();
+        List<FieldMap> Mappings { get; }
+        List<Field> References => new List<Field>();
+        List<Field> Columns => Mappings.Select(m => m.targetField).Prepend(PrimaryKey).Concat(References).Distinct().ToList();
     }
 }

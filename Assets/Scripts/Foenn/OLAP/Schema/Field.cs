@@ -2,11 +2,11 @@ namespace Assets.Scripts.Foenn.OLAP.Schema
 {
     using System.Data;
 
-    public class Field : IDataField
+    public class Field
     {
         public string name;
         public DbType dbType { get; }
-        public ColumnType columnType;
+        public AnalyticsType analyticsType;
         public ITable table;
         public AggregationKey? aggregation;
         public bool isPrimaryKey;
@@ -17,18 +17,18 @@ namespace Assets.Scripts.Foenn.OLAP.Schema
         public string sourceCsvColumn;
         public bool IsReference => referencedDimension != null;
 
-        public Field(string name, DbType type, ColumnType columnType)
+        public Field(string name, DbType type, AnalyticsType analyticsType)
         {
             this.name = name;
             this.dbType = type;
-            this.columnType = columnType;
+            this.analyticsType = analyticsType;
         }
 
         private Field(Field source, ITable table, AggregationKey? aggregation)
         {
             this.name = source.name;
             this.dbType = source.dbType;
-            this.columnType = source.columnType;
+            this.analyticsType = source.analyticsType;
             this.isPrimaryKey = source.isPrimaryKey;
             this.autoIncrement = source.autoIncrement;
             this.referencedDimension = source.referencedDimension;
@@ -37,18 +37,17 @@ namespace Assets.Scripts.Foenn.OLAP.Schema
             this.aggregation = aggregation;
         }
 
-        public static Field Metric(string name) => new Field(name, DbType.Double, ColumnType.METRIC);
-        public static Field Text(string name) => new Field(name, DbType.String, ColumnType.ATTRIBUTE);
-        public static Field Int(string name) => new Field(name, DbType.Int32, ColumnType.ATTRIBUTE);
-        public static Field Int16(string name) => new Field(name, DbType.Int16, ColumnType.ATTRIBUTE);
-        public static Field Int64(string name) => new Field(name, DbType.Int64, ColumnType.ATTRIBUTE);
-        public static Field Double(string name) => new Field(name, DbType.Double, ColumnType.ATTRIBUTE);
-        public static Field PK(string name = "ID") => new Field(name, DbType.Int32, ColumnType.ATTRIBUTE) { isPrimaryKey = true, autoIncrement = true };
+        public static Field Metric(string name) => new Field(name, DbType.Double, AnalyticsType.METRIC);
+        public static Field Text(string name) => new Field(name, DbType.String, AnalyticsType.ATTRIBUTE);
+        public static Field Int(string name) => new Field(name, DbType.Int32, AnalyticsType.ATTRIBUTE);
+        public static Field Int16(string name) => new Field(name, DbType.Int16, AnalyticsType.ATTRIBUTE);
+        public static Field Int64(string name) => new Field(name, DbType.Int64, AnalyticsType.ATTRIBUTE);
+        public static Field Double(string name) => new Field(name, DbType.Double, AnalyticsType.ATTRIBUTE);
+        public static Field PK(string name = "ID") => new Field(name, DbType.Int32, AnalyticsType.ATTRIBUTE) { isPrimaryKey = true, autoIncrement = true };
 
-        public static Field Ref(IDimension dimension, string fieldName, string csvColumn) => new Field(fieldName, dimension.PrimaryKey.dbType, ColumnType.ATTRIBUTE)
+        public static Field Ref(IDimension dimension, string fieldName) => new Field(fieldName, dimension.PrimaryKey.dbType, AnalyticsType.ATTRIBUTE)
         {
-            referencedDimension = dimension,
-            sourceCsvColumn = csvColumn
+            referencedDimension = dimension
         };
 
         public Field Of(ITable table) => new Field(this, table, this.aggregation);
