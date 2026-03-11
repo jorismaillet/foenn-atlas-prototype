@@ -2,44 +2,45 @@ namespace Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory
 {
     using Assets.Scripts.Foenn.OLAP.Schema;
     using System.Collections.Generic;
-    using System.Data;
 
     public class WeatherFact : IFact
     {
-        public string Name => "hourly_weather_history_facts";
-        public PrimaryKey PrimaryKey => new PrimaryKey("ID", DbType.Int32, ColumnType.ATTRIBUTE, true);
+        public string TableName => "hourly_weather_history_facts";
+        public Field PrimaryKey => Field.PK();
 
-        public static Field temperature = new Field("temperature", DbType.Double, ColumnType.METRIC);
-        public static Field temperature_10 = new Field("temperature_10", DbType.Double, ColumnType.METRIC);
-        public static Field temperature_20 = new Field("temperature_20", DbType.Double, ColumnType.METRIC);
-        public static Field temperature_100 = new Field("temperature_100", DbType.Double, ColumnType.METRIC);
-        public static Field rain_1 = new Field("rain_1", DbType.Double, ColumnType.METRIC);
-        public static Field wind_1 = new Field("wind_1", DbType.Double, ColumnType.METRIC);
-        public static Field wind_2 = new Field("wind_2", DbType.Double, ColumnType.METRIC);
-        public static Field gust_1 = new Field("gust_1", DbType.Double, ColumnType.METRIC);
-        public static Field gust_2 = new Field("gust_2", DbType.Double, ColumnType.METRIC);
-        public static Field gust_3s = new Field("gust_3s", DbType.Double, ColumnType.METRIC);
+        public static Field temperature = Field.Metric("temperature");
+        public static Field temperature_10 = Field.Metric("temperature_10");
+        public static Field temperature_20 = Field.Metric("temperature_20");
+        public static Field temperature_100 = Field.Metric("temperature_100");
+        public static Field rain_1 = Field.Metric("rain_1");
+        public static Field wind_1 = Field.Metric("wind_1");
+        public static Field wind_2 = Field.Metric("wind_2");
+        public static Field gust_1 = Field.Metric("gust_1");
+        public static Field gust_2 = Field.Metric("gust_2");
+        public static Field gust_3s = Field.Metric("gust_3s");
 
-        public static Field timeId = new Field("time_id", DbType.Int32, ColumnType.ATTRIBUTE);
-        public static Field locationId = new Field("location_id", DbType.Int32, ColumnType.ATTRIBUTE);
-
-        public Reference timeReference, locationReference;
+        public Field timeRef, locationRef;
 
         public List<IndexDefinition> Indexes => new List<IndexDefinition>() {
-            new IndexDefinition(true, timeId, locationId)
+            new IndexDefinition(true, timeRef, locationRef)
         };
 
-        public List<Field> Columns => new List<Field> { PrimaryKey, timeId, locationId, temperature, rain_1 };
         public List<IDimension> Dimensions => _dimensions;
-        public List<Reference> References => new List<Reference>() { timeReference, locationReference };
+        public List<Field> References => new List<Field>() { timeRef, locationRef };
+
+        public List<FieldMapping> Mappings => new List<FieldMapping>()
+        {
+            FieldMapping.Map("T", temperature),
+            FieldMapping.Map("RR1", rain_1)
+        };
 
         private List<IDimension> _dimensions;
 
         public WeatherFact(TimeDimension time, LocationDimension location)
         {
             _dimensions = new List<IDimension>() { time, location };
-            timeReference = new Reference(time, timeId, "AAAAMMJJHH");
-            locationReference = new Reference(location, locationId, "NUM_POSTE");
+            timeRef = Field.Ref(time, "time_id", "AAAAMMJJHH");
+            locationRef = Field.Ref(location, "location_id", "NUM_POSTE");
         }
     }
 }

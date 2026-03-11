@@ -18,7 +18,7 @@ namespace Assets.Scripts.Foenn.ETL
         public void LoadFromDatabase(SqliteConnection connection)
         {
             _cache.Clear();
-            var sql = $"SELECT \"{_dimension.PrimaryKey.name}\", \"{_dimension.LookupKey.name}\" FROM \"{_dimension.Name}\"";
+            var sql = $"SELECT \"{_dimension.PrimaryKey.name}\", FROM \"{_dimension.TableName}\"";
             using (var reader = SqliteHelper.ExecuteReader(connection, sql))
             {
                 while (reader.Read())

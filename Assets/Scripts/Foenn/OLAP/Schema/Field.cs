@@ -7,9 +7,15 @@ namespace Assets.Scripts.Foenn.OLAP.Schema
         public string name;
         public DbType dbType { get; }
         public ColumnType columnType;
-
         public ITable table;
         public AggregationKey? aggregation;
+        public bool isPrimaryKey;
+        public bool autoIncrement;
+
+        // Reference properties
+        public IDimension referencedDimension;
+        public string sourceCsvColumn;
+        public bool IsReference => referencedDimension != null;
 
         public Field(string name, DbType type, ColumnType columnType)
         {
@@ -23,19 +29,35 @@ namespace Assets.Scripts.Foenn.OLAP.Schema
             this.name = source.name;
             this.dbType = source.dbType;
             this.columnType = source.columnType;
+            this.isPrimaryKey = source.isPrimaryKey;
+            this.autoIncrement = source.autoIncrement;
+            this.referencedDimension = source.referencedDimension;
+            this.sourceCsvColumn = source.sourceCsvColumn;
             this.table = table;
             this.aggregation = aggregation;
         }
 
+        public static Field Metric(string name) => new Field(name, DbType.Double, ColumnType.METRIC);
+        public static Field Text(string name) => new Field(name, DbType.String, ColumnType.ATTRIBUTE);
+        public static Field Int(string name) => new Field(name, DbType.Int32, ColumnType.ATTRIBUTE);
+        public static Field Int16(string name) => new Field(name, DbType.Int16, ColumnType.ATTRIBUTE);
+        public static Field Int64(string name) => new Field(name, DbType.Int64, ColumnType.ATTRIBUTE);
+        public static Field Double(string name) => new Field(name, DbType.Double, ColumnType.ATTRIBUTE);
+        public static Field PK(string name = "ID") => new Field(name, DbType.Int32, ColumnType.ATTRIBUTE) { isPrimaryKey = true, autoIncrement = true };
+
+        public static Field Ref(IDimension dimension, string fieldName, string csvColumn) => new Field(fieldName, dimension.PrimaryKey.dbType, ColumnType.ATTRIBUTE)
+        {
+            referencedDimension = dimension,
+            sourceCsvColumn = csvColumn
+        };
+
         public Field Of(ITable table) => new Field(this, table, this.aggregation);
-
         public Field As(AggregationKey agg) => new Field(this, this.table, agg);
-
         public Field Of(ITable table, AggregationKey agg) => new Field(this, table, agg);
 
         public string ToSql()
         {
-            var col = table != null ? $"\"{table.Name}\".\"{name}\"" : $"\"{name}\"";
+            var col = table != null ? $"\"{table.TableName}\".\"{name}\"" : $"\"{name}\"";
             return aggregation.HasValue ? $"{aggregation.Value}({col})" : col;
         }
     }

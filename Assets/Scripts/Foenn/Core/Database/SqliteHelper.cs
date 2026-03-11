@@ -40,7 +40,7 @@ namespace Assets.Scripts.Foenn.Core.Database
         {
             var command = connection.CreateCommand();
             command.CommandText = @$"
-            INSERT INTO {table.Name}_staging({string.Join(", ", table.Columns.Select(column => column.name))})
+            INSERT INTO {table.TableName}_staging({string.Join(", ", table.Columns.Select(column => column.name))})
             VALUES ({string.Join(", ", table.Columns.Select(column => $"@{column.name}"))})
             ";
             table.Columns.Each(column =>
@@ -54,8 +54,8 @@ namespace Assets.Scripts.Foenn.Core.Database
         {
             var command = connection.CreateCommand();
             command.CommandText = @$"
-                INSERT OR IGNORE INTO {table.Name}
-                SELECT * FROM {table.Name}_staging;
+                INSERT OR IGNORE INTO {table.TableName}
+                SELECT * FROM {table.TableName}_staging;
             ";
             command.ExecuteNonQuery();
         }
@@ -69,10 +69,10 @@ namespace Assets.Scripts.Foenn.Core.Database
                 DbType.Int64 or DbType.Int32 or DbType.Int16 => "INTEGER",
                 _ => throw new System.NotImplementedException($"Database type not supported: {field.dbType}")
             };
-            if (!skipPK && field is PrimaryKey pk)
+            if (!skipPK && field.isPrimaryKey)
             {
                 res += " PRIMARY KEY";
-                if (pk.autoIncrement)
+                if (field.autoIncrement)
                     res += " AUTOINCREMENT";
             }
             return res;
@@ -114,13 +114,13 @@ namespace Assets.Scripts.Foenn.Core.Database
         {
             var columns = table.Columns.Select(column => $"\"{column.name}\" {FieldToSql(column)}");
 
-            var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{table.Name}\" ({string.Join(", ", columns)});";
+            var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{table.TableName}\" ({string.Join(", ", columns)});";
 
             table.Indexes.ForEach(index =>
             {
                 string cols = string.Join(", ", index.fields.Select(field => $"\"{field.name}\""));
                 string unique = index.unique ? "UNIQUE " : string.Empty;
-                createTableSql += $"CREATE {unique}INDEX IF NOT EXISTS \"{index.name}\" ON \"{table.Name}\"({cols});";
+                createTableSql += $"CREATE {unique}INDEX IF NOT EXISTS \"{index.name}\" ON \"{table.TableName}\"({cols});";
             });
             UnityEngine.Debug.Log(createTableSql);
             Execute(connection, createTableSql);
@@ -133,14 +133,14 @@ namespace Assets.Scripts.Foenn.Core.Database
             {
                 columns.Add($"{column.name} {FieldToSql(column, skipPK: true)}");
             });
-            var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{table.Name}_staging\" ({string.Join(", ", columns)});";
+            var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{table.TableName}_staging\" ({string.Join(", ", columns)});";
             UnityEngine.Debug.Log(createTableSql);
             Execute(connection, createTableSql);
         }
 
         public static void DropStagingTable(SqliteConnection connection, ITable table)
         {
-            var sql = $"DROP TABLE IF EXISTS {table.Name}_staging;";
+            var sql = $"DROP TABLE IF EXISTS {table.TableName}_staging;";
             UnityEngine.Debug.Log(sql);
             Execute(connection, sql);
         }

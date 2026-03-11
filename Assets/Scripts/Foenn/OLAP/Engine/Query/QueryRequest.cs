@@ -56,10 +56,10 @@ namespace Assets.Scripts.Foenn.OLAP.Query
             return this;
         }
 
-        public QueryRequest Join(ITable leftTable, Reference reference, JoinType joinType)
+        public QueryRequest Join(ITable leftTable, Field refField, JoinType joinType)
         {
-            var leftField = ((Field)reference).Of(leftTable);
-            var rightField = reference.referencedDimension.PrimaryKey.Of(reference.referencedDimension);
+            var leftField = refField.Of(leftTable);
+            var rightField = refField.referencedDimension.PrimaryKey.Of(refField.referencedDimension);
             joins.Add(new JoinDefinition(leftField, rightField, joinType));
             return this;
         }

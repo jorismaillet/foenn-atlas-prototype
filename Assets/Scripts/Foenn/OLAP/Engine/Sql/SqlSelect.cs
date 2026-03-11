@@ -10,7 +10,7 @@ namespace Assets.Scripts.Foenn.OLAP.Sql
 
         public SqlSelect(List<ITable> tables, List<IDataField> selectedColumns)
         {
-            var selected = tables.Select(t => $"\"{t.Name}\".*");
+            var selected = tables.Select(t => $"\"{t.TableName}\".*");
             selected.Concat(selectedColumns.Select(c => c.ToSql()));
             clause = "SELECT " + string.Join(", ", selected);
         }

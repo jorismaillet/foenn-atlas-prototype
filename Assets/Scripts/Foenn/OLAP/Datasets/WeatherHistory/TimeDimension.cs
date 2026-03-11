@@ -1,30 +1,40 @@
 namespace Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory
 {
     using Assets.Scripts.Foenn.OLAP.Schema;
+    using System;
     using System.Collections.Generic;
-    using System.Data;
+    using System.Globalization;
 
     public class TimeDimension : IDimension
     {
-        public static PrimaryKey ID = new PrimaryKey("ID", DbType.Int32, ColumnType.ATTRIBUTE, true);
-        public static Field yyyymmddhh = new Field("yyyymmddhh", DbType.String, ColumnType.ATTRIBUTE);
-        public static Field timestamp = new Field("timestamp", DbType.Int64, ColumnType.ATTRIBUTE);
-        public static Field year = new Field("year", DbType.Int16, ColumnType.ATTRIBUTE);
-        public static Field month = new Field("month", DbType.Int16, ColumnType.ATTRIBUTE);
-        public static Field day = new Field("day", DbType.Int16, ColumnType.ATTRIBUTE);
-        public static Field hour = new Field("hour", DbType.Int16, ColumnType.ATTRIBUTE);
-        public static Field dayOfWeek = new Field("day_of_week", DbType.Int16, ColumnType.ATTRIBUTE);
-        public static Field dayOfYear = new Field("day_of_year", DbType.Int16, ColumnType.ATTRIBUTE);
-        public static Field weekOfYear = new Field("week_of_year", DbType.Int16, ColumnType.ATTRIBUTE);
+        public static Field yyyymmddhh = Field.Text("yyyymmddhh");
+        public static Field year = Field.Int16("year");
+        public static Field month = Field.Int16("month");
+        public static Field day = Field.Int16("day");
+        public static Field hour = Field.Int16("hour");
 
-        public string Name => "time";
-        public PrimaryKey PrimaryKey => ID;
-        public Field LookupKey => yyyymmddhh;
+        public string TableName => "time";
+        public Field PrimaryKey => Field.PK();
 
         public List<IndexDefinition> Indexes => new List<IndexDefinition>() {
             new IndexDefinition(true, yyyymmddhh)
         };
 
-        public List<Field> Columns => new List<Field>() { ID, yyyymmddhh, timestamp, year, month, day, hour, dayOfWeek, dayOfYear, weekOfYear };
+        public List<FieldMapping> Mappings => new List<FieldMapping>()
+        {
+            FieldMapping.Map("AAAAMMJJHH", yyyymmddhh),
+            FieldMapping.Compute("AAAAMMJJHH", Field.Int64("timestamp"), ToTimestamp),
+            FieldMapping.Compute("AAAAMMJJHH", year, s => ParseDate(s).Year),
+            FieldMapping.Compute("AAAAMMJJHH", month, s => ParseDate(s).Month),
+            FieldMapping.Compute("AAAAMMJJHH", day, s => ParseDate(s).Day),
+            FieldMapping.Compute("AAAAMMJJHH", hour, s => ParseDate(s).Hour),
+            FieldMapping.Compute("AAAAMMJJHH", Field.Int16("day_of_week"), s => (int)ParseDate(s).DayOfWeek),
+            FieldMapping.Compute("AAAAMMJJHH", Field.Int16("day_of_year"), s => ParseDate(s).DayOfYear),
+            FieldMapping.Compute("AAAAMMJJHH", Field.Int16("week_of_year"), s => GetWeekOfYear(ParseDate(s)))
+        };
+
+        private static DateTime ParseDate(string s) => DateTime.ParseExact(s, "yyyyMMddHH", CultureInfo.InvariantCulture);
+        private static object ToTimestamp(string s) => new DateTimeOffset(ParseDate(s)).ToUnixTimeSeconds();
+        private static int GetWeekOfYear(DateTime d) => CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(d, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
     }
 }

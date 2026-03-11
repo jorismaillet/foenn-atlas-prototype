@@ -2,27 +2,31 @@ namespace Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory
 {
     using Assets.Scripts.Foenn.OLAP.Schema;
     using System.Collections.Generic;
-    using System.Data;
 
     public class LocationDimension : IDimension
     {
-        public static PrimaryKey ID = new PrimaryKey("ID", DbType.Int32, ColumnType.ATTRIBUTE, true);
-        public static Field PostNumber = new Field("post_number", DbType.Int32, ColumnType.ATTRIBUTE);
-        public static Field Latitude = new Field("lat", DbType.Double, ColumnType.ATTRIBUTE);
-        public static Field Longitude = new Field("lon", DbType.Double, ColumnType.ATTRIBUTE);
-        public static Field PostName = new Field("post_name", DbType.String, ColumnType.ATTRIBUTE);
-        public static Field Department = new Field("department", DbType.String, ColumnType.ATTRIBUTE);
-        public static Field Altitude = new Field("altitude", DbType.Int16, ColumnType.ATTRIBUTE);
+        public static Field PostNumber = Field.Int("post_number");
+        public static Field Latitude = Field.Double("lat");
+        public static Field Longitude = Field.Double("lon");
+        public static Field PostName = Field.Text("post_name");
+        public static Field Department = Field.Text("department");
 
-        public string Name => "location";
-        public PrimaryKey PrimaryKey => ID;
-        public Field LookupKey => PostNumber;
+        public string TableName => "location";
+        public Field PrimaryKey => Field.PK();
 
         public List<IndexDefinition> Indexes => new List<IndexDefinition>() {
             new IndexDefinition(true, PostNumber),
             new IndexDefinition(false, Department)
         };
 
-        public List<Field> Columns => new List<Field>() { ID, PostNumber, Latitude, Longitude, PostName, Department, Altitude };
+        public List<FieldMapping> Mappings => new List<FieldMapping>()
+        {
+            FieldMapping.MapInt("NUM_POSTE", "post_number"),
+            FieldMapping.Map("LAT", Latitude),
+            FieldMapping.Map("LON", Longitude),
+            FieldMapping.MapText("NOM_USUEL", "post_name"),
+            FieldMapping.Compute("NUM_POSTE", Department, s => s.Substring(0, 2)),
+            FieldMapping.MapInt("ALTI", "altitude")
+        };
     }
 }

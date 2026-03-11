@@ -21,7 +21,7 @@
             using (var sqliteConnection = SqliteHelper.CreateConnection())
             {
                 WeatherHistoryDataset.InitTables(sqliteConnection);
-                var metadataTable = new MetadataTable(WeatherHistoryDataset.fact.Name);
+                var metadataTable = new MetadataTable(WeatherHistoryDataset.fact.TableName);
                 metadataTable.InitTable(sqliteConnection);
                 StartCoroutine(Init(sqliteConnection, metadataTable.FilesToLoad(sqliteConnection), metadataTable));
             }

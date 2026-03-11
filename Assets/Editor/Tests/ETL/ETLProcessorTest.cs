@@ -33,8 +33,8 @@
             foreach (var table in WeatherHistoryDataset.Tables)
             {
                 SqliteHelper.DropStagingTable(connection, table);
-                SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {table.Name}");
-                SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {MetadataTable.TableName(table.Name)}");
+                SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {table.TableName}");
+                SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {MetadataTable.MakeTableName(table.TableName)}");
             }
         }
     }

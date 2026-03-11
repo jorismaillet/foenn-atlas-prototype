@@ -5,21 +5,19 @@ namespace Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory
     using Mono.Data.Sqlite;
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.IO;
     using System.Linq;
 
     public class MetadataTable : ITable
     {
         private string metadataTableName;
+        private Field fileName = Field.Text("File");
 
-        public PrimaryKey PrimaryKey => new PrimaryKey("ID", DbType.Int64, ColumnType.ATTRIBUTE, true);
-
-        private Field fileName = new Field("File", DbType.String, ColumnType.ATTRIBUTE);
+        public Field PrimaryKey => Field.PK();
 
         public MetadataTable(string table)
         {
-            metadataTableName = TableName(table);
+            metadataTableName = MakeTableName(table);
         }
 
         public void InitTable(SqliteConnection connection)
@@ -27,9 +25,9 @@ namespace Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory
             SqliteHelper.CreateTable(connection, this);
         }
 
-        public static string TableName(string table) => $"{table}_metadata";
+        public static string MakeTableName(string table) => $"{table}_metadata";
 
-        public string Name => metadataTableName;
+        public string TableName => metadataTableName;
 
         public List<IndexDefinition> Indexes => new List<IndexDefinition>() {
             new IndexDefinition(true, fileName),
@@ -37,11 +35,11 @@ namespace Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory
 
         public List<Field> Columns => new List<Field>() { PrimaryKey, fileName };
 
-        public List<Reference> References => new List<Reference>();
+                public List<FieldMapping> Mappings => new List<FieldMapping>();
 
-        public List<string> FilesToLoad(SqliteConnection connection)
-        {
-            var connector = new SqliteHelper();
+                public List<string> FilesToLoad(SqliteConnection connection)
+                {
+                    var connector = new SqliteHelper();
 
             var weathersDir = Path.Combine(UnityEngine.Application.dataPath, "Resources", "Weathers");
             if (!Directory.Exists(weathersDir))

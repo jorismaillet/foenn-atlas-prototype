@@ -1,15 +1,15 @@
 namespace Assets.Scripts.Foenn.OLAP.Schema
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     public interface ITable
     {
-        string Name { get; }
-
-        PrimaryKey PrimaryKey { get; }
-
+        string TableName { get; }
+        Field PrimaryKey { get; }
         List<IndexDefinition> Indexes { get; }
+        List<FieldMapping> Mappings { get; }
 
-        List<Field> Columns { get; }
+        List<Field> Columns => Mappings.Select(m => m.targetField).Prepend(PrimaryKey).Distinct().ToList();
     }
 }

@@ -8,7 +8,7 @@ namespace Assets.Scripts.Foenn.OLAP.Sql
 
         public SqlFrom(ITable table)
         {
-            clause = $" FROM \"{table.Name}\"";
+            clause = $" FROM \"{table.TableName}\"";
         }
     }
 }
