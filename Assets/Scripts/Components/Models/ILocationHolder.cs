@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Components.Holders
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Locations;
-    using Assets.Scripts.Unity.Commons.Holders;
-    using TMPro;
+﻿using Assets.Scripts.Components.Commons.Holders;
+using Assets.Scripts.Models.Locations;
+using TMPro;
 
+namespace Assets.Scripts.Components.Models
+{
     public class ILocationHolder : Holder<ILocation>
     {
         public void SetName(TMP_Text text)

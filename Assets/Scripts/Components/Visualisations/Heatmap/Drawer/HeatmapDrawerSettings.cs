@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage
-{
-    using System;
+﻿using System;
 
+namespace Assets.Scripts.Components.Visualisations.Heatmap.Drawer
+{
     public class HeatmapDrawerSettings
     {
         public readonly float alpha;// 0..1 overlay alpha

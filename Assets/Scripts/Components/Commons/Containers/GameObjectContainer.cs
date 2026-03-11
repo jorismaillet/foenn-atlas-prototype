@@ -1,8 +1,8 @@
-﻿namespace Assets.Scripts.Unity.Commons.Containers
-{
-    using Assets.Scripts.Unity.Commons.Behaviours;
-    using UnityEngine;
+﻿using Assets.Scripts.Components.Commons.Behaviours;
+using UnityEngine;
 
+namespace Assets.Scripts.Components.Commons.Containers
+{
     public class GameObjectContainer : BaseBehaviour
     {
         public bool clearPreviousElement = true;

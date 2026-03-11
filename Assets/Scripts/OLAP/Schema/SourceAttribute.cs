@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Assets.Scripts.Foenn.OLAP.Schema
+namespace Assets.Scripts.OLAP.Schema
 {
     public class SourceAttribute
     {
         public string name;
+
         public SourceAttributeType type;
 
         public SourceAttribute(string name, SourceAttributeType type)

@@ -1,8 +1,8 @@
-﻿namespace Assets.Scripts.Unity.Commons
-{
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
+namespace Assets.Scripts.Components.Commons
+{
     public class GameEvent
     {
         public List<Action> callBacks = new List<Action>();

@@ -1,7 +1,7 @@
-namespace Assets.Scripts.Foenn.OLAP.Query
-{
-    using Assets.Scripts.Foenn.OLAP.Schema;
+using Assets.Scripts.OLAP.Schema;
 
+namespace Assets.Scripts.OLAP.Engine.Result
+{
     public class AttributeValue
     {
         public Field attribute;

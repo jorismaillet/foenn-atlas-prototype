@@ -1,8 +1,8 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Plannings
-{
-    using Assets.Scripts.Foenn.OLAP.Query;
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Assets.Scripts.OLAP.Engine.Result;
 
+namespace Assets.Scripts.Models.Plannings
+{
     public class PlanningRow
     {
         public Row row;

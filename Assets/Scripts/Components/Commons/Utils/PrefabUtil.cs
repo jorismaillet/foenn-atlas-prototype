@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Unity.Commons.Utils
-{
-    using System;
-    using System.Linq;
-    using UnityEngine;
+﻿using System;
+using System.Linq;
+using UnityEngine;
 
+namespace Assets.Scripts.Components.Commons.Utils
+{
     public class PrefabUtil : MonoBehaviour
     {
         public static GameObject AddGameObject(string prefabPath, string name = null, Transform parent = null)

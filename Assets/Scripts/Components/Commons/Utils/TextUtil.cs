@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Unity.Commons.Utils
-{
-    using UnityEngine.UI;
+﻿using UnityEngine.UI;
 
+namespace Assets.Scripts.Components.Commons.Utils
+{
     public class TextUtil
     {
         public static void TrySet(Text property, string value)

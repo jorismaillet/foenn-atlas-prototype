@@ -1,15 +1,15 @@
-namespace Assets.Scripts.Foenn.Atlas.Components
-{
-    using Assets.Scripts.Foenn.Atlas.Layers;
-    using Assets.Scripts.Foenn.Atlas.Models.Geo;
-    using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap;
-    using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage;
-    using Assets.Scripts.Unity;
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using UnityEngine;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Assets.Scripts.Components.Layers.OpenStreetMap;
+using Assets.Scripts.Components.Logger;
+using Assets.Scripts.Components.Visualisations.Heatmap.Drawer;
+using Assets.Scripts.Components.Visualisations.Heatmap.Render;
+using Assets.Scripts.Models.Geo;
+using UnityEngine;
 
+namespace Assets.Scripts.Components.Visualisations.Heatmap
+{
     [DisallowMultipleComponent]
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]

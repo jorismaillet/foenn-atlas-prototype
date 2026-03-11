@@ -1,14 +1,13 @@
-namespace Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap
-{
-    using Assets.Scripts.Common.Extensions;
-    using Assets.Scripts.Foenn.Atlas.Layers;
-    using Assets.Scripts.Foenn.Atlas.Models.Geo;
-    using Assets.Scripts.Unity.Commons.Containers;
-    using Assets.Scripts.Unity.Commons.Holders;
-    using System.Collections.Generic;
-    using System.Linq;
-    using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
+using Assets.Scripts.Components.Commons.Containers;
+using Assets.Scripts.Components.Commons.Holders;
+using Assets.Scripts.Components.Layers.OpenStreetMap;
+using Assets.Scripts.Models.Geo;
+using UnityEngine;
 
+namespace Assets.Scripts.Components.Movement
+{
     public class GeoPointMovementHandler : MonoBehaviour
     {
         [Header("References")]
@@ -37,7 +36,8 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap
 
         void RefreshMeasureHolders()
         {
-            pointHolders.Replace(container.elements.Select(go => go.GetComponent<Holder<GeoPoint>>()).ToList());
+            pointHolders.Clear();
+            pointHolders.AddRange(container.elements.Select(go => go.GetComponent<Holder<GeoPoint>>()).ToList());
         }
 
         void OnEnable()

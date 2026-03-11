@@ -1,16 +1,17 @@
-namespace Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory
-{
-    using Assets.Scripts.Foenn.Core.Database;
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using Mono.Data.Sqlite;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Assets.Scripts.Database;
+using Assets.Scripts.OLAP.Schema;
+using Mono.Data.Sqlite;
 
+namespace Assets.Scripts.OLAP.Datasets.Metadata
+{
     public class MetadataTable : ITable
     {
-        public string TableName{ get; set; }
+        public string TableName { get; set; }
+
         public Field PrimaryKey => Field.PK();
 
         private Field fileName = Field.Text("File");
@@ -25,14 +26,18 @@ namespace Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory
 
         public MetadataTable(string table)
         {
-            TableName = $"{table}_metadata";
+            TableName = MakeTableName(table);
+        }
+
+        public static string MakeTableName(string table)
+        {
+            return $"{table}_metadata";
         }
 
         public void InitTable(SqliteConnection connection)
         {
             SqliteHelper.CreateTable(connection, this);
         }
-
 
         public List<string> FilesToLoad(SqliteConnection connection)
         {

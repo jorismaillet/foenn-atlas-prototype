@@ -1,10 +1,9 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
-{
-    using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage;
-    using System;
-    using UnityEngine;
-    using RenderSettings = Assets.Scripts.Foenn.Atlas.Visualisations.RenderSettings;
+﻿using System;
+using RenderSettings = Assets.Scripts.Components.Visualisations.Heatmap.Render.RenderSettings;
+using UnityEngine;
 
+namespace Assets.Scripts.Components.Visualisations.Heatmap.Drawer
+{
     internal static class HeatmapDrawer
     {
         private const float ExactHitEpsilon = 1e-6f;

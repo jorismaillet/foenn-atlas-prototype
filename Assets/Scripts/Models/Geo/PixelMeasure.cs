@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Geo
+﻿using Assets.Scripts.Components.Visualisations.Heatmap.Render;
+
+namespace Assets.Scripts.Models.Geo
 {
     public readonly struct PixelMeasure
     {

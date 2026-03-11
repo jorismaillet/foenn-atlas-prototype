@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Unity.Commons.Utils
-{
-    using UnityEngine;
+﻿using UnityEngine;
 
+namespace Assets.Scripts.Components.Commons.Utils
+{
     public class ColorUtil
     {
         public static void SetAlpha(CanvasGroup group, float alpha)

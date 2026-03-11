@@ -1,8 +1,8 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions
-{
-    using Assets.Scripts.Foenn.OLAP.Query;
-    using Assets.Scripts.Foenn.OLAP.Schema;
+﻿using Assets.Scripts.OLAP.Engine.Result;
+using Assets.Scripts.OLAP.Schema;
 
+namespace Assets.Scripts.Models.Condition.Definitions
+{
     public class MetricRangeCondition : ICondition
     {
         public Field field;

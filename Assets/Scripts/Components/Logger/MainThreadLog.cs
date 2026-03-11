@@ -1,8 +1,8 @@
-﻿namespace Assets.Scripts.Unity
-{
-    using System.Collections.Concurrent;
-    using UnityEngine;
+﻿using System.Collections.Concurrent;
+using UnityEngine;
 
+namespace Assets.Scripts.Components.Logger
+{
     public static class MainThreadLog
     {
         private static readonly ConcurrentQueue<string> _q = new();

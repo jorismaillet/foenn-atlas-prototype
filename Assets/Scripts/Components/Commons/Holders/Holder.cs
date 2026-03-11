@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Unity.Commons.Holders
-{
-    using Assets.Scripts.Unity.Commons.Attachers;
+﻿using Assets.Scripts.Components.Commons.Attachers;
 
+namespace Assets.Scripts.Components.Commons.Holders
+{
     public abstract class Holder<Element> : BaseHolder, IElementInitializer<Element>
     {
         public Element element;

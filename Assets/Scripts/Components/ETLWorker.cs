@@ -1,17 +1,18 @@
-﻿namespace Assets.Scripts.Foenn.Atlas
-{
-    using Assets.Scripts.Foenn.ETL;
-    using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
-    using Assets.Scripts.Unity;
-    using Mono.Data.Sqlite;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+using Assets.Scripts.Components.Logger;
+using Assets.Scripts.ETL;
+using Assets.Scripts.OLAP.Datasets.Metadata;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory;
+using Mono.Data.Sqlite;
+using UnityEngine;
 
-    public class ETLHandler : MonoBehaviour
+namespace Assets.Scripts.Components
+{
+    public class ETLWorker : MonoBehaviour
     {
         private CancellationTokenSource ct;
 

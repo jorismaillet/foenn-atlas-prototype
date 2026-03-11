@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Unity.Commons.Mutables
-{
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+namespace Assets.Scripts.Components.Commons.Mutables
+{
     public class MutableList<T> : List<T>
     {
         public GameEvent<List<T>> onChange = new GameEvent<List<T>>();

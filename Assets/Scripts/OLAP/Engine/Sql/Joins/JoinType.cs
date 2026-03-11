@@ -1,4 +1,4 @@
-namespace Assets.Scripts.Foenn.OLAP.Sql
+namespace Assets.Scripts.OLAP.Engine.Sql.Joins
 {
     public enum JoinType
     {

@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Foenn
-{
-    using System;
+﻿using System;
 
+namespace Assets.Scripts
+{
     public class Env
     {
         private static string DATABASE_PATH = null;

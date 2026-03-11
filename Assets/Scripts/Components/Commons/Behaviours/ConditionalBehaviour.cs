@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Unity.Commons.Behaviours
+﻿namespace Assets.Scripts.Components.Commons.Behaviours
 {
     public abstract class ConditionalBehaviour<T> : Behaviour<T>
     {

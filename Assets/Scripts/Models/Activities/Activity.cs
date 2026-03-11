@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Activities
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Condition;
+﻿using Assets.Scripts.Models.Condition;
 
+namespace Assets.Scripts.Models.Activities
+{
     public class Activity
     {
         public string name;

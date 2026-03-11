@@ -1,15 +1,15 @@
-﻿namespace Assets.Scripts.Unity.Commons.Behaviours
-{
-    using Assets.Scripts.Unity.Commons.Containers;
-    using Assets.Scripts.Unity.Commons.Holders;
-    using Assets.Scripts.Unity.Commons.Mutables;
-    using Assets.Scripts.Unity.Commons.Utils;
-    using System;
-    using System.Collections.Generic;
-    using UnityEngine;
-    using UnityEngine.Events;
-    using UnityEngine.UI;
+﻿using System;
+using System.Collections.Generic;
+using Assets.Scripts.Components.Commons.Containers;
+using Assets.Scripts.Components.Commons.Holders;
+using Assets.Scripts.Components.Commons.Mutables;
+using Assets.Scripts.Components.Commons.Utils;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
+namespace Assets.Scripts.Components.Commons.Behaviours
+{
     public class BaseBehaviour : MonoBehaviour
     {
         private List<Action> removeListenerActions = new List<Action>();

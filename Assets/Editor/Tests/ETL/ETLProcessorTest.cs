@@ -1,19 +1,41 @@
-﻿namespace Assets.Editor.Tests.ETL
-{
-    using Assets.Scripts.Foenn;
-    using Assets.Scripts.Foenn.Core.Database;
-    using Assets.Scripts.Foenn.ETL;
-    using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
-    using Assets.Scripts.Foenn.OLAP.Query;
-    using Mono.Data.Sqlite;
-    using NUnit.Framework;
+﻿using Assets.Scripts;
+using Assets.Scripts.Database;
+using Assets.Scripts.ETL;
+using Assets.Scripts.OLAP.Datasets.Metadata;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory;
+using Assets.Scripts.OLAP.Engine;
+using Mono.Data.Sqlite;
+using NUnit.Framework;
 
+namespace Assets.Editor.Tests.ETL
+{
+    [TestFixture]
     public class ETLProcessorTest
     {
+        [OneTimeSetUp]
+        public void Setup()
+        {
+            Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
+            DatabaseHelper.CreateDb();
+        }
+
+        [OneTimeTearDown]
+        public void Cleanup()
+        {
+            using (var connection = SqliteHelper.CreateConnection())
+            {
+                foreach (var table in WeatherHistoryDataset.Tables)
+                {
+                    SqliteHelper.DropStagingTable(connection, table);
+                    SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {table.TableName}");
+                    SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {MetadataTable.MakeTableName(table.TableName)}");
+                }
+            }
+        }
+
         [Test]
         public void TestETLProcessor()
         {
-            Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
             using (var connection = SqliteHelper.CreateConnection())
             {
                 WeatherHistoryDataset.InitTables(connection);
@@ -23,18 +45,6 @@
 
                 var res = new QueryRequest(WeatherHistoryDataset.fact).Execute(connection);
                 Assert.AreEqual(res.rows.Count, 4);
-
-                CleanupDataset(connection);
-            }
-        }
-
-        private void CleanupDataset(SqliteConnection connection)
-        {
-            foreach (var table in WeatherHistoryDataset.Tables)
-            {
-                SqliteHelper.DropStagingTable(connection, table);
-                SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {table.TableName}");
-                SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {MetadataTable.MakeTableName(table.TableName)}");
             }
         }
     }

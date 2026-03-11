@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Unity.Commons.Attachers
-{
-    using Assets.Scripts.Unity.Commons.Behaviours;
-    using Assets.Scripts.Unity.Commons.Holders;
-    using UnityEngine.Events;
+﻿using Assets.Scripts.Components.Commons.Behaviours;
+using Assets.Scripts.Components.Commons.Holders;
+using UnityEngine.Events;
 
+namespace Assets.Scripts.Components.Commons.Attachers
+{
     public abstract class BaseAttacher : BaseBehaviour
     {
         public UnityEvent onInitialize;

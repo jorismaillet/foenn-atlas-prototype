@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Foenn.OLAP.Schema
-{
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
+namespace Assets.Scripts.OLAP.Schema
+{
     public class IndexDefinition
     {
         public readonly string name;

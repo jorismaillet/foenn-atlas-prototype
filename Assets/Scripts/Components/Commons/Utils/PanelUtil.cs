@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Unity.Commons.Utils
-{
-    using UnityEngine;
+﻿using UnityEngine;
 
+namespace Assets.Scripts.Components.Commons.Utils
+{
     //TODO: handle root canvas scale
     public class PanelUtil
     {

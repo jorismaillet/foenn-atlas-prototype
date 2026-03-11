@@ -1,10 +1,10 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Maps
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Activities;
-    using Assets.Scripts.Foenn.Atlas.Models.Locations;
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Assets.Scripts.Models.Activities;
+using Assets.Scripts.Models.Locations;
 
+namespace Assets.Scripts.Models.Maps
+{
     public class Map
     {
         public List<Activity> activities;

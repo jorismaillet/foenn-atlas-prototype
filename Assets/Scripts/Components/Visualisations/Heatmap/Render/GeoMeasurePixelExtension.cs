@@ -1,9 +1,10 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Geo
-{
-    using Assets.Scripts.Foenn.Atlas.Layers;
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Assets.Scripts.Components.Layers.OpenStreetMap;
+using Assets.Scripts.Models.Geo;
 
+namespace Assets.Scripts.Components.Visualisations.Heatmap.Render
+{
     public static class GeoMeasurePixelExtension
     {
         public static IEnumerable<PixelMeasure> ToTileGridPixelMeasures(this List<GeoMeasure> geoMeasures, GeoPoint mapCenter, int zoom, int gridSize)

@@ -1,11 +1,10 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Components.Holders
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Geo;
-    using Assets.Scripts.Foenn.Atlas.Models.Locations;
-    using Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap.Go;
-    using Assets.Scripts.Unity.Commons.Holders;
-    using TMPro;
+﻿using Assets.Scripts.Components.Commons.Holders;
+using Assets.Scripts.Models.Geo;
+using Assets.Scripts.Models.Locations;
+using TMPro;
 
+namespace Assets.Scripts.Components.Models
+{
     public class GeoMeasureHolder : Holder<GeoMeasure>
     {
         public void SetPointLocation(PointLocationHolder holder)

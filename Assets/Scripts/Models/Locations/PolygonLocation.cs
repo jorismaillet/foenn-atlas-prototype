@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Locations
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Geo;
-    using System.Collections.Generic;
-    using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Assets.Scripts.Models.Geo;
 
+namespace Assets.Scripts.Models.Locations
+{
     public class PolygonLocation : ILocation
     {
         public string name;

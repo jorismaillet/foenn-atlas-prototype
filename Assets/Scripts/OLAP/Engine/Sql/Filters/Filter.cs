@@ -1,7 +1,7 @@
-namespace Assets.Scripts.Foenn.OLAP.Sql
-{
-    using Assets.Scripts.Foenn.OLAP.Schema;
+using Assets.Scripts.OLAP.Schema;
 
+namespace Assets.Scripts.OLAP.Engine.Sql.Filters
+{
     public abstract class Filter
     {
         public Field filteredField;

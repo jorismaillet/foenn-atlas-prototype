@@ -1,13 +1,14 @@
-namespace Assets.Scripts.Foenn.ETL
-{
-    using Assets.Scripts.Foenn.Core.Database;
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using Mono.Data.Sqlite;
-    using System.Collections.Generic;
+using System.Collections.Generic;
+using Assets.Scripts.Database;
+using Assets.Scripts.OLAP.Schema;
+using Mono.Data.Sqlite;
 
+namespace Assets.Scripts.ETL.Loaders
+{
     public class DimensionCache
     {
         private readonly IDimension _dimension;
+
         private readonly Dictionary<string, int> _cache = new Dictionary<string, int>();
 
         public DimensionCache(IDimension dimension)

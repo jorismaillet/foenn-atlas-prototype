@@ -1,23 +1,23 @@
-namespace Assets.Scripts.Foenn.Core.Database
-{
-    using Assets.Scripts.Common.Extensions;
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using Mono.Data.Sqlite;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Linq;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using Assets.Scripts.OLAP.Schema;
+using Mono.Data.Sqlite;
 
+namespace Assets.Scripts.Database
+{
     public class SqliteHelper
     {
         public const string DATABASE_PATH = "Resources/sqlite/foenn.db";
-
         public const string DATABASE_TEST_PATH = "Resources/sqlite/foenn_test.db";
 
         public static SqliteConnection CreateConnection()
         {
             var path = DatabaseHelper.ResolveDatabasePath(Env.DatabasePath());
             string connString = $"Data Source={path};Version=3;";
-            return new SqliteConnection(connString);
+            var conn = new SqliteConnection(connString);
+            conn.Open();
+            return conn;
         }
 
         public static void ApplyStagingPragmas(SqliteConnection connection)
@@ -43,10 +43,10 @@ namespace Assets.Scripts.Foenn.Core.Database
             INSERT INTO {table.TableName}_staging({string.Join(", ", table.Columns.Select(column => column.name))})
             VALUES ({string.Join(", ", table.Columns.Select(column => $"@{column.name}"))})
             ";
-            table.Columns.Each(column =>
+            foreach (var column in table.Columns)
             {
                 command.Parameters.Add(new SqliteParameter($"@{column.name}", column.dbType));
-            });
+            }
             return command;
         }
 

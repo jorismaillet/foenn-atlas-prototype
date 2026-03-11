@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Unity.Commons.Utils
-{
-    using UnityEngine;
+﻿using UnityEngine;
 
+namespace Assets.Scripts.Components.Commons.Utils
+{
     public class VectorUtil
     {
         public static Vector2 NormalizedAngleOffset(Vector3 from, Vector3 to)

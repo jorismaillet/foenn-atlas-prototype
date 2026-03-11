@@ -1,14 +1,15 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
-{
-    using Assets.Scripts.Foenn.Atlas.Layers;
-    using Assets.Scripts.Foenn.Atlas.Models.Geo;
-    using Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap.RawImage;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using UnityEngine;
-    using RenderSettings = Assets.Scripts.Foenn.Atlas.Visualisations.RenderSettings;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Assets.Scripts.Components.Layers.OpenStreetMap;
+using Assets.Scripts.Components.Visualisations.Heatmap.Drawer;
+using Assets.Scripts.Components.Visualisations.Heatmap.Render;
+using Assets.Scripts.Models.Geo;
+using UnityEngine;
+using RenderSettings = Assets.Scripts.Components.Visualisations.Heatmap.Render.RenderSettings;
 
+namespace Assets.Scripts.Components.Visualisations.Heatmap
+{
     public class HeatmapGenerator
     {
         public static Texture2D BuildTileGridRawImageTexture(

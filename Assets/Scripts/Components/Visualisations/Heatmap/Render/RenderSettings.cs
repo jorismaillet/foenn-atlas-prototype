@@ -1,8 +1,7 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Visualisations
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Geo;
-    using System;
+﻿using System;
 
+namespace Assets.Scripts.Components.Visualisations.Heatmap.Render
+{
     public readonly struct RenderSettings
     {
         public readonly int width;

@@ -1,21 +1,28 @@
-namespace Assets.Scripts.Foenn.OLAP.Query
-{
-    using Assets.Scripts.Foenn.Core.Database;
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using Assets.Scripts.Foenn.OLAP.Sql;
-    using Assets.Scripts.Unity;
-    using Mono.Data.Sqlite;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Text;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
+using Assets.Scripts.Components.Logger;
+using Assets.Scripts.Database;
+using Assets.Scripts.OLAP.Engine.Sql.Clauses;
+using Assets.Scripts.OLAP.Engine.Sql.Filters;
+using Assets.Scripts.OLAP.Engine.Sql.Joins;
+using Assets.Scripts.OLAP.Schema;
+using Mono.Data.Sqlite;
 
+namespace Assets.Scripts.OLAP.Engine
+{
     public class QueryRequest
     {
         public List<Field> selectedColumns = new List<Field>();
+
         public List<ITable> selectedTables = new List<ITable>();
+
         public List<Field> groups = new List<Field>();
+
         public List<JoinDefinition> joins = new List<JoinDefinition>();
+
         public List<Filter> filters = new List<Filter>();
+
         public ITable from;
 
         public QueryRequest(ITable from)

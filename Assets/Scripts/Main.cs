@@ -1,17 +1,18 @@
-﻿namespace Assets.Scripts.Foenn.Atlas
-{
-    using Assets.Scripts.Foenn.Atlas.Components.Holders;
-    using Assets.Scripts.Foenn.Core.Database;
-    using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
-    using Mono.Data.Sqlite;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
-    using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Assets.Scripts.Components;
+using Assets.Scripts.Database;
+using Assets.Scripts.OLAP.Datasets.Metadata;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory;
+using Mono.Data.Sqlite;
+using UnityEngine;
 
+namespace Assets.Scripts
+{
     public class Main : MonoBehaviour
     {
-        public ETLHandler etlHandler;
+        public ETLWorker etlHandler;
 
         public MapComponent map;
 

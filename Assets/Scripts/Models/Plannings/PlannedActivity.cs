@@ -1,8 +1,8 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Plannings
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Activities;
-    using Assets.Scripts.Foenn.Atlas.Models.Locations;
+﻿using Assets.Scripts.Models.Activities;
+using Assets.Scripts.Models.Locations;
 
+namespace Assets.Scripts.Models.Plannings
+{
     public class PlannedActivity
     {
         public Activity activity;

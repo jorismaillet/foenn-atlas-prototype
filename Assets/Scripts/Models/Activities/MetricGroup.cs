@@ -1,8 +1,8 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Activities
-{
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Assets.Scripts.OLAP.Schema;
 
+namespace Assets.Scripts.Models.Activities
+{
     /// <summary>
     /// Frontend business model representing a group of metrics for activity conditions.
     /// </summary>

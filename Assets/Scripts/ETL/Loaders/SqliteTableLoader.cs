@@ -1,20 +1,21 @@
-﻿namespace Assets.Scripts.Foenn.ETL
-{
-    using Assets.Scripts.Foenn.Core.Database;
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using Mono.Data.Sqlite;
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Globalization;
-    using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using Assets.Scripts.Database;
+using Assets.Scripts.OLAP.Schema;
+using Mono.Data.Sqlite;
 
+namespace Assets.Scripts.ETL.Loaders
+{
     public class SqliteTableLoader
     {
         public ITable Table { get; }
 
         protected SqliteCommand _stageCommand;
+
         protected SqliteParameter[] _stageParams;
+
         protected List<Func<string[], object>> _valueResolvers;
 
         public SqliteTableLoader(ITable table)
@@ -44,7 +45,8 @@
                 var converter = mapping.column.GetConverter();
                 if (mapping.transform != null)
                 {
-                    _valueResolvers.Add(line => {
+                    _valueResolvers.Add(line =>
+                    {
                         var raw = csvIdx >= 0 ? line[csvIdx] : string.Empty;
                         if (string.IsNullOrEmpty(raw)) return DBNull.Value;
                         var transformed = mapping.transform(raw);
@@ -53,7 +55,8 @@
                 }
                 else
                 {
-                    _valueResolvers.Add(line => {
+                    _valueResolvers.Add(line =>
+                    {
                         var raw = csvIdx >= 0 ? line[csvIdx] : string.Empty;
                         return converter(raw);
                     });

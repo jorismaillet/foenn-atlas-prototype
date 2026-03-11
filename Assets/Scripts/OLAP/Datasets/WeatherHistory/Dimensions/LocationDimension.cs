@@ -1,11 +1,12 @@
-namespace Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory
-{
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using System.Collections.Generic;
+using System.Collections.Generic;
+using Assets.Scripts.OLAP.Schema;
 
+namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
+{
     public class LocationDimension : IDimension
     {
-        public string TableName => "location";
+        public string TableName => "location_dimension";
+
         public Field PrimaryKey => Field.PK();
 
         public static Field PostNumber = Field.Int("post_number");

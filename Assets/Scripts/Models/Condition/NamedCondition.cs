@@ -1,6 +1,6 @@
-﻿using Assets.Scripts.Foenn.OLAP.Query;
+﻿using Assets.Scripts.OLAP.Engine.Result;
 
-namespace Assets.Scripts.Foenn.Atlas.Models.Condition
+namespace Assets.Scripts.Models.Condition
 {
     public class NamedCondition : ICondition
     {

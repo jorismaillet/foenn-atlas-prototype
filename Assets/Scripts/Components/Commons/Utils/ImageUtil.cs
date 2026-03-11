@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Unity.Commons.Utils
-{
-    using System.Collections.Generic;
-    using UnityEngine;
-    using UnityEngine.UI;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
+namespace Assets.Scripts.Components.Commons.Utils
+{
     public class ImageUtil
     {
         private static readonly string ImagesFolder = "Images/{0}";

@@ -1,9 +1,9 @@
-namespace Assets.Scripts.Foenn.OLAP.Sql
-{
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using System.Collections.Generic;
-    using System.Linq;
+using System.Collections.Generic;
+using System.Linq;
+using Assets.Scripts.OLAP.Schema;
 
+namespace Assets.Scripts.OLAP.Engine.Sql.Clauses
+{
     public class SqlSelect
     {
         public readonly string clause;
@@ -12,7 +12,8 @@ namespace Assets.Scripts.Foenn.OLAP.Sql
         {
             var selected = tables.Select(t => $"\"{t.TableName}\".*");
             selected.Concat(selectedColumns.Select(c => c.ToSql()));
-            clause = "SELECT " + string.Join(", ", selected);
+            var statement = selected.Any() ? string.Join(", ", selected) : "*";
+            clause = "SELECT " + statement;
         }
     }
 }

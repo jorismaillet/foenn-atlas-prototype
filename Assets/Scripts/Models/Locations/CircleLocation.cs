@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Locations
+﻿namespace Assets.Scripts.Models.Locations
 {
     public class CircleLocation : ILocation
     {

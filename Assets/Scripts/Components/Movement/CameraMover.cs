@@ -1,8 +1,8 @@
-﻿namespace Assets.Scripts.Unity
-{
-    using UnityEngine;
-    using UnityEngine.EventSystems;
+﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
+namespace Assets.Scripts.Components.Movement
+{
     public class CameraMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler, IScrollHandler
     {
         [Header("References")]

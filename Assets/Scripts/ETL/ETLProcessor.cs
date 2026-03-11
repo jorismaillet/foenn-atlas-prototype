@@ -1,15 +1,19 @@
-﻿namespace Assets.Scripts.Foenn.ETL
-{
-    using Assets.Scripts.Foenn.Core.Database;
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using Assets.Scripts.Unity;
-    using System.Collections.Generic;
-    using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
+using Assets.Scripts.Components.Logger;
+using Assets.Scripts.Database;
+using Assets.Scripts.ETL.Extractors;
+using Assets.Scripts.ETL.Loaders;
+using Assets.Scripts.OLAP.Schema;
 
+namespace Assets.Scripts.ETL
+{
     public class ETLProcessor
     {
         private CSVExtractor _extractor;
+
         private List<DimensionTableLoader> _dimensionLoaders = new List<DimensionTableLoader>();
+
         private List<FactTableLoader> _factLoaders = new List<FactTableLoader>();
 
         public ETLProcessor(string csvFileName, List<IDimension> dimensions, List<IFact> facts)

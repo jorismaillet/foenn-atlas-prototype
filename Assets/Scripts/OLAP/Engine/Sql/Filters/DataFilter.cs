@@ -1,12 +1,13 @@
-namespace Assets.Scripts.Foenn.OLAP.Sql
-{
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using System.Collections.Generic;
-    using System.Linq;
+using System.Collections.Generic;
+using System.Linq;
+using Assets.Scripts.OLAP.Schema;
 
+namespace Assets.Scripts.OLAP.Engine.Sql.Filters
+{
     public class DataFilter : Filter
     {
         public List<object> selectedValues;
+
         public DataFilterMode mode;
 
         public DataFilter(Field column, DataFilterMode mode, params object[] selectedValues) : base(column)

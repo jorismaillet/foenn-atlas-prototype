@@ -1,12 +1,12 @@
-namespace Assets.Scripts.Foenn.ETL
-{
-    using Assets.Scripts.Foenn.Core.Database;
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using Mono.Data.Sqlite;
+using Assets.Scripts.OLAP.Schema;
+using Mono.Data.Sqlite;
 
+namespace Assets.Scripts.ETL.Loaders
+{
     public class DimensionTableLoader : SqliteTableLoader
     {
         public IDimension Dimension => (IDimension)Table;
+
         public DimensionCache Cache { get; }
 
         public DimensionTableLoader(IDimension dimension) : base(dimension)

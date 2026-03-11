@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Unity.Commons.Containers
-{
-    using System.Collections.Generic;
-    using System.Linq;
-    using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
+namespace Assets.Scripts.Components.Commons.Containers
+{
     public class IntContainer : GameObjectsContainer
     {
         public GameObject prefab;

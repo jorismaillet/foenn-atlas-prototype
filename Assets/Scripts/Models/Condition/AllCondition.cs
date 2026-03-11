@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Condition
-{
-    using Assets.Scripts.Foenn.OLAP.Query;
-    using System.Collections.Generic;
-    using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Assets.Scripts.OLAP.Engine.Result;
 
+namespace Assets.Scripts.Models.Condition
+{
     public class AllCondition : ICondition
     {
         public List<ICondition> conditions;

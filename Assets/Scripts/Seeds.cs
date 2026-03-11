@@ -1,22 +1,22 @@
-﻿namespace Assets.Scripts.Foenn.Atlas
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Activities;
-    using Assets.Scripts.Foenn.Atlas.Models.Condition;
-    using Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions;
-    using Assets.Scripts.Foenn.Atlas.Models.Geo;
-    using Assets.Scripts.Foenn.Atlas.Models.Locations;
-    using Assets.Scripts.Foenn.Atlas.Models.Plannings;
-    using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
+﻿using Assets.Scripts.Models.Activities;
+using Assets.Scripts.Models.Condition;
+using Assets.Scripts.Models.Condition.Definitions;
+using Assets.Scripts.Models.Geo;
+using Assets.Scripts.Models.Locations;
+using Assets.Scripts.Models.Plannings;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts;
 
+namespace Assets.Scripts
+{
     public class Seeds
     {
-        public static MetricGroup temp = new MetricGroup("Temperature", WeatherFact.temperature, WeatherFact.temperature_10, WeatherFact.temperature_20, WeatherFact.temperature_100);
+        public static MetricGroup temp = new MetricGroup("Temperature", WeatherFact.temperature);
 
-        public static MetricGroup rain = new MetricGroup("Pluie", WeatherFact.rain_1);
+        public static MetricGroup rain = new MetricGroup("Pluie", WeatherFact.rain);
 
-        public static MetricGroup wind = new MetricGroup("Vent", WeatherFact.wind_1, WeatherFact.wind_2);
+        public static MetricGroup wind = new MetricGroup("Vent", WeatherFact.wind);
 
-        public static MetricGroup gust = new MetricGroup("Rafales", WeatherFact.gust_1, WeatherFact.gust_2, WeatherFact.gust_3s);
+        public static MetricGroup gust = new MetricGroup("Rafales", WeatherFact.gust);
 
         public static GroupAllCondition pasDePluie = new GroupAllCondition(rain, 0, 0);
 

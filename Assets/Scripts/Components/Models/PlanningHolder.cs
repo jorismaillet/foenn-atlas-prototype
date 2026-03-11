@@ -1,10 +1,10 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Components.Holders
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Plannings;
-    using Assets.Scripts.Unity.Commons.Containers;
-    using Assets.Scripts.Unity.Commons.Holders;
-    using TMPro;
+﻿using Assets.Scripts.Components.Commons.Containers;
+using Assets.Scripts.Components.Commons.Holders;
+using Assets.Scripts.Models.Plannings;
+using TMPro;
 
+namespace Assets.Scripts.Components.Models
+{
     public class PlanningHolder : Holder<Planning>
     {
         public void SetTitle(TMP_Text text)

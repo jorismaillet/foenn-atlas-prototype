@@ -1,8 +1,8 @@
-﻿namespace Assets.Scripts.Unity.Common.Behaviours
-{
-    using Assets.Scripts.Unity.Commons.Behaviours;
-    using UnityEngine.Events;
+﻿using Assets.Scripts.Components.Commons.Behaviours;
+using UnityEngine.Events;
 
+namespace Assets.Scripts.Components.Commons.Hooks
+{
     public class OnAwakeHook : BaseBehaviour
     {
         public UnityEvent onAwake;

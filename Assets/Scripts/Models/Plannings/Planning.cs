@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Plannings
-{
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+namespace Assets.Scripts.Models.Plannings
+{
     public class Planning
     {
         public string title;

@@ -1,8 +1,8 @@
-﻿namespace Assets.Scripts.Unity.Commons.Containers
-{
-    using Assets.Scripts.Unity.Commons.Holders;
-    using UnityEngine;
+﻿using Assets.Scripts.Components.Commons.Holders;
+using UnityEngine;
 
+namespace Assets.Scripts.Components.Commons.Containers
+{
     public abstract class AbstractPrefabContainer : GameObjectContainer
     {
         protected abstract GameObject ElementPrefab<Element>(Element element);

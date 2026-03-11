@@ -1,14 +1,17 @@
-namespace Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory
-{
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using System.Collections.Generic;
+using System.Collections.Generic;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
+using Assets.Scripts.OLAP.Schema;
 
+namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
+{
     public class WeatherExtraFact : IFact
     {
         public string TableName => "weather_history_extra_facts";
+
         public Field PrimaryKey => Field.PK();
 
         public static Field temperature10 = Field.Metric("temperature_10");
+
         public static Field temperature20 = Field.Metric("temperature_20");
 
         public Field timeRef, locationRef;
@@ -18,6 +21,7 @@ namespace Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory
         };
 
         public List<IDimension> Dimensions => _dimensions;
+
         public List<Field> References => new List<Field>() { timeRef, locationRef };
 
         public List<FieldMap> Mappings => new List<FieldMap>()

@@ -1,8 +1,8 @@
-﻿namespace Assets.Scripts.Unity.Commons.Attachers
-{
-    using System;
-    using UnityEngine;
+﻿using System;
+using UnityEngine;
 
+namespace Assets.Scripts.Components.Commons.Attachers
+{
     public abstract class Attacher<Element> : BaseAttacher, IElementInitializer<Element> where Element : class
     {
         public Element element;

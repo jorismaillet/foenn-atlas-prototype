@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Unity.Commons.Behaviours
-{
-    using System;
+﻿using System;
 
+namespace Assets.Scripts.Components.Commons.Behaviours
+{
     public abstract class TickedBehaviour : BaseBehaviour
     {
         private DateTime lastTick = DateTime.UtcNow;

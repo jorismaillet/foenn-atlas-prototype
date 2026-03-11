@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Unity.Commons.Mutables
+﻿namespace Assets.Scripts.Components.Commons.Mutables
 {
     public class Mutable<T>
     {

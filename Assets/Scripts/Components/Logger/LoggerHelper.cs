@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Unity
-{
-    using UnityEngine;
+﻿using UnityEngine;
 
+namespace Assets.Scripts.Components.Logger
+{
     public class LoggerHelper : MonoBehaviour
     {
         void Update()

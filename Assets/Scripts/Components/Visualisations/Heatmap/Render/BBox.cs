@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Geo
+﻿namespace Assets.Scripts.Components.Visualisations.Heatmap.Render
 {
     public struct BBox
     {

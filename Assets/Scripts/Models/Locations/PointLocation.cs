@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Locations
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Geo;
+﻿using Assets.Scripts.Models.Geo;
 
+namespace Assets.Scripts.Models.Locations
+{
     public class PointLocation : GeoPoint, ILocation
     {
         public string name;

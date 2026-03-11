@@ -1,9 +1,9 @@
-﻿namespace Assets.Editor.Tests.ETL
-{
-    using Assets.Scripts.Foenn.ETL;
-    using NUnit.Framework;
-    using System.Linq;
+﻿using System.Linq;
+using Assets.Scripts.ETL.Extractors;
+using NUnit.Framework;
 
+namespace Assets.Editor.Tests.ETL
+{
     public class ExtractorTest
     {
         [Test]

@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Unity.Commons.Attachers
+﻿namespace Assets.Scripts.Components.Commons.Attachers
 {
     public abstract class TextAttacher<Element> : Attacher<Element> where Element : class
     {

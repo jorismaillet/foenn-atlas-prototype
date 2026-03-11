@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Layers
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Geo;
-    using System;
-    using UnityEngine;
+﻿using System;
+using Assets.Scripts.Models.Geo;
+using UnityEngine;
 
+namespace Assets.Scripts.Components.Layers.OpenStreetMap
+{
     public static class TileGridHelper
     {
         public const int TileSize = 256;

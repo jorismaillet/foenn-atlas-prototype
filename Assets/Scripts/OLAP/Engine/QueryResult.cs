@@ -1,16 +1,19 @@
-namespace Assets.Scripts.Foenn.OLAP.Query
-{
-    using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Text.RegularExpressions;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using Assets.Scripts.Models.Geo;
+using Assets.Scripts.OLAP.Engine.Result;
+using Assets.Scripts.OLAP.Schema;
 
+namespace Assets.Scripts.OLAP.Engine
+{
     public class QueryResult
     {
         public List<Row> rows;
+
         private Action<Row, object>[] columnParsers;
+
         private List<Action<Row, object[]>> lineParsers = new List<Action<Row, object[]>>();
 
         static readonly Regex AggregationRegex = new Regex(
@@ -23,11 +26,11 @@ namespace Assets.Scripts.Foenn.OLAP.Query
             RegexOptions.Compiled | RegexOptions.IgnoreCase
         );
 
-        public QueryResult(string[] rawHeaders, List<Field> columns)
+        public QueryResult(string[] rawHeaders, List<Field> selectedColumns)
         {
             this.rows = new List<Row>();
             this.columnParsers = new System.Action<Row, object>[rawHeaders.Length];
-            var geoHeaderIndexes = new Dictionary<WeatherHistoryGeoAttributeKey, int>();
+            var geoHeaderIndexes = new Dictionary<string, int>();
             for (int i = 0; i < rawHeaders.Length; i++)
             {
                 var rawHeader = rawHeaders[i];
@@ -35,13 +38,18 @@ namespace Assets.Scripts.Foenn.OLAP.Query
                 if (!TryParseResultHeader(rawHeader, out var tableName, out var columnName, out var aggregationValue))
                     throw new System.Exception($"Unknown header {rawHeader}");
 
-                var column = columns.Find(c => c.ToSql().Equals(rawHeader, StringComparison.OrdinalIgnoreCase));
-
-                AddValueParser(i, column);
-
-                if (System.Enum.TryParse<WeatherHistoryGeoAttributeKey>(columnName, out var geoAttributeKey))
+                var column = selectedColumns.Find(c => c.ToSql().Equals(rawHeader, StringComparison.OrdinalIgnoreCase));
+                if (column != null)
                 {
-                    geoHeaderIndexes[geoAttributeKey] = i;
+                    AddValueParser(i, column);
+                    if (columnName == "lon")
+                    {
+                        geoHeaderIndexes["lon"] = i;
+                    }
+                    else if (columnName == "lat")
+                    {
+                        geoHeaderIndexes["lat"] = i;
+                    }
                 }
             }
             if (geoHeaderIndexes.Count == 2)
@@ -81,13 +89,13 @@ namespace Assets.Scripts.Foenn.OLAP.Query
             return !string.IsNullOrEmpty(columnName);
         }
 
-        private void AddGeoDimensionParser(Dictionary<WeatherHistoryGeoAttributeKey, int> geoAttributeIndexes)
+        private void AddGeoDimensionParser(Dictionary<string, int> geoAttributeIndexes)
         {
             lineParsers.Add((Row row, object[] rawLine) =>
             {
-                row.geo = new GeoField(
-                    float.Parse((string)rawLine[geoAttributeIndexes[WeatherHistoryGeoAttributeKey.LAT]], CultureInfo.InvariantCulture),
-                    float.Parse((string)rawLine[geoAttributeIndexes[WeatherHistoryGeoAttributeKey.LON]], CultureInfo.InvariantCulture)
+                row.geo = new GeoPoint(
+                    float.Parse((string)rawLine[geoAttributeIndexes["lat"]], CultureInfo.InvariantCulture),
+                    float.Parse((string)rawLine[geoAttributeIndexes["lon"]], CultureInfo.InvariantCulture)
                 );
             });
         }

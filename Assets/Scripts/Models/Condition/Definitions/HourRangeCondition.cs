@@ -1,6 +1,8 @@
-﻿using Assets.Scripts.Foenn.OLAP.Query;
+﻿using System;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
+using Assets.Scripts.OLAP.Engine.Result;
 
-namespace Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions
+namespace Assets.Scripts.Models.Condition.Definitions
 {
     public class HourRangeCondition : ICondition
     {
@@ -14,7 +16,9 @@ namespace Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions
 
         public bool IsMatch(Row row)
         {
-            return row.time.start.Hour >= minHour && row.time.End().Hour <= maxHour;
+            var timestamp = DateTime.Parse((string)row.values[TimeDimension.timestamp]);
+            var duration = (int)row.values[TimeDimension.duration];
+            return timestamp.Hour >= minHour && timestamp.AddHours(duration).Hour <= maxHour;
         }
     }
 }

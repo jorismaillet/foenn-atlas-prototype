@@ -1,10 +1,9 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Components.Holders
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Locations;
-    using Assets.Scripts.Foenn.Atlas.Models.Plannings;
-    using Assets.Scripts.Foenn.Atlas.Visualisations.Pointmap.Go;
-    using Assets.Scripts.Unity.Commons.Holders;
+﻿using Assets.Scripts.Components.Commons.Holders;
+using Assets.Scripts.Models.Locations;
+using Assets.Scripts.Models.Plannings;
 
+namespace Assets.Scripts.Components.Models
+{
     public class PlannedActivityHolder : Holder<PlannedActivity>
     {
         public void SetActivity(ActivityHolder holder)

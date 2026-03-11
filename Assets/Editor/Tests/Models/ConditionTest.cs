@@ -1,13 +1,13 @@
-﻿namespace Assets.Editor.Tests.Atlas.Models
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Activities;
-    using Assets.Scripts.Foenn.Atlas.Models.Condition;
-    using Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions;
-    using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
-    using Assets.Scripts.Foenn.OLAP.Query;
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using NUnit.Framework;
+﻿using Assets.Scripts.Models.Activities;
+using Assets.Scripts.Models.Condition;
+using Assets.Scripts.Models.Condition.Definitions;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts;
+using Assets.Scripts.OLAP.Engine.Result;
+using NUnit.Framework;
 
+namespace Assets.Editor.Tests.Models
+{
     public class CustomCondition : ICondition
     {
         private bool overrideCondition;
@@ -30,7 +30,8 @@
         public void TestInsideHourRangeCondition()
         {
             var c = new HourRangeCondition(8, 10);
-            var row = new Row() { time = TimeField.AAAAMMJJHH("2023091508") };
+            var row = new Row();
+            row.values[TimeDimension.timestamp] = TimeDimension.ToTimestamp("2023091508");
             Assert.IsTrue(c.IsMatch(row));
         }
 
@@ -38,7 +39,8 @@
         public void TestOutsideHourRangeCondition()
         {
             var c = new HourRangeCondition(8, 10);
-            var row = new Row() { time = TimeField.AAAAMMJJHH("2023091510") };
+            var row = new Row();
+            row.values[TimeDimension.timestamp] = TimeDimension.ToTimestamp("2023091510");
             Assert.IsFalse(c.IsMatch(row));
         }
 
@@ -123,20 +125,20 @@
         [Test]
         public void TestMatchGroupAllCondition()
         {
-            var c = new GroupAllCondition(new MetricGroup("Test", WeatherFact.temperature, WeatherFact.temperature_10), 10, 20);
+            var c = new GroupAllCondition(new MetricGroup("Test", WeatherFact.temperature, WeatherExtraFact.temperature10), 10, 20);
             var row = new Row();
             row.values.Add(WeatherFact.temperature, new Measure(WeatherFact.temperature, 15));
-            row.values.Add(WeatherFact.temperature_10, new Measure(WeatherFact.temperature_10, 15));
+            row.values.Add(WeatherExtraFact.temperature10, new Measure(WeatherExtraFact.temperature10, 15));
             Assert.IsTrue(c.IsMatch(row));
         }
 
         [Test]
         public void TestNoMatchGroupAllCondition()
         {
-            var c = new GroupAllCondition(new MetricGroup("Test", WeatherFact.temperature, WeatherFact.temperature_10), 10, 20);
+            var c = new GroupAllCondition(new MetricGroup("Test", WeatherFact.temperature, WeatherExtraFact.temperature10), 10, 20);
             var row = new Row();
             row.values.Add(WeatherFact.temperature, new Measure(WeatherFact.temperature, 15));
-            row.values.Add(WeatherFact.temperature_10, new Measure(WeatherFact.temperature_10, 35));
+            row.values.Add(WeatherExtraFact.temperature10, new Measure(WeatherExtraFact.temperature10, 35));
             Assert.IsFalse(c.IsMatch(row));
         }
 
@@ -144,20 +146,20 @@
         [Test]
         public void TestMatchGroupAnyCondition()
         {
-            var c = new GroupAnyCondition(new MetricGroup("Test", WeatherFact.temperature, WeatherFact.temperature_10), 10, 20);
+            var c = new GroupAnyCondition(new MetricGroup("Test", WeatherFact.temperature, WeatherExtraFact.temperature10), 10, 20);
             var row = new Row();
             row.values.Add(WeatherFact.temperature, new Measure(WeatherFact.temperature, 15));
-            row.values.Add(WeatherFact.temperature_10, new Measure(WeatherFact.temperature_10, 15));
+            row.values.Add(WeatherExtraFact.temperature10, new Measure(WeatherExtraFact.temperature10, 15));
             Assert.IsTrue(c.IsMatch(row));
         }
 
         [Test]
         public void TestNoMatchGroupAnyondition()
         {
-            var c = new GroupAnyCondition(new MetricGroup("Test", WeatherFact.temperature, WeatherFact.temperature_10), 10, 20);
+            var c = new GroupAnyCondition(new MetricGroup("Test", WeatherFact.temperature, WeatherExtraFact.temperature10), 10, 20);
             var row = new Row();
             row.values.Add(WeatherFact.temperature, new Measure(WeatherFact.temperature, 15));
-            row.values.Add(WeatherFact.temperature_10, new Measure(WeatherFact.temperature_10, 35));
+            row.values.Add(WeatherExtraFact.temperature10, new Measure(WeatherExtraFact.temperature10, 35));
             Assert.IsTrue(c.IsMatch(row));
         }
     }

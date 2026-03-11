@@ -1,8 +1,8 @@
-namespace Assets.Scripts.Foenn.Core.Database
-{
-    using System.IO;
-    using UnityEngine;
+using System.IO;
+using UnityEngine;
 
+namespace Assets.Scripts.Database
+{
     public abstract class DatabaseHelper
     {
         public static string ResolveDatabasePath(string databasePath)
@@ -12,9 +12,9 @@ namespace Assets.Scripts.Foenn.Core.Database
                 : Path.Combine(Application.dataPath, databasePath);
         }
 
-        public static void CreateDb(string databasePath)
+        public static void CreateDb()
         {
-            var fullPath = ResolveDatabasePath(databasePath);
+            var fullPath = ResolveDatabasePath(Env.DatabasePath());
             var dir = Path.GetDirectoryName(fullPath);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
                 Directory.CreateDirectory(dir);

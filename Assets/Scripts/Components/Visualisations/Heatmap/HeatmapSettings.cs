@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
-{
-    using System;
+﻿using System;
 
+namespace Assets.Scripts.Components.Visualisations.Heatmap
+{
     public readonly struct HeatmapSettings
     {
         public readonly float idwPower;// typically 2

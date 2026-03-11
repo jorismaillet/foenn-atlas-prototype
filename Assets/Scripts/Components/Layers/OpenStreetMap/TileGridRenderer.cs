@@ -1,12 +1,12 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Layers
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Geo;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.IO;
-    using UnityEngine;
-    using UnityEngine.Networking;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using Assets.Scripts.Models.Geo;
+using UnityEngine;
+using UnityEngine.Networking;
 
+namespace Assets.Scripts.Components.Layers.OpenStreetMap
+{
     public class TileGridRenderer : MonoBehaviour
     {
         public GeoPoint franceCenter = new GeoPoint(46.50f, 2.00f);

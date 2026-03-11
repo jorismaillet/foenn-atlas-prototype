@@ -1,14 +1,14 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Components.Holders
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Activities;
-    using Assets.Scripts.Foenn.Atlas.Models.Locations;
-    using Assets.Scripts.Foenn.Atlas.Models.Plannings;
-    using Assets.Scripts.Foenn.Atlas.Services;
-    using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
-    using Assets.Scripts.Unity.Commons.Containers;
-    using System.Collections.Generic;
-    using UnityEngine;
+﻿using System.Collections.Generic;
+using Assets.Scripts.Components.Commons.Containers;
+using Assets.Scripts.Components.Visualisations.Heatmap;
+using Assets.Scripts.Models.Activities;
+using Assets.Scripts.Models.Locations;
+using Assets.Scripts.Models.Plannings;
+using Assets.Scripts.Services;
+using UnityEngine;
 
+namespace Assets.Scripts.Components
+{
     public class MapComponent : MonoBehaviour
     {
         public PrefabsContainer pointLocationContainer;
@@ -27,7 +27,7 @@
         [SerializeField]
         public string department = "29";
 
-        public WeatherHistoryMetricKey key;
+        public string key;
 
         public void Initialize()
         {

@@ -1,8 +1,8 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Condition
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Activities;
-    using Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions;
+﻿using Assets.Scripts.Models.Activities;
+using Assets.Scripts.Models.Condition.Definitions;
 
+namespace Assets.Scripts.Models.Condition
+{
     public class GroupAnyCondition : AnyCondition
     {
         public GroupAnyCondition(MetricGroup group, float min, float max) : base()

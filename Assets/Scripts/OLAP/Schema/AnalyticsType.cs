@@ -1,4 +1,4 @@
-namespace Assets.Scripts.Foenn.OLAP.Schema
+namespace Assets.Scripts.OLAP.Schema
 {
     public enum AnalyticsType
     {

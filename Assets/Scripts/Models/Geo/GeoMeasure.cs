@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Geo
-{
-    using Assets.Scripts.Foenn.OLAP.Query;
+﻿using Assets.Scripts.OLAP.Engine.Result;
 
+namespace Assets.Scripts.Models.Geo
+{
     public class GeoMeasure
     {
         public GeoPoint point;

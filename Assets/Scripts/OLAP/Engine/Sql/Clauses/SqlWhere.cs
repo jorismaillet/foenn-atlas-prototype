@@ -1,7 +1,8 @@
-namespace Assets.Scripts.Foenn.OLAP.Sql
-{
-    using System.Collections.Generic;
+using System.Collections.Generic;
+using Assets.Scripts.OLAP.Engine.Sql.Filters;
 
+namespace Assets.Scripts.OLAP.Engine.Sql.Clauses
+{
     public class SqlWhere
     {
         public readonly string clause;

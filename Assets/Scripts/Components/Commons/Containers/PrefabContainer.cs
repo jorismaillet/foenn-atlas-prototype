@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Unity.Commons.Containers
-{
-    using UnityEngine;
+﻿using UnityEngine;
 
+namespace Assets.Scripts.Components.Commons.Containers
+{
     public class PrefabContainer : AbstractPrefabContainer
     {
         public GameObject prefab;

@@ -1,8 +1,8 @@
-namespace Assets.Scripts.Foenn.OLAP.Sql
-{
-    using Assets.Scripts.Foenn.OLAP.Schema;
-    using System.Collections.Generic;
+using System.Collections.Generic;
+using Assets.Scripts.OLAP.Schema;
 
+namespace Assets.Scripts.OLAP.Engine.Sql.Clauses
+{
     public class SqlGroupBy
     {
         public readonly string clause;

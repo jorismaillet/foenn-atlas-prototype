@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Unity.Commons.Attachers
-{
-    using System.Collections.Generic;
-    using UnityEngine;
-    using UnityEngine.UI;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
+namespace Assets.Scripts.Components.Commons.Attachers
+{
     public abstract class ImageAttacher<Element> : Attacher<Element> where Element : class
     {
         private static readonly string ImagesFolder = "Images/{0}";

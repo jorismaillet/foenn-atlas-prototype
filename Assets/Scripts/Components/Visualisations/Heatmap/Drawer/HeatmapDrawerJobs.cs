@@ -1,18 +1,10 @@
-#if UNITY_2019_1_OR_NEWER
+using System;
 using Unity.Collections;
 using Unity.Jobs;
-#if ENABLE_BURST_COMPILATION
-using Unity.Burst;
-#endif
+using UnityEngine;
 
-#if ENABLE_BURST_COMPILATION
-using Unity.Burst;
-#endif
-namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
+namespace Assets.Scripts.Components.Visualisations.Heatmap.Drawer
 {
-    using System;
-    using UnityEngine;
-
     internal static class HeatmapDrawerJobs
     {
         public static bool TryComputeCoarseField(
@@ -114,9 +106,6 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
             }
         }
 
-#if ENABLE_BURST_COMPILATION
-        [BurstCompile(FloatMode = FloatMode.Fast, FloatPrecision = FloatPrecision.Low)]
-#endif
         private struct CoarseFieldJob : IJobParallelFor
         {
             [ReadOnly] public NativeArray<int> xs;
@@ -266,4 +255,3 @@ namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
         }
     }
 }
-#endif

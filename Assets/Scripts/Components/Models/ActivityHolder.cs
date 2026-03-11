@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Components.Holders
-{
-    using Assets.Scripts.Foenn.Atlas.Models.Activities;
-    using Assets.Scripts.Unity.Commons.Holders;
-    using TMPro;
+﻿using Assets.Scripts.Components.Commons.Holders;
+using Assets.Scripts.Models.Activities;
+using TMPro;
 
+namespace Assets.Scripts.Components.Models
+{
     public class ActivityHolder : Holder<Activity>
     {
         public void SetName(TMP_Text text)

@@ -1,8 +1,8 @@
-﻿namespace Assets.Scripts.Foenn.ETL
-{
-    using System.Collections.Generic;
-    using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
+namespace Assets.Scripts.ETL.Extractors
+{
     public class CSVExtractor
     {
         public static char[] STRING_SPLIT = { ';' };

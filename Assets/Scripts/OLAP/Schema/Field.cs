@@ -1,20 +1,28 @@
-namespace Assets.Scripts.Foenn.OLAP.Schema
-{
-    using System.Data;
+using System.Data;
 
+namespace Assets.Scripts.OLAP.Schema
+{
     public class Field
     {
         public string name;
+
         public DbType dbType { get; }
+
         public AnalyticsType analyticsType;
+
         public ITable table;
+
         public AggregationKey? aggregation;
+
         public bool isPrimaryKey;
+
         public bool autoIncrement;
 
         // Reference properties
         public IDimension referencedDimension;
+
         public string sourceCsvColumn;
+
         public bool IsReference => referencedDimension != null;
 
         public Field(string name, DbType type, AnalyticsType analyticsType)
@@ -38,11 +46,17 @@ namespace Assets.Scripts.Foenn.OLAP.Schema
         }
 
         public static Field Metric(string name) => new Field(name, DbType.Double, AnalyticsType.METRIC);
+
         public static Field Text(string name) => new Field(name, DbType.String, AnalyticsType.ATTRIBUTE);
+
         public static Field Int(string name) => new Field(name, DbType.Int32, AnalyticsType.ATTRIBUTE);
+
         public static Field Int16(string name) => new Field(name, DbType.Int16, AnalyticsType.ATTRIBUTE);
+
         public static Field Int64(string name) => new Field(name, DbType.Int64, AnalyticsType.ATTRIBUTE);
+
         public static Field Double(string name) => new Field(name, DbType.Double, AnalyticsType.ATTRIBUTE);
+
         public static Field PK(string name = "ID") => new Field(name, DbType.Int32, AnalyticsType.ATTRIBUTE) { isPrimaryKey = true, autoIncrement = true };
 
         public static Field Ref(IDimension dimension, string fieldName) => new Field(fieldName, dimension.PrimaryKey.dbType, AnalyticsType.ATTRIBUTE)
@@ -51,7 +65,9 @@ namespace Assets.Scripts.Foenn.OLAP.Schema
         };
 
         public Field Of(ITable table) => new Field(this, table, this.aggregation);
+
         public Field As(AggregationKey agg) => new Field(this, this.table, agg);
+
         public Field Of(ITable table, AggregationKey agg) => new Field(this, table, agg);
 
         public string ToSql()
