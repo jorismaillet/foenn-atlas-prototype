@@ -3,8 +3,8 @@
     using Assets.Scripts.Foenn.Atlas.Models.Activities;
     using Assets.Scripts.Foenn.Atlas.Models.Locations;
     using Assets.Scripts.Foenn.Atlas.Models.Plannings;
+    using Assets.Scripts.Foenn.Atlas.Services;
     using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
-    using Assets.Scripts.Foenn.OLAP.Query;
     using Assets.Scripts.Unity.Commons.Containers;
     using System.Collections.Generic;
     using UnityEngine;
@@ -31,7 +31,7 @@
 
         public void Initialize()
         {
-            var geoMeasures = PreconfiguredRequest.FieldMeasuresPerPostForDay(day, month, year, department, key);
+            var geoMeasures = WeatherQueryService.FieldMeasuresPerPostForDay(day, month, year, department, key);
             heatmapContainer.SetMeasures(geoMeasures);
             pointmapContainer.Initialize(geoMeasures);
             pointLocationContainer.Initialize(new List<PointLocation>()

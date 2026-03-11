@@ -1,4 +1,4 @@
-namespace Assets.Scripts.Foenn.OLAP.Fields
+namespace Assets.Scripts.Foenn.OLAP.Schema
 {
     using Assets.Scripts.Foenn.Atlas.Models.Geo;
 
@@ -6,9 +6,8 @@ namespace Assets.Scripts.Foenn.OLAP.Fields
     {
         public GeoPoint point;
 
-        public GeoField(GeoPoint point)
-        {
-            this.point = point;
-        }
+        public GeoField(GeoPoint point) => this.point = point;
+
+        public GeoField(float lat, float lon) => point = new GeoPoint(lat, lon);
     }
 }

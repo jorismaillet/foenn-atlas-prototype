@@ -1,7 +1,6 @@
 namespace Assets.Scripts.Foenn.OLAP.Query
 {
     using Assets.Scripts.Foenn.Core.Database;
-    using Assets.Scripts.Foenn.OLAP.Fields;
     using Assets.Scripts.Foenn.OLAP.Schema;
     using Assets.Scripts.Foenn.OLAP.Sql;
     using Assets.Scripts.Unity;
@@ -13,15 +12,10 @@ namespace Assets.Scripts.Foenn.OLAP.Query
     public class QueryRequest
     {
         public List<IDataField> selectedColumns = new List<IDataField>();
-
         public List<ITable> selectedTables = new List<ITable>();
-
         public List<IDataField> groups = new List<IDataField>();
-
         public List<JoinDefinition> joins = new List<JoinDefinition>();
-
         public List<Filter> filters = new List<Filter>();
-
         public ITable from;
 
         public QueryRequest(ITable from)
@@ -38,27 +32,21 @@ namespace Assets.Scripts.Foenn.OLAP.Query
         public QueryRequest Select(ITable table, params Field[] fields)
         {
             foreach (var field in fields)
-            {
-                selectedColumns.Add(new PrefixedField(table, field));
-            }
+                selectedColumns.Add(field.Of(table));
             return this;
         }
 
         public QueryRequest Select(AggregationKey aggregation, params Field[] fields)
         {
             foreach (var field in fields)
-            {
-                selectedColumns.Add(new AggregatedField(field, aggregation));
-            }
+                selectedColumns.Add(field.As(aggregation));
             return this;
         }
 
         public QueryRequest Select(ITable table, Field field, params AggregationKey[] aggregations)
         {
             foreach (var aggregation in aggregations)
-            {
-                selectedColumns.Add(new PrefixedAggregatedField(table, field, aggregation));
-            }
+                selectedColumns.Add(field.Of(table, aggregation));
             return this;
         }
 
@@ -70,7 +58,9 @@ namespace Assets.Scripts.Foenn.OLAP.Query
 
         public QueryRequest Join(ITable leftTable, Reference reference, JoinType joinType)
         {
-            joins.Add(new JoinDefinition(new PrefixedField(leftTable, reference), new PrefixedField(reference.referencedTable, reference.referencedTable.PrimaryKey), joinType));
+            var leftField = ((Field)reference).Of(leftTable);
+            var rightField = reference.referencedDimension.PrimaryKey.Of(reference.referencedDimension);
+            joins.Add(new JoinDefinition(leftField, rightField, joinType));
             return this;
         }
 

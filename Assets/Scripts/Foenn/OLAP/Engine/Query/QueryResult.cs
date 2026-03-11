@@ -1,8 +1,6 @@
 namespace Assets.Scripts.Foenn.OLAP.Query
 {
-    using Assets.Scripts.Foenn.Atlas.Models.Geo;
     using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
-    using Assets.Scripts.Foenn.OLAP.Fields;
     using Assets.Scripts.Foenn.OLAP.Schema;
     using System;
     using System.Collections.Generic;
@@ -12,10 +10,8 @@ namespace Assets.Scripts.Foenn.OLAP.Query
     public class QueryResult
     {
         public List<Row> rows;
-
-        private System.Action<Row, object>[] columnParsers;
-
-        private List<System.Action<Row, object[]>> lineParsers = new List<System.Action<Row, object[]>>();
+        private Action<Row, object>[] columnParsers;
+        private List<Action<Row, object[]>> lineParsers = new List<Action<Row, object[]>>();
 
         static readonly Regex AggregationRegex = new Regex(
             @"^(?<agg>[A-Za-z_][A-Za-z0-9_]*)\s*\(\s*(?<expr>.+?)\s*\)$",
@@ -89,10 +85,10 @@ namespace Assets.Scripts.Foenn.OLAP.Query
         {
             lineParsers.Add((Row row, object[] rawLine) =>
             {
-                row.geo = new GeoField(new GeoPoint(
+                row.geo = new GeoField(
                     float.Parse((string)rawLine[geoAttributeIndexes[WeatherHistoryGeoAttributeKey.LAT]], CultureInfo.InvariantCulture),
                     float.Parse((string)rawLine[geoAttributeIndexes[WeatherHistoryGeoAttributeKey.LON]], CultureInfo.InvariantCulture)
-                ));
+                );
             });
         }
 

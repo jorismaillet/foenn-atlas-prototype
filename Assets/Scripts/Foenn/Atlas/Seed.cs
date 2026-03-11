@@ -7,7 +7,6 @@
     using Assets.Scripts.Foenn.Atlas.Models.Locations;
     using Assets.Scripts.Foenn.Atlas.Models.Plannings;
     using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
-    using Assets.Scripts.Foenn.OLAP.Query;
 
     public class Seed
     {

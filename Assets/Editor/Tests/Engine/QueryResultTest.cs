@@ -1,8 +1,8 @@
 ﻿namespace Assets.Editor.Tests.Engine
 {
     using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
-    using Assets.Scripts.Foenn.OLAP.Fields;
     using Assets.Scripts.Foenn.OLAP.Query;
+    using Assets.Scripts.Foenn.OLAP.Schema;
     using Assets.Scripts.Foenn.OLAP.Sql;
     using NUnit.Framework;
     using System.Collections.Generic;
@@ -12,11 +12,14 @@
         [Test]
         public void TestQueryResultCreation()
         {
+            var loc = WeatherHistoryDataset.location;
+            var time = WeatherHistoryDataset.time;
+
             var queryRequest = new QueryRequest(WeatherHistoryDataset.fact)
                 .Select(AggregationKey.AVG, WeatherFact.temperature)
-                .Select(WeatherHistoryDataset.location, LocationDimension.Department)
-                .Select(WeatherHistoryDataset.time, TimeDimension.yyyymmddhh)
-                .Where(new DataFilter(new PrefixedField(WeatherHistoryDataset.location, LocationDimension.Department), DataFilterMode.INCLUDE, "29"))
+                .Select(loc, LocationDimension.Department)
+                .Select(time, TimeDimension.yyyymmddhh)
+                .Where(new DataFilter(LocationDimension.Department.Of(loc), DataFilterMode.INCLUDE, "29"))
                 .GroupBy(LocationDimension.PostName);
             var headers = new string[] { "T", "DPT", "AAAAMMJJHH", "NUM_POSTE" };
             List<string[]> rawResult = new List<string[]>();

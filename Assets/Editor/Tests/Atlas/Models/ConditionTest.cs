@@ -1,10 +1,11 @@
 ﻿namespace Assets.Editor.Tests.Atlas.Models
 {
+    using Assets.Scripts.Foenn.Atlas.Models.Activities;
     using Assets.Scripts.Foenn.Atlas.Models.Condition;
     using Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions;
     using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
-    using Assets.Scripts.Foenn.OLAP.Fields;
     using Assets.Scripts.Foenn.OLAP.Query;
+    using Assets.Scripts.Foenn.OLAP.Schema;
     using NUnit.Framework;
 
     public class CustomCondition : ICondition

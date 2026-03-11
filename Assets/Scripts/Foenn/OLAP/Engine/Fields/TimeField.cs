@@ -1,11 +1,10 @@
-namespace Assets.Scripts.Foenn.OLAP.Fields
+namespace Assets.Scripts.Foenn.OLAP.Schema
 {
     using System;
 
     public class TimeField
     {
         public DateTime start;
-
         public int durationHours;
 
         public static TimeField AAAAMMJJHH(string AAAAMMJJHH)
@@ -17,9 +16,6 @@ namespace Assets.Scripts.Foenn.OLAP.Fields
             };
         }
 
-        public DateTime End()
-        {
-            return start.AddHours(durationHours);
-        }
+        public DateTime End() => start.AddHours(durationHours);
     }
 }

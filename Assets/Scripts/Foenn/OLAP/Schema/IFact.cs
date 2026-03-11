@@ -1,10 +1,14 @@
 namespace Assets.Scripts.Foenn.OLAP.Schema
 {
-    using System;
     using System.Collections.Generic;
 
     public interface IFact : ITable
     {
-        public List<IDimension> Dimensions { get; }
+        List<IDimension> Dimensions { get; }
+
+        /// <summary>
+        /// References to dimension tables with their source mappings.
+        /// </summary>
+        List<Reference> References { get; }
     }
 }

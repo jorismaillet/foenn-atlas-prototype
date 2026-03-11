@@ -1,12 +1,12 @@
 namespace Assets.Scripts.Foenn.OLAP.Sql
 {
-    using Assets.Scripts.Foenn.OLAP.Fields;
+    using Assets.Scripts.Foenn.OLAP.Schema;
 
     public class RangeFilter : Filter
     {
         public int minValue, maxValue;
 
-        public RangeFilter(PrefixedField column, int minValue, int maxValue) : base(column)
+        public RangeFilter(Field column, int minValue, int maxValue) : base(column)
         {
             this.minValue = minValue;
             this.maxValue = maxValue;

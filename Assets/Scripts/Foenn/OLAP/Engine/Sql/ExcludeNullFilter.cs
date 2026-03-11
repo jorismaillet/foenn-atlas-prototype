@@ -1,12 +1,10 @@
 namespace Assets.Scripts.Foenn.OLAP.Sql
 {
-    using Assets.Scripts.Foenn.OLAP.Fields;
+    using Assets.Scripts.Foenn.OLAP.Schema;
 
     public class ExcludeNullFilter : Filter
     {
-        public ExcludeNullFilter(PrefixedField column) : base(column)
-        {
-        }
+        public ExcludeNullFilter(Field column) : base(column) { }
 
         public override string ToSql()
         {

@@ -1,16 +1,15 @@
 namespace Assets.Scripts.Foenn.OLAP.Sql
 {
-    using Assets.Scripts.Foenn.OLAP.Fields;
+    using Assets.Scripts.Foenn.OLAP.Schema;
     using System.Collections.Generic;
     using System.Linq;
 
     public class DataFilter : Filter
     {
         public List<object> selectedValues;
-
         public DataFilterMode mode;
 
-        public DataFilter(PrefixedField column, DataFilterMode mode, params object[] selectedValues) : base(column)
+        public DataFilter(Field column, DataFilterMode mode, params object[] selectedValues) : base(column)
         {
             this.selectedValues = selectedValues.ToList();
             this.mode = mode;

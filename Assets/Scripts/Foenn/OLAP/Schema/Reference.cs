@@ -2,11 +2,14 @@
 {
     public class Reference : Field
     {
-        public ITable referencedTable;
+        public IDimension referencedDimension;
+        public string sourceCsvColumn;
 
-        public Reference(ITable table, Field referenceField) : base(referenceField.name, table.PrimaryKey.dbType, table.PrimaryKey.columnType)
+        public Reference(IDimension dimension, Field referenceField, string sourceCsvColumn) 
+            : base(referenceField.name, dimension.PrimaryKey.dbType, dimension.PrimaryKey.columnType)
         {
-            referencedTable = table;
+            referencedDimension = dimension;
+            this.sourceCsvColumn = sourceCsvColumn;
         }
     }
 }
