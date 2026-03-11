@@ -3,10 +3,9 @@ namespace Assets.Editor.Tests.Atlas.Models
     using Assets.Scripts.Foenn.Atlas.Models.Activities;
     using Assets.Scripts.Foenn.Atlas.Models.Condition;
     using Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions;
-    using Assets.Scripts.Foenn.Datasets.Facts;
-    using Assets.Scripts.Foenn.Engine.Execution;
-    using Assets.Scripts.Foenn.Engine.OLAP.Dimensions;
-    using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
+    using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
+    using Assets.Scripts.Foenn.OLAP.Fields;
+    using Assets.Scripts.Foenn.OLAP.Query;
     using NUnit.Framework;
 
     public class ActivityTest

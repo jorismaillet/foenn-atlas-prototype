@@ -1,7 +1,7 @@
 ﻿namespace Assets.Scripts.Foenn.Atlas
 {
     using Assets.Scripts.Foenn.ETL;
-    using Assets.Scripts.Foenn.ETL.Datasources;
+    using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
     using Assets.Scripts.Unity;
     using Mono.Data.Sqlite;
     using System.Collections;
@@ -60,8 +60,10 @@
 
         public IEnumerator LoadFile(SqliteConnection connection, string fileName, MetadataTable metadata)
         {
-            var processor = new WeatherHistoryProcessor(
-                    fileName
+            var processor = new ETLProcessor(
+                    fileName,
+                    WeatherHistoryDataset.Dimensions,
+                    WeatherHistoryDataset.Facts
                 );
             ct = new CancellationTokenSource();
             task = Task.Run(() => processor.ProcessETL(ct.Token), ct.Token);

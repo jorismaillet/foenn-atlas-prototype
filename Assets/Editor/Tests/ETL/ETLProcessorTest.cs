@@ -1,11 +1,10 @@
 ﻿namespace Assets.Editor.Tests.ETL
 {
     using Assets.Scripts.Foenn;
-    using Assets.Scripts.Foenn.Engine.Connectors;
-    using Assets.Scripts.Foenn.Engine.Execution;
+    using Assets.Scripts.Foenn.Core.Database;
     using Assets.Scripts.Foenn.ETL;
-    using Assets.Scripts.Foenn.ETL.Datasets;
-    using Assets.Scripts.Foenn.ETL.Datasources;
+    using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
+    using Assets.Scripts.Foenn.OLAP.Query;
     using Mono.Data.Sqlite;
     using NUnit.Framework;
 
@@ -19,7 +18,7 @@
             {
                 WeatherHistoryDataset.InitTables(connection);
                 var fileName = "Tests/Weathers/H_29_latest-2023-2024.csv";
-                var processor = new WeatherHistoryProcessor(fileName);
+                var processor = new ETLProcessor(fileName);
                 processor.ProcessETL();
 
                 var res = new QueryRequest(WeatherHistoryDataset.fact).Execute(connection);

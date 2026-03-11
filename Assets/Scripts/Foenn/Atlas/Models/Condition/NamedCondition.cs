@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Models.Condition
-{
-    using Assets.Scripts.Foenn.Engine.Execution;
+﻿using Assets.Scripts.Foenn.OLAP.Query;
 
+namespace Assets.Scripts.Foenn.Atlas.Models.Condition
+{
     public class NamedCondition : ICondition
     {
         public string name;

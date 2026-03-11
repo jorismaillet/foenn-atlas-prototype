@@ -1,6 +1,5 @@
-﻿namespace Assets.Scripts.Foenn.ETL.Models
+﻿namespace Assets.Scripts.Foenn.OLAP.Schema
 {
-    using Assets.Scripts.Foenn.Atlas.Datasets.Common.Schema;
     using System.Data;
 
     public class PrimaryKey : Field

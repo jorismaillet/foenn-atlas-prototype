@@ -1,9 +1,8 @@
 ﻿namespace Assets.Scripts.Foenn.Atlas
 {
     using Assets.Scripts.Foenn.Atlas.Components.Holders;
-    using Assets.Scripts.Foenn.Engine.Connectors;
-    using Assets.Scripts.Foenn.ETL.Datasets;
-    using Assets.Scripts.Foenn.ETL.Datasources;
+    using Assets.Scripts.Foenn.Core.Database;
+    using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
     using Mono.Data.Sqlite;
     using System.Collections;
     using System.Collections.Generic;

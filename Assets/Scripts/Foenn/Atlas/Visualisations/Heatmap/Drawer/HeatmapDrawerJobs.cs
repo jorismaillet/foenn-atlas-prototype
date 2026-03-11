@@ -1,14 +1,18 @@
 #if UNITY_2019_1_OR_NEWER
-using System;
 using Unity.Collections;
 using Unity.Jobs;
-using UnityEngine;
 #if ENABLE_BURST_COMPILATION
 using Unity.Burst;
 #endif
 
+#if ENABLE_BURST_COMPILATION
+using Unity.Burst;
+#endif
 namespace Assets.Scripts.Foenn.Atlas.Visualisations.Heatmap
 {
+    using System;
+    using UnityEngine;
+
     internal static class HeatmapDrawerJobs
     {
         public static bool TryComputeCoarseField(

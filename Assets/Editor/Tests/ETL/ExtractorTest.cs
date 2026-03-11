@@ -1,6 +1,6 @@
 ﻿namespace Assets.Editor.Tests.ETL
 {
-    using Assets.Scripts.Foenn.ETL.Extractors;
+    using Assets.Scripts.Foenn.ETL;
     using NUnit.Framework;
     using System.Linq;
 

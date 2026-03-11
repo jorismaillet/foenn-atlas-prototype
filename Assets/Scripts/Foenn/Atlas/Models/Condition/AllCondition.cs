@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scripts.Foenn.Atlas.Models.Condition
 {
-    using Assets.Scripts.Foenn.Engine.Execution;
+    using Assets.Scripts.Foenn.OLAP.Query;
     using System.Collections.Generic;
     using System.Linq;
 

@@ -1,7 +1,7 @@
 ﻿namespace Assets.Scripts.Foenn.Atlas.Models.Condition.Definitions
 {
-    using Assets.Scripts.Foenn.Engine.Execution;
-    using Assets.Scripts.Foenn.ETL.Models;
+    using Assets.Scripts.Foenn.OLAP.Query;
+    using Assets.Scripts.Foenn.OLAP.Schema;
 
     public class MetricRangeCondition : ICondition
     {

@@ -1,8 +1,6 @@
-﻿namespace Assets.Scripts.Foenn.Engine.Sql
+namespace Assets.Scripts.Foenn.OLAP.Fields
 {
-    using Assets.Scripts.Foenn.Datasets;
-    using Assets.Scripts.Foenn.ETL.Models;
-    using Assets.Scripts.Foenn.OLAP.Engine.Sql;
+    using Assets.Scripts.Foenn.OLAP.Schema;
     using System.Data;
 
     public class PrefixedField : IDataField

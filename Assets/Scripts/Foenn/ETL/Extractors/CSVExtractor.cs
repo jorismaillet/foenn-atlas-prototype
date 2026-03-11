@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.ETL.Extractors
+﻿namespace Assets.Scripts.Foenn.ETL
 {
     using System.Collections.Generic;
     using System.IO;

@@ -1,8 +1,7 @@
-﻿namespace Assets.Scripts.Foenn.Engine.Sql
+namespace Assets.Scripts.Foenn.OLAP.Fields
 {
-    using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
-    using Assets.Scripts.Foenn.ETL.Models;
-    using Assets.Scripts.Foenn.OLAP.Engine.Sql;
+    using Assets.Scripts.Foenn.OLAP.Query;
+    using Assets.Scripts.Foenn.OLAP.Schema;
     using System.Data;
 
     public class AggregatedField : IDataField

@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.ETL.Models
+﻿namespace Assets.Scripts.Foenn.OLAP.Schema
 {
     using System.Collections.Generic;
     using System.Linq;

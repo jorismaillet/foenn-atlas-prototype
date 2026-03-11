@@ -3,8 +3,8 @@
     using Assets.Scripts.Foenn.Atlas.Models.Activities;
     using Assets.Scripts.Foenn.Atlas.Models.Locations;
     using Assets.Scripts.Foenn.Atlas.Models.Plannings;
-    using Assets.Scripts.Foenn.Engine.Execution;
-    using Assets.Scripts.Foenn.ETL.Datasources.WeatherHistory;
+    using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
+    using Assets.Scripts.Foenn.OLAP.Query;
     using Assets.Scripts.Unity.Commons.Containers;
     using System.Collections.Generic;
     using UnityEngine;

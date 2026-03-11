@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scripts.Foenn.Atlas.Models.Geo
 {
-    using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
+    using Assets.Scripts.Foenn.OLAP.Query;
 
     public class GeoMeasure
     {

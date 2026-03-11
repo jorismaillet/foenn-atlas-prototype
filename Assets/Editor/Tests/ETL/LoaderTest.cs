@@ -1,11 +1,10 @@
 ﻿namespace Assets.Editor.Tests.ETL
 {
     using Assets.Scripts.Foenn;
-    using Assets.Scripts.Foenn.Engine.Connectors;
-    using Assets.Scripts.Foenn.Engine.Execution;
-    using Assets.Scripts.Foenn.ETL.Datasets;
-    using Assets.Scripts.Foenn.ETL.Datasources;
-    using Assets.Scripts.Foenn.ETL.Loaders;
+    using Assets.Scripts.Foenn.Core.Database;
+    using Assets.Scripts.Foenn.ETL;
+    using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
+    using Assets.Scripts.Foenn.OLAP.Query;
     using Mono.Data.Sqlite;
     using NUnit.Framework;
 

@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Foenn.Engine.OLAP.Dimensions
+namespace Assets.Scripts.Foenn.OLAP.Fields
 {
     using System;
 

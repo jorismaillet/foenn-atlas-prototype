@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Foenn.ETL.Loaders
+﻿namespace Assets.Scripts.Foenn.ETL
 {
-    using Assets.Scripts.Foenn.Datasets;
-    using Assets.Scripts.Foenn.Engine.Connectors;
+    using Assets.Scripts.Foenn.Core.Database;
+    using Assets.Scripts.Foenn.OLAP.Schema;
     using Mono.Data.Sqlite;
     using System;
     using System.Data;

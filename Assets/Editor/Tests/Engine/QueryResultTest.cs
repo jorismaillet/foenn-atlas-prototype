@@ -1,12 +1,9 @@
 ﻿namespace Assets.Editor.Tests.Engine
 {
-    using Assets.Scripts.Foenn.Datasets.Facts;
-    using Assets.Scripts.Foenn.Engine.Execution;
-    using Assets.Scripts.Foenn.Engine.OLAP.Filters;
-    using Assets.Scripts.Foenn.Engine.OLAP.Metrics;
-    using Assets.Scripts.Foenn.Engine.Sql;
-    using Assets.Scripts.Foenn.ETL.Datasets;
-    using Assets.Scripts.Foenn.ETL.Dimensions;
+    using Assets.Scripts.Foenn.OLAP.Datasets.WeatherHistory;
+    using Assets.Scripts.Foenn.OLAP.Fields;
+    using Assets.Scripts.Foenn.OLAP.Query;
+    using Assets.Scripts.Foenn.OLAP.Sql;
     using NUnit.Framework;
     using System.Collections.Generic;
 

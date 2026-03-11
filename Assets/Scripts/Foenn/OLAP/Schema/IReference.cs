@@ -1,8 +1,5 @@
-﻿namespace Assets.Scripts.Foenn.Atlas.Datasets.Common
+﻿namespace Assets.Scripts.Foenn.OLAP.Schema
 {
-    using Assets.Scripts.Foenn.Datasets;
-    using Assets.Scripts.Foenn.ETL.Models;
-
     public class TableReference
     {
         public Field ReferenceField { get; }

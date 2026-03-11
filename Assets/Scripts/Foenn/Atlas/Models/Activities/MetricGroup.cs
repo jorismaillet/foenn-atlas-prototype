@@ -1,6 +1,6 @@
-﻿namespace Assets.Scripts.Foenn.Engine.OLAP.Metrics
+﻿namespace Assets.Scripts.Foenn.OLAP.Query
 {
-    using Assets.Scripts.Foenn.ETL.Models;
+    using Assets.Scripts.Foenn.OLAP.Schema;
     using System.Collections.Generic;
 
     public class MetricGroup
