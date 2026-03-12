@@ -7,37 +7,34 @@ using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts;
 using Assets.Scripts.OLAP.Engine;
 using Assets.Scripts.OLAP.Engine.Result;
+using Assets.Scripts.OLAP.Engine.Sql.Clauses;
 using Assets.Scripts.OLAP.Engine.Sql.Filters;
 using Assets.Scripts.OLAP.Engine.Sql.Joins;
 using Assets.Scripts.OLAP.Schema;
+using SqlKata;
 
 namespace Assets.Scripts.Services
 {
     public class WeatherQueryService
     {
-        public static List<GeoMeasure> FieldMeasuresPerPostForDay(int dayOfMonth, int month, int year, string dpt, string key)
+        public static List<GeoMeasure> DayObservationsForPost(int dayOfMonth, int month, int year, string dpt, string key)
         {
-            var factField = FieldFor(key);
-            var loc = WeatherHistoryDataset.location;
-            var time = WeatherHistoryDataset.time;
-            var fact = WeatherHistoryDataset.fact;
-
-            var avgFact = factField.Of(fact, AggregationKey.AVG);
-
-            var query = new QueryRequest(fact)
+            var factTable = WeatherHistoryDataset.fact;
+            var observation = FieldFor(key).Of(factTable);
+            var query = QueryRequest.From(factTable)
                 .Select(
                     LocationDimension.Longitude,
                     LocationDimension.Latitude,
-                    LocationDimension.PostName,
-                    avgFact)
-                .Join(fact, fact.locationRef, JoinType.INNER)
-                .Join(fact, fact.timeRef, JoinType.INNER)
+                    LocationDimension.PostName)
+                .SelectAvg(observation)
+                .Join(factTable.locationRef)
+                .Join(factTable.timeRef)
                 .GroupBy(LocationDimension.PostName)
-                .Where(new DataFilter(LocationDimension.Department.Of(loc), DataFilterMode.INCLUDE, dpt))
-                .Where(new DataFilter(TimeDimension.day.Of(time), DataFilterMode.INCLUDE, dayOfMonth))
-                .Where(new DataFilter(TimeDimension.month.Of(time), DataFilterMode.INCLUDE, month))
-                .Where(new DataFilter(TimeDimension.year.Of(time), DataFilterMode.INCLUDE, year))
-                .Where(new ExcludeNullFilter(WeatherFact.temperature.Of(fact)));
+                .WhereEq(LocationDimension.Department, dpt)
+                .WhereEq(TimeDimension.day, dayOfMonth)
+                .WhereEq(TimeDimension.month, month)
+                .WhereEq(TimeDimension.year, year)
+                .WhereNotNull(WeatherFact.temperature);
 
             using (var connection = SqliteHelper.CreateConnection())
             {
@@ -47,12 +44,14 @@ namespace Assets.Scripts.Services
                 {
                     string post = (string)row.values[LocationDimension.PostName];
                     var coord = row.geo;
-                    var measure = new Measure(factField, (float)row.values[avgFact]);
+                    var measure = new Measure(observation, (float)row.values[avgFact]);
                     res.Add(new GeoMeasure(new PointLocation(post, coord.lat, coord.lon), measure));
                 }
                 return res;
             }
         }
+
+
 
         private static Field FieldFor(string key)
         {

@@ -5,7 +5,7 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
 {
     public class LocationDimension : IDimension
     {
-        public string TableName => "location_dimension";
+        public string name => "location_dimension";
 
         public Field PrimaryKey => Field.PK();
 

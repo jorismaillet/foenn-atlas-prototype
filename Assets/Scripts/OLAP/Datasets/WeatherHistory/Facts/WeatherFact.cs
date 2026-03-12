@@ -6,7 +6,7 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
 {
     public class WeatherFact : IFact
     {
-        public string TableName => "weather_history_facts";
+        public string name => "weather_history_facts";
 
         public Field PrimaryKey => Field.PK();
 

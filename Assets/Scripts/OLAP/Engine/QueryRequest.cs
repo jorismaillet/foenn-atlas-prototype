@@ -1,94 +1,68 @@
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
+using System.Linq;
 using Assets.Scripts.Components.Logger;
 using Assets.Scripts.Database;
-using Assets.Scripts.OLAP.Engine.Sql.Clauses;
-using Assets.Scripts.OLAP.Engine.Sql.Filters;
-using Assets.Scripts.OLAP.Engine.Sql.Joins;
 using Assets.Scripts.OLAP.Schema;
 using Mono.Data.Sqlite;
+using SqlKata;
 
 namespace Assets.Scripts.OLAP.Engine
 {
-    public class QueryRequest
+    public static class QueryRequest
     {
-        public List<Field> selectedColumns = new List<Field>();
-
-        public List<ITable> selectedTables = new List<ITable>();
-
-        public List<Field> groups = new List<Field>();
-
-        public List<JoinDefinition> joins = new List<JoinDefinition>();
-
-        public List<Filter> filters = new List<Filter>();
-
-        public ITable from;
-
-        public QueryRequest(ITable from)
+        public static Query From(ITable from)
         {
-            this.from = from;
+            return new Query(from.name);
         }
 
-        public QueryRequest Select(params Field[] fields)
+        public static Query Select(this Query query, params Field[] selectedColumns)
         {
-            selectedColumns.AddRange(fields);
-            return this;
+            return query.Select(selectedColumns.Select(c => c.name).ToArray());
         }
 
-        public QueryRequest Select(ITable table, params Field[] fields)
+        public static Query SelectAvg(this Query query, Field field)
         {
-            foreach (var field in fields)
-                selectedColumns.Add(field.Of(table));
-            return this;
+            return query.SelectAvg(field.name);
         }
 
-        public QueryRequest Select(AggregationKey aggregation, params Field[] fields)
+        public static Query Join(this Query query, Field refField)
         {
-            foreach (var field in fields)
-                selectedColumns.Add(field.As(aggregation));
-            return this;
+            query.Join(refField.table.name, refField.name, refField.table.PrimaryKey.name);
+            return query;
         }
 
-        public QueryRequest Select(ITable table, Field field, params AggregationKey[] aggregations)
+        public static Query GroupBy(this Query query, params Field[] fields)
         {
-            foreach (var aggregation in aggregations)
-                selectedColumns.Add(field.Of(table, aggregation));
-            return this;
+            query.GroupBy(fields.Select(c => c.name).ToArray());
+            return query;
         }
 
-        public QueryRequest GroupBy(params Field[] fields)
+        public static Query WhereIn(this Query query, Field field, IEnumerable<object> values)
         {
-            groups.AddRange(fields);
-            return this;
+            query.WhereIn(field.name, values);
+            return query;
         }
 
-        public QueryRequest Join(ITable leftTable, Field refField, JoinType joinType)
+        public static Query WhereEq(this Query query, Field field, object value)
         {
-            var leftField = refField.Of(leftTable);
-            var rightField = refField.referencedDimension.PrimaryKey.Of(refField.referencedDimension);
-            joins.Add(new JoinDefinition(leftField, rightField, joinType));
-            return this;
+            query.Where(field.name, value);
+            return query;
         }
 
-        public QueryRequest Where(params Filter[] filters)
+        public static Query WhereNotNull(this Query query, Field field)
         {
-            this.filters.AddRange(filters);
-            return this;
+            query.WhereNotNull(field.name);
+            return query;
         }
 
-        public string ToSql()
+        public static Query WhereBetween<T>(this Query query, Field field, T lower, T higher)
         {
-            StringBuilder sql = new StringBuilder();
-            sql.Append(new SqlSelect(selectedTables, selectedColumns).clause);
-            sql.Append(new SqlFrom(from).clause);
-            sql.Append(new SqlJoin(joins).clause);
-            sql.Append(new SqlWhere(filters).clause);
-            sql.Append(new SqlGroupBy(groups).clause);
-            return sql.ToString();
+            query.WhereBetween(field.name, lower, higher);
+            return query;
         }
 
-        public QueryResult Execute(SqliteConnection connection)
+        public static QueryResult Execute(this Query query, SqliteConnection connection)
         {
             var sql = ToSql();
             UnityEngine.Debug.Log($"Executing query : {sql}");

@@ -7,7 +7,7 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
 {
     public class TimeDimension : IDimension
     {
-        public string TableName => "time_dimension";
+        public string name => "time_dimension";
 
         public Field PrimaryKey => Field.PK();
 

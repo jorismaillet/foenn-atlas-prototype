@@ -5,7 +5,7 @@ namespace Assets.Scripts.OLAP.Schema
 {
     public interface ITable
     {
-        string TableName { get; }
+        string name { get; }
 
         Field PrimaryKey { get; }
 

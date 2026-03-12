@@ -22,7 +22,7 @@ namespace Assets.Scripts
             using (var sqliteConnection = SqliteHelper.CreateConnection())
             {
                 WeatherHistoryDataset.InitTables(sqliteConnection);
-                var metadataTable = new MetadataTable(WeatherHistoryDataset.fact.TableName);
+                var metadataTable = new MetadataTable(WeatherHistoryDataset.fact.name);
                 metadataTable.InitTable(sqliteConnection);
                 StartCoroutine(Init(sqliteConnection, metadataTable.FilesToLoad(sqliteConnection), metadataTable));
             }

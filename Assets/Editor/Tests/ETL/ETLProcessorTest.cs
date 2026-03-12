@@ -27,8 +27,8 @@ namespace Assets.Editor.Tests.ETL
                 foreach (var table in WeatherHistoryDataset.Tables)
                 {
                     SqliteHelper.DropStagingTable(connection, table);
-                    SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {table.TableName}");
-                    SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {MetadataTable.MakeTableName(table.TableName)}");
+                    SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {table.name}");
+                    SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {MetadataTable.MakeTableName(table.name)}");
                 }
             }
         }

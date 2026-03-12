@@ -27,8 +27,8 @@ namespace Assets.Editor.Tests.ETL
                 foreach (var table in WeatherHistoryDataset.Tables)
                 {
                     SqliteHelper.DropStagingTable(connection, table);
-                    SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {table.TableName}");
-                    SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {MetadataTable.MakeTableName(table.TableName)}");
+                    SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {table.name}");
+                    SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {MetadataTable.MakeTableName(table.name)}");
                 }
             }
         }
@@ -39,7 +39,7 @@ namespace Assets.Editor.Tests.ETL
             using (var connection = SqliteHelper.CreateConnection())
             {
                 WeatherHistoryDataset.InitTables(connection);
-                SqliteHelper.Execute(connection, $"INSERT INTO \"{WeatherHistoryDataset.fact.TableName}\" (temperature) VALUES (20);");
+                SqliteHelper.Execute(connection, $"INSERT INTO \"{WeatherHistoryDataset.fact.name}\" (temperature) VALUES (20);");
                 var res = new QueryRequest(WeatherHistoryDataset.fact).Execute(connection);
                 Assert.AreEqual(res.rows.Count, 1);
             }

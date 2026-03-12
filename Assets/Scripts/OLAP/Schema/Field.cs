@@ -72,7 +72,7 @@ namespace Assets.Scripts.OLAP.Schema
 
         public string ToSql()
         {
-            var col = table != null ? $"\"{table.TableName}\".\"{name}\"" : $"\"{name}\"";
+            var col = table != null ? $"\"{table.name}\".\"{name}\"" : $"\"{name}\"";
             return aggregation.HasValue ? $"{aggregation.Value}({col})" : col;
         }
     }

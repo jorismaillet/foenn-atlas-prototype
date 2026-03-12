@@ -10,7 +10,7 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
 {
     public class MetadataTable : ITable
     {
-        public string TableName { get; set; }
+        public string name { get; set; }
 
         public Field PrimaryKey => Field.PK();
 
@@ -26,7 +26,7 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
 
         public MetadataTable(string table)
         {
-            TableName = MakeTableName(table);
+            name = MakeTableName(table);
         }
 
         public static string MakeTableName(string table)
@@ -53,7 +53,7 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
                 .Select(f => Path.Combine("Weathers", Path.GetFileName(f)));
 
             var existingFiles = new List<string>();
-            using (var reader = SqliteHelper.ExecuteReader(connection, $"SELECT \"{fileName.name}\" FROM {TableName}"))
+            using (var reader = SqliteHelper.ExecuteReader(connection, $"SELECT \"{fileName.name}\" FROM {name}"))
             {
                 while (reader.Read())
                 {
@@ -67,7 +67,7 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
         {
             SqliteHelper.Insert(
                 connection,
-                TableName,
+                name,
                 new List<Field>() { fileName },
                 new List<string>() { "", file }
             );

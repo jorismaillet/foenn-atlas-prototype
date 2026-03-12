@@ -25,13 +25,15 @@ namespace Assets.Scripts.ETL.Loaders
 
         public virtual void StartStaging(SqliteConnection connection, SqliteTransaction transaction, string[] csvFieldNames)
         {
+            SqliteHelper.CreateStagingTable(connection, Table);
+
             var mappings = Table.Mappings;
 
             _stageCommand = connection.CreateCommand();
             _stageCommand.Transaction = transaction;
             var colNames = string.Join(", ", mappings.Select(c => c.targetField.name));
             var paramNames = string.Join(", ", mappings.Select(c => $"@{c.targetField.name}"));
-            _stageCommand.CommandText = $"INSERT INTO \"{Table.TableName}_staging\" ({colNames}) VALUES ({paramNames})";
+            _stageCommand.CommandText = $"INSERT INTO \"{Table.name}_staging\" ({colNames}) VALUES ({paramNames})";
 
             _stageParams = new SqliteParameter[mappings.Count];
             _valueResolvers = new List<Func<string[], object>>(mappings.Count);

@@ -71,10 +71,6 @@ namespace Assets.Scripts.ETL
                     MainThreadLog.Log($"Staged dimensions batch, total={_loaded}");
                     transaction.Dispose();
                     transaction = connection.BeginTransaction();
-
-                    foreach (var loader in _dimensionLoaders)
-                        loader.StartStaging(connection, transaction, fieldNames);
-
                     _inBatch = 0;
                 }
             }
@@ -125,9 +121,6 @@ namespace Assets.Scripts.ETL
                     MainThreadLog.Log($"Staged facts batch, total={_loaded}");
                     transaction.Dispose();
                     transaction = connection.BeginTransaction();
-
-                    foreach (var loader in _factLoaders)
-                        loader.StartStaging(connection, transaction, fieldNames, caches);
 
                     _inBatch = 0;
                 }

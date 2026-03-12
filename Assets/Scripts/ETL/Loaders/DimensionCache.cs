@@ -19,7 +19,7 @@ namespace Assets.Scripts.ETL.Loaders
         public void LoadFromDatabase(SqliteConnection connection)
         {
             _cache.Clear();
-            var sql = $"SELECT \"{_dimension.PrimaryKey.name}\", FROM \"{_dimension.TableName}\"";
+            var sql = $"SELECT \"{_dimension.PrimaryKey.name}\" FROM \"{_dimension.name}\"";
             using (var reader = SqliteHelper.ExecuteReader(connection, sql))
             {
                 while (reader.Read())
