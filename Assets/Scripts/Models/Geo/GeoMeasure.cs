@@ -1,17 +1,20 @@
-﻿using Assets.Scripts.OLAP.Engine.Result;
+﻿using Assets.Scripts.Models.Locations;
+using Assets.Scripts.OLAP.Schema;
 
 namespace Assets.Scripts.Models.Geo
 {
     public class GeoMeasure
     {
-        public GeoPoint point;
+        public PointLocation point;
 
-        public Measure measure;
+        public Field field;
+        public float value;
 
-        public GeoMeasure(GeoPoint point, Measure measure)
+        public GeoMeasure(PointLocation point, Field field, float value)
         {
             this.point = point;
-            this.measure = measure;
+            this.field = field;
+            this.value = value;
         }
     }
 }

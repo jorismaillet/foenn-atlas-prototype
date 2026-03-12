@@ -6,12 +6,7 @@ using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts;
 using Assets.Scripts.OLAP.Engine;
-using Assets.Scripts.OLAP.Engine.Result;
-using Assets.Scripts.OLAP.Engine.Sql.Clauses;
-using Assets.Scripts.OLAP.Engine.Sql.Filters;
-using Assets.Scripts.OLAP.Engine.Sql.Joins;
 using Assets.Scripts.OLAP.Schema;
-using SqlKata;
 
 namespace Assets.Scripts.Services
 {
@@ -20,13 +15,13 @@ namespace Assets.Scripts.Services
         public static List<GeoMeasure> DayObservationsForPost(int dayOfMonth, int month, int year, string dpt, string key)
         {
             var factTable = WeatherHistoryDataset.fact;
-            var observation = FieldFor(key).Of(factTable);
-            var query = QueryRequest.From(factTable)
+            var fieldToMeasure = FieldFor(key).Of(factTable);
+            var query = new QueryRequest(factTable)
                 .Select(
                     LocationDimension.Longitude,
                     LocationDimension.Latitude,
                     LocationDimension.PostName)
-                .SelectAvg(observation)
+                .SelectAvg(fieldToMeasure)
                 .Join(factTable.locationRef)
                 .Join(factTable.timeRef)
                 .GroupBy(LocationDimension.PostName)
@@ -42,16 +37,13 @@ namespace Assets.Scripts.Services
                 var res = new List<GeoMeasure>();
                 foreach (var row in result.rows)
                 {
-                    string post = (string)row.values[LocationDimension.PostName];
-                    var coord = row.geo;
-                    var measure = new Measure(observation, (float)row.values[avgFact]);
-                    res.Add(new GeoMeasure(new PointLocation(post, coord.lat, coord.lon), measure));
+                    string postName = (string)row.values[LocationDimension.PostName];
+                    var measure = row.FloatValue(fieldToMeasure);
+                    res.Add(new GeoMeasure(new PointLocation(postName, row.geo.lat, row.geo.lon), fieldToMeasure, measure));
                 }
                 return res;
             }
         }
-
-
 
         private static Field FieldFor(string key)
         {

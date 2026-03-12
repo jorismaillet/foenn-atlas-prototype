@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Assets.Scripts.OLAP.Engine.Result;
+using Assets.Scripts.OLAP.Engine;
 
 namespace Assets.Scripts.Models.Plannings
 {

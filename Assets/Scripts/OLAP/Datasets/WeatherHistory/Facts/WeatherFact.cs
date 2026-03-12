@@ -38,8 +38,8 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
         public WeatherFact(TimeDimension time, LocationDimension location)
         {
             _dimensions = new List<IDimension>() { time, location };
-            timeRef = Field.Ref(time, "time_id");
-            locationRef = Field.Ref(location, "location_id");
+            timeRef = Field.Ref(time, "time_id").Of(this);
+            locationRef = Field.Ref(location, "location_id").Of(this);
         }
     }
 }

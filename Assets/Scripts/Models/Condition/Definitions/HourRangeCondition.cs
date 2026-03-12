@@ -1,6 +1,6 @@
 ﻿using System;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
-using Assets.Scripts.OLAP.Engine.Result;
+using Assets.Scripts.OLAP.Engine;
 
 namespace Assets.Scripts.Models.Condition.Definitions
 {
