@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Assets.Scripts.Models.Geo;
 using Assets.Scripts.OLAP.Schema;
@@ -12,15 +13,15 @@ namespace Assets.Scripts.OLAP.Engine
 
         public int IntValue(Field field)
         {
-            return (int)values[field];
+            return Convert.ToInt32(values[field]);
         }
         public string StringValue(Field field)
         {
-            return (string)values[field];
+            return Convert.ToString(values[field]);
         }
         public float FloatValue(Field field)
         {
-            return (float)values[field];
+            return Convert.ToSingle(values[field]);
         }
     }
 }

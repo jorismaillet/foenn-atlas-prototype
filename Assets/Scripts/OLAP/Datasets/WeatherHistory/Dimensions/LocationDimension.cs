@@ -9,12 +9,12 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
 
         public Field PrimaryKey => Field.PK();
 
-        public static Field PostNumber = Field.Int("post_number");
-        public static Field Latitude = Field.Double("lat");
-        public static Field Longitude = Field.Double("lon");
-        public static Field Altitude = Field.Double("altitude");
-        public static Field PostName = Field.Text("post_name");
-        public static Field Department = Field.Text("department");
+        public static Field PostNumber = Field.IntAttribute("post_number");
+        public static Field Latitude = Field.FloatAttribute("lat");
+        public static Field Longitude = Field.FloatAttribute("lon");
+        public static Field Altitude = Field.IntAttribute("altitude");
+        public static Field PostName = Field.TextAttribute("post_name");
+        public static Field Department = Field.IntAttribute("department");
 
         public List<IndexDefinition> Indexes => new List<IndexDefinition>() {
             new IndexDefinition(true, PostNumber),

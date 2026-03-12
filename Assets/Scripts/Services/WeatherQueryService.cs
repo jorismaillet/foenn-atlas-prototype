@@ -15,7 +15,7 @@ namespace Assets.Scripts.Services
         public static List<GeoMeasure> DayObservationsForPost(int dayOfMonth, int month, int year, string dpt, string key)
         {
             var factTable = WeatherHistoryDataset.fact;
-            var fieldToMeasure = FieldFor(key).Of(factTable);
+            var fieldToMeasure = FieldFor(key);
             var query = new QueryRequest(factTable)
                 .Select(
                     LocationDimension.Longitude,

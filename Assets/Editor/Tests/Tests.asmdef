@@ -15,7 +15,7 @@
     "precompiledReferences": [
         "nunit.framework.dll",
         "Mono.Data.Sqlite.dll",
-        "SqlKata.Core.dll"
+        "SqlKata.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

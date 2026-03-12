@@ -1,9 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading;
 using Assets.Scripts.OLAP.Schema;
 using Mono.Data.Sqlite;
+using SqlKata;
+using SqlKata.Compilers;
+using UnityEngine.UIElements;
 
 namespace Assets.Scripts.Database
 {
@@ -159,11 +163,19 @@ namespace Assets.Scripts.Database
             ExecuteNonQueryWithRetry(command);
         }
 
-        public static SqliteDataReader ExecuteReader(SqliteConnection connection, string sql)
+        public static SqliteDataReader ExecuteReader(SqliteConnection connection, Query query)
         {
+            var compiled = new SqliteCompiler().Compile(query);
+            UnityEngine.Debug.Log(compiled.Sql);
+
             var command = connection.CreateCommand();
-            command.CommandText = sql;
-            UnityEngine.Debug.Log(sql);
+            command.CommandText = compiled.Sql;
+
+            for (int i = 0; i < compiled.Bindings.Count; i++)
+            {
+                command.Parameters.Add(new SqliteParameter($"@p{i}", compiled.Bindings[i] ?? DBNull.Value));
+            }
+
             return command.ExecuteReader();
         }
 

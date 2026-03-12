@@ -2544,9 +2544,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   etlHandler: {fileID: 1473888556}
-  HourToLoad: 2023080110
-  department: 06
-  key: 37
   map: {fileID: 1473888557}
 --- !u!4 &1473888555
 Transform:

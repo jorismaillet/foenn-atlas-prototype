@@ -10,9 +10,8 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
 
         public Field PrimaryKey => Field.PK();
 
-        public static Field temperature10 = Field.Metric("temperature_10");
-
-        public static Field temperature20 = Field.Metric("temperature_20");
+        public static Field temperature10 = Field.FloatMetric("temperature_10");
+        public static Field temperature20 = Field.FloatMetric("temperature_20");
 
         public Field timeRef, locationRef;
 
@@ -35,8 +34,8 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
         public WeatherExtraFact(TimeDimension time, LocationDimension location)
         {
             _dimensions = new List<IDimension>() { time, location };
-            timeRef = Field.Ref(time, "time_id");
-            locationRef = Field.Ref(location, "location_id");
+            timeRef = Field.Ref(this, time, "time_id");
+            locationRef = Field.Ref(this, location, "location_id");
         }
     }
 }

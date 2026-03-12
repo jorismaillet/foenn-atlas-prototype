@@ -12,8 +12,6 @@ namespace Assets.Scripts.OLAP.Schema
 
         public ITable table;
 
-        public AggregationKey? aggregation;
-
         public bool isPrimaryKey;
 
         public bool autoIncrement;
@@ -25,60 +23,35 @@ namespace Assets.Scripts.OLAP.Schema
 
         public bool IsReference => referencedDimension != null;
 
-        public Field(string name, DbType type, AnalyticsType analyticsType)
+        private Field(string name, DbType type, AnalyticsType analyticsType)
         {
             this.name = name;
             this.dbType = type;
             this.analyticsType = analyticsType;
         }
 
-        private Field(Field source, ITable table, AggregationKey? aggregation)
-        {
-            this.name = source.name;
-            this.dbType = source.dbType;
-            this.analyticsType = source.analyticsType;
-            this.isPrimaryKey = source.isPrimaryKey;
-            this.autoIncrement = source.autoIncrement;
-            this.referencedDimension = source.referencedDimension;
-            this.sourceCsvColumn = source.sourceCsvColumn;
-            this.table = table;
-            this.aggregation = aggregation;
-        }
-
-        public static Field Metric(string name) => new Field(name, DbType.Double, AnalyticsType.METRIC);
-
-        public static Field Text(string name) => new Field(name, DbType.String, AnalyticsType.ATTRIBUTE);
-
-        public static Field Int(string name) => new Field(name, DbType.Int32, AnalyticsType.ATTRIBUTE);
-
-        public static Field Int16(string name) => new Field(name, DbType.Int16, AnalyticsType.ATTRIBUTE);
-
-        public static Field Int64(string name) => new Field(name, DbType.Int64, AnalyticsType.ATTRIBUTE);
-
-        public static Field Double(string name) => new Field(name, DbType.Double, AnalyticsType.ATTRIBUTE);
-
+        // Primary key
         public static Field PK(string name = "ID") => new Field(name, DbType.Int32, AnalyticsType.ATTRIBUTE) { isPrimaryKey = true, autoIncrement = true };
 
-        public static Field Ref(IDimension dimension, string fieldName) => new Field(fieldName, dimension.PrimaryKey.dbType, AnalyticsType.ATTRIBUTE)
+        //Attributes
+        public static Field TextAttribute(string name) => new Field(name, DbType.String, AnalyticsType.ATTRIBUTE);
+        public static Field IntAttribute(string name) => new Field(name, DbType.Int32, AnalyticsType.ATTRIBUTE);
+        public static Field FloatAttribute(string name) => new Field(name, DbType.Single, AnalyticsType.ATTRIBUTE);
+
+        //Metrics
+        public static Field IntMetric(string name) => new Field(name, DbType.Int32, AnalyticsType.METRIC);
+        public static Field FloatMetric(string name) => new Field(name, DbType.Single, AnalyticsType.METRIC);
+
+        // Foreign key
+        public static Field Ref(ITable current, IDimension foreign, string foreignKey) => new Field(foreignKey, foreign.PrimaryKey.dbType, AnalyticsType.ATTRIBUTE)
         {
-            referencedDimension = dimension
+            table = current,
+            referencedDimension = foreign
         };
 
-        public Field Of(ITable table) => new Field(this, table, this.aggregation);
-
-        public Field As(AggregationKey agg) => new Field(this, this.table, agg);
-
-        public Field Of(ITable table, AggregationKey agg) => new Field(this, table, agg);
-
-        public string ToSql()
+        public string Identifier()
         {
-            var col = table != null ? $"\"{table.name}\".\"{name}\"" : $"\"{name}\"";
-            return aggregation.HasValue ? $"{aggregation.Value}({col})" : col;
+            return $"{table.name}.{name}";
         }
-    }
-
-    public enum AggregationKey
-    {
-        SUM, MIN, MAX, AVG, D_COUNT
     }
 }

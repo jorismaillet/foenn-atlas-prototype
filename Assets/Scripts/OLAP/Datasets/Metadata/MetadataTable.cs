@@ -5,6 +5,7 @@ using System.Linq;
 using Assets.Scripts.Database;
 using Assets.Scripts.OLAP.Schema;
 using Mono.Data.Sqlite;
+using SqlKata;
 
 namespace Assets.Scripts.OLAP.Datasets.Metadata
 {
@@ -14,7 +15,7 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
 
         public Field PrimaryKey => Field.PK();
 
-        private Field fileName = Field.Text("File");
+        private Field fileName = Field.TextAttribute("File");
 
         public List<IndexDefinition> Indexes => new List<IndexDefinition>() {
             new IndexDefinition(true, fileName),
@@ -53,7 +54,7 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
                 .Select(f => Path.Combine("Weathers", Path.GetFileName(f)));
 
             var existingFiles = new List<string>();
-            using (var reader = SqliteHelper.ExecuteReader(connection, $"SELECT \"{fileName.name}\" FROM {name}"))
+            using (var reader = SqliteHelper.ExecuteReader(connection, new Query(name).Select(fileName.name)))
             {
                 while (reader.Read())
                 {

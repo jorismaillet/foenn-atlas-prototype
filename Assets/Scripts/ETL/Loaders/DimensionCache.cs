@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Assets.Scripts.Database;
 using Assets.Scripts.OLAP.Schema;
 using Mono.Data.Sqlite;
+using SqlKata;
 
 namespace Assets.Scripts.ETL.Loaders
 {
@@ -19,8 +20,7 @@ namespace Assets.Scripts.ETL.Loaders
         public void LoadFromDatabase(SqliteConnection connection)
         {
             _cache.Clear();
-            var sql = $"SELECT \"{_dimension.PrimaryKey.name}\" FROM \"{_dimension.name}\"";
-            using (var reader = SqliteHelper.ExecuteReader(connection, sql))
+            using (var reader = SqliteHelper.ExecuteReader(connection, new Query(_dimension.name).Select(_dimension.PrimaryKey.name)))
             {
                 while (reader.Read())
                 {

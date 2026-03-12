@@ -11,12 +11,12 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
 
         public Field PrimaryKey => Field.PK();
 
-        public static Field timestamp = Field.Int64("timestamp");
-        public static Field year = Field.Int16("year");
-        public static Field month = Field.Int16("month");
-        public static Field day = Field.Int16("day");
-        public static Field hour = Field.Int16("hour");
-        public static Field duration = Field.Int16("duration");
+        public static Field timestamp = Field.IntAttribute("timestamp");
+        public static Field year = Field.IntAttribute("year");
+        public static Field month = Field.IntAttribute("month");
+        public static Field day = Field.IntAttribute("day");
+        public static Field hour = Field.IntAttribute("hour");
+        public static Field duration = Field.IntAttribute("duration");
 
         public List<IndexDefinition> Indexes => new List<IndexDefinition>()
         {
@@ -34,8 +34,12 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
             FieldMap.Compute(AAAAMMJJHH, duration, s => "1")
         };
 
-        public static DateTime ToDateTime(string yyyyMMddhh) => DateTime.ParseExact(yyyyMMddhh, "yyyyMMddHH", CultureInfo.InvariantCulture);
+        public static DateTime ToDateTime(string yyyyMMddHH) => DateTime.SpecifyKind(DateTime.ParseExact(yyyyMMddHH, "yyyyMMddHH", CultureInfo.InvariantCulture),
+            DateTimeKind.Utc
+        );
 
         public static string ToTimestamp(string yyyyMMddHH) => new DateTimeOffset(ToDateTime(yyyyMMddHH)).ToUnixTimeSeconds().ToString();
+
+        public static DateTime FromTimestamp(string timestamp) => DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(timestamp)).UtcDateTime;
     }
 }

@@ -24,14 +24,17 @@ namespace Assets.Scripts.OLAP.Engine
         public QueryRequest Select(params Field[] selectedColumns)
         {
             selectedFields.AddRange(selectedColumns);
-            query.Select(selectedColumns.Select(c => c.name).ToArray());
+            foreach (var item in selectedColumns)
+            {
+                query.Select(item.name);
+            }
             return this;
         }
 
         public QueryRequest SelectAvg(Field field)
         {
             selectedFields.Add(field);
-            query.AsAverage(field.name);
+            query.SelectAvg(field.name);
             return this;
         }
 
@@ -71,18 +74,12 @@ namespace Assets.Scripts.OLAP.Engine
             return this;
         }
 
-        public string ToSqlite()
-        {
-            return new SqliteCompiler().Compile(query).Sql;
-        }
 
         public QueryResult Execute(SqliteConnection connection)
         {
-            var sql = ToSqlite();
-            UnityEngine.Debug.Log($"Executing query : {sql}");
             var queryTime = new Stopwatch();
             queryTime.Start();
-            using (var reader = SqliteHelper.ExecuteReader(connection, sql))
+            using (var reader = SqliteHelper.ExecuteReader(connection, query))
             {
                 int nbColumns = reader.FieldCount;
                 string[] rawHeaders = new string[nbColumns];

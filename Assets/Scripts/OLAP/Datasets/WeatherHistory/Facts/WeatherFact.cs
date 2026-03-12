@@ -10,10 +10,10 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
 
         public Field PrimaryKey => Field.PK();
 
-        public static Field temperature = Field.Metric("temperature");
-        public static Field rain = Field.Metric("rain");
-        public static Field wind = Field.Metric("wind");
-        public static Field gust = Field.Metric("gust");
+        public static Field temperature = Field.FloatMetric("temperature");
+        public static Field rain = Field.FloatMetric("rain");
+        public static Field wind = Field.FloatMetric("wind");
+        public static Field gust = Field.FloatMetric("gust");
 
         public Field timeRef, locationRef;
 
@@ -38,8 +38,8 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
         public WeatherFact(TimeDimension time, LocationDimension location)
         {
             _dimensions = new List<IDimension>() { time, location };
-            timeRef = Field.Ref(time, "time_id").Of(this);
-            locationRef = Field.Ref(location, "location_id").Of(this);
+            timeRef = Field.Ref(this, time, "time_id");
+            locationRef = Field.Ref(this, location, "location_id");
         }
     }
 }
