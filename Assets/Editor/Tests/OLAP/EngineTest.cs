@@ -12,33 +12,12 @@ using NUnit.Framework;
 
 namespace Assets.Editor.Tests.OLAP
 {
-    [TestFixture]
     public class EngineTest
     {
-        [OneTimeSetUp]
-        public void Setup()
-        {
-            Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
-            DatabaseHelper.CreateDb();
-        }
-
-        [OneTimeTearDown]
-        public void Cleanup()
-        {
-            using (var connection = SqliteHelper.CreateConnection())
-            {
-                foreach (var table in WeatherHistoryDataset.Tables)
-                {
-                    SqliteHelper.DropStagingTable(connection, table);
-                    SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {table.name}");
-                    SqliteHelper.Execute(connection, $"DROP TABLE IF EXISTS {MetadataTable.MakeTableName(table.name)}");
-                }
-            }
-        }
-
         [Test]
         public void TestQueryExecuteAndResult()
         {
+            Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
             using (var connection = SqliteHelper.CreateConnection())
             {
                 WeatherHistoryDataset.InitTables(connection);

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.OLAP.Schema;
 using Mono.Data.Sqlite;
+using UnityEngine;
 
 namespace Assets.Scripts.ETL.Loaders
 {
@@ -17,24 +18,19 @@ namespace Assets.Scripts.ETL.Loaders
         {
             base.StartStaging(connection, transaction, csvFieldNames);
 
-            var columnsWithoutPk = Fact.Columns.Where(c => !c.autoIncrement).ToList();
-
-            foreach (var refField in Fact.References)
+            for (int i = 0; i < Fact.References.Count; i++)
             {
-                if (caches.TryGetValue(refField.referencedDimension, out var cache))
+                var refField = Fact.References[i];
+                var cache = caches[refField.referencedDimension];
+                int colIndex = Fact.Mappings.Count + i;
+                string lookupCsvColumn = refField.referencedDimension.LookupSourceAttribute.name;
+                int csvIdx = FindCsvIndex(lookupCsvColumn, csvFieldNames);
+                _valueResolvers.Add(line =>
                 {
-                    int sourceIdx = FindCsvIndex(refField.sourceCsvColumn, csvFieldNames);
-                    int colIndex = columnsWithoutPk.FindIndex(c => c.name == refField.name);
-
-                    if (colIndex >= 0)
-                    {
-                        _valueResolvers[colIndex] = line =>
-                        {
-                            string lookupValue = sourceIdx >= 0 ? line[sourceIdx] : string.Empty;
-                            return cache.TryGetId(lookupValue, out int dimId) ? dimId : (object)System.DBNull.Value;
-                        };
-                    }
-                }
+                    return cache.Get(line[csvIdx]);
+                });
+                _stageParams[colIndex] = new SqliteParameter($"@{refField.name}", refField.dbType);
+                _stageCommand.Parameters.Add(_stageParams[colIndex]);
             }
         }
     }

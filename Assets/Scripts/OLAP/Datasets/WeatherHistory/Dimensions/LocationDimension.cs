@@ -8,6 +8,8 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
         public string name => "location_dimension";
 
         public Field PrimaryKey => Field.PK();
+        public Field LookupField => PostNumber;
+        public SourceAttribute LookupSourceAttribute => new SourceAttribute("NUM_POSTE", SourceAttributeType.Int);
 
         public static Field PostNumber = Field.IntAttribute("post_number");
         public static Field Latitude = Field.FloatAttribute("lat");
@@ -23,7 +25,7 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
 
         public List<FieldMap> Mappings => new List<FieldMap>()
         {
-            FieldMap.Map(new SourceAttribute("NUM_POSTE", SourceAttributeType.Int), PostNumber),
+            FieldMap.Map(LookupSourceAttribute, PostNumber),
             FieldMap.Map(new SourceAttribute("LAT", SourceAttributeType.Float), Latitude),
             FieldMap.Map(new SourceAttribute("LON", SourceAttributeType.Float), Longitude),
             FieldMap.Map(new SourceAttribute("NOM_USUEL", SourceAttributeType.String), PostName),

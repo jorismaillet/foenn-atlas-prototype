@@ -5,6 +5,7 @@ using Assets.Scripts.Database;
 using Assets.Scripts.ETL.Extractors;
 using Assets.Scripts.ETL.Loaders;
 using Assets.Scripts.OLAP.Schema;
+using Mono.Data.Sqlite;
 
 namespace Assets.Scripts.ETL
 {
@@ -29,21 +30,18 @@ namespace Assets.Scripts.ETL
 
         private int _loaded = 0, _inBatch = 0, _batchSize = 10000;
 
-        public void ProcessETL(CancellationToken cancellationToken = default)
+        public void ProcessETL(SqliteConnection connection, CancellationToken cancellationToken = default)
         {
             var fieldNames = _extractor.ExtractFieldNames();
+            SqliteHelper.ApplyStagingPragmas(connection);
 
-            using (var connection = SqliteHelper.CreateConnection())
-            {
-                SqliteHelper.ApplyStagingPragmas(connection);
+            StageDimensions(connection, fieldNames, cancellationToken);
+            MergeDimensions(connection);
 
-                StageDimensions(connection, fieldNames, cancellationToken);
-                MergeDimensions(connection);
+            var dimensionCaches = BuildDimensionCaches();
 
-                var dimensionCaches = BuildDimensionCaches();
-                StageFacts(connection, fieldNames, dimensionCaches, cancellationToken);
-                MergeFacts(connection);
-            }
+            StageFacts(connection, fieldNames, dimensionCaches, cancellationToken);
+            MergeFacts(connection);
 
             MainThreadLog.Log($"Finished ETL, total records={_loaded}");
         }

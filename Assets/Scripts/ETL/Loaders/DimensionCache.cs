@@ -8,7 +8,7 @@ namespace Assets.Scripts.ETL.Loaders
 {
     public class DimensionCache
     {
-        private readonly IDimension _dimension;
+        public readonly IDimension _dimension;
 
         private readonly Dictionary<string, int> _cache = new Dictionary<string, int>();
 
@@ -20,22 +20,20 @@ namespace Assets.Scripts.ETL.Loaders
         public void LoadFromDatabase(SqliteConnection connection)
         {
             _cache.Clear();
-            using (var reader = SqliteHelper.ExecuteReader(connection, new Query(_dimension.name).Select(_dimension.PrimaryKey.name)))
+            using (var reader = SqliteHelper.ExecuteReader(connection, new Query(_dimension.name).Select(_dimension.PrimaryKey.name, _dimension.LookupField.name)))
             {
                 while (reader.Read())
                 {
                     var id = reader.GetInt32(0);
-                    var lookupValue = reader.GetValue(1)?.ToString() ?? string.Empty;
+                    var lookupValue = reader.GetValue(1).ToString();
                     _cache[lookupValue] = id;
                 }
             }
         }
 
-        public bool TryGetId(string lookupValue, out int id)
+        public int Get(string lookupValue)
         {
-            return _cache.TryGetValue(lookupValue, out id);
+            return _cache[lookupValue];
         }
-
-        public int Count => _cache.Count;
     }
 }

@@ -19,6 +19,7 @@ namespace Assets.Scripts
         void Start()
         {
             Env.SetDatabasePath(SqliteHelper.DATABASE_PATH);
+            DatabaseHelper.CreateDb();
             using (var sqliteConnection = SqliteHelper.CreateConnection())
             {
                 WeatherHistoryDataset.InitTables(sqliteConnection);

@@ -14,7 +14,8 @@ namespace Assets.Scripts.Database
     public class SqliteHelper
     {
         public const string DATABASE_PATH = "Resources/sqlite/foenn.db";
-        public const string DATABASE_TEST_PATH = "Resources/sqlite/foenn_test.db";
+        public const string DATABASE_TEST_PATH = ":memory";
+
         private const int SQLITE_BUSY_TIMEOUT_MS = 15000;
         private const int SQLITE_LOCK_RETRY_COUNT = 5;
         private const int SQLITE_LOCK_RETRY_DELAY_MS = 100;
@@ -22,7 +23,9 @@ namespace Assets.Scripts.Database
         public static SqliteConnection CreateConnection()
         {
             var path = DatabaseHelper.ResolveDatabasePath(Env.DatabasePath());
-            string connString = $"Data Source={path};Version=3;Pooling=True;Default Timeout=15;";
+            string connString = Env.DatabasePath() == ":memory" ?
+                "Data Source=:memory:;Version=3;New=True;Cache=Shared;" :
+                $"Data Source={path};Version=3;Pooling=True;Default Timeout=15;";
             var conn = new SqliteConnection(connString);
             conn.Open();
             using (var command = conn.CreateCommand())

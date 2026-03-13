@@ -35,8 +35,8 @@ namespace Assets.Scripts.ETL.Loaders
             var paramNames = string.Join(", ", mappings.Select(c => $"@{c.targetField.name}"));
             _stageCommand.CommandText = $"INSERT INTO \"{Table.name}_staging\" ({colNames}) VALUES ({paramNames})";
 
-            _stageParams = new SqliteParameter[mappings.Count];
-            _valueResolvers = new List<Func<string[], object>>(mappings.Count);
+            _stageParams = new SqliteParameter[mappings.Count + Table.References.Count];
+            _valueResolvers = new List<Func<string[], object>>();
 
             for (int i = 0; i < mappings.Count; i++)
             {

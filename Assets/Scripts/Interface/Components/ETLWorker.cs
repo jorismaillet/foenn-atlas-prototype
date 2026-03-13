@@ -8,6 +8,7 @@ using Assets.Scripts.ETL;
 using Assets.Scripts.OLAP.Datasets.Metadata;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using Mono.Data.Sqlite;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 namespace Assets.Scripts.Components
@@ -67,7 +68,7 @@ namespace Assets.Scripts.Components
                     WeatherHistoryDataset.Facts
                 );
             ct = new CancellationTokenSource();
-            task = Task.Run(() => processor.ProcessETL(ct.Token), ct.Token);
+            task = Task.Run(() => processor.ProcessETL(connection, ct.Token), ct.Token);
 
             while (!task.IsCompleted)
                 yield return null;
