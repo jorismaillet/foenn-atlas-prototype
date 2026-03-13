@@ -28,53 +28,80 @@ namespace Assets.Scripts.ETL
                 _factLoaders.Add(new FactTableLoader(fact));
         }
 
-        private int _loaded = 0, _inBatch = 0, _batchSize = 10000;
+        private int _loaded = 0, _inBatch = 0, _batchSize = 50000;
 
         public void ProcessETL(SqliteConnection connection, CancellationToken cancellationToken = default)
         {
-            var fieldNames = _extractor.ExtractFieldNames();
-            SqliteHelper.ApplyStagingPragmas(connection);
+            try
+            {
+                var fieldNames = _extractor.ExtractFieldNames();
+                SqliteHelper.ApplyStagingPragmas(connection);
 
-            StageDimensions(connection, fieldNames, cancellationToken);
-            MergeDimensions(connection);
+                StageDimensions(connection, fieldNames, cancellationToken);
+                MergeDimensions(connection);
 
-            var dimensionCaches = BuildDimensionCaches();
+                var dimensionCaches = BuildDimensionCaches();
 
-            StageFacts(connection, fieldNames, dimensionCaches, cancellationToken);
-            MergeFacts(connection);
+                StageFacts(connection, fieldNames, dimensionCaches, cancellationToken);
+                MergeFacts(connection);
 
-            MainThreadLog.Log($"Finished ETL, total records={_loaded}");
+                MainThreadLog.Log($"Finished ETL, total records={_loaded}");
+            }
+            finally
+            {
+                foreach (var loader in _dimensionLoaders)
+                    loader.Dispose();
+
+                foreach (var loader in _factLoaders)
+                    loader.Dispose();
+            }
         }
 
         private void StageDimensions(Mono.Data.Sqlite.SqliteConnection connection, string[] fieldNames, CancellationToken ct)
         {
             var transaction = connection.BeginTransaction();
 
-            foreach (var loader in _dimensionLoaders)
-                loader.StartStaging(connection, transaction, fieldNames);
-
-            foreach (var line in _extractor.ExtractValues())
+            try
             {
-                ct.ThrowIfCancellationRequested();
-
                 foreach (var loader in _dimensionLoaders)
-                    loader.StageLine(line);
-
-                _loaded++;
-                _inBatch++;
-
-                if (_inBatch >= _batchSize)
                 {
-                    transaction.Commit();
-                    MainThreadLog.Log($"Staged dimensions batch, total={_loaded}");
-                    transaction.Dispose();
-                    transaction = connection.BeginTransaction();
-                    _inBatch = 0;
+                    loader.Cache.LoadFromDatabase(connection);
+                    loader.StartStaging(connection, transaction, fieldNames);
+                    loader.StartBatch(transaction);
                 }
-            }
 
-            transaction.Commit();
-            transaction.Dispose();
+                foreach (var line in _extractor.ExtractValues())
+                {
+                    ct.ThrowIfCancellationRequested();
+
+                    foreach (var loader in _dimensionLoaders)
+                        if (loader.TryStageLine(line))
+                        {
+                            _loaded++;
+                            _inBatch++;
+                        }
+
+                    if (_inBatch >= _batchSize)
+                    {
+                        transaction.Commit();
+                        MainThreadLog.Log($"Staged dimensions batch, total={_loaded}");
+                        transaction.Dispose();
+                        transaction = connection.BeginTransaction();
+
+                        foreach (var loader in _dimensionLoaders)
+                            loader.StartBatch(transaction);
+
+                        _inBatch = 0;
+                    }
+                }
+
+                transaction.Commit();
+                MainThreadLog.Log($"Staged dimensions batch, total={_loaded}");
+            }
+            finally
+            {
+                transaction?.Dispose();
+            }
         }
 
         private void MergeDimensions(Mono.Data.Sqlite.SqliteConnection connection)
@@ -100,32 +127,45 @@ namespace Assets.Scripts.ETL
 
             var transaction = connection.BeginTransaction();
 
-            foreach (var loader in _factLoaders)
-                loader.StartStaging(connection, transaction, fieldNames, caches);
-
-            foreach (var line in _extractor.ExtractValues())
+            try
             {
-                ct.ThrowIfCancellationRequested();
-
                 foreach (var loader in _factLoaders)
-                    loader.StageLine(line);
-
-                _loaded++;
-                _inBatch++;
-
-                if (_inBatch >= _batchSize)
                 {
-                    transaction.Commit();
-                    MainThreadLog.Log($"Staged facts batch, total={_loaded}");
-                    transaction.Dispose();
-                    transaction = connection.BeginTransaction();
-
-                    _inBatch = 0;
+                    loader.StartStaging(connection, transaction, fieldNames, caches);
+                    loader.StartBatch(transaction);
                 }
-            }
 
-            transaction.Commit();
-            transaction.Dispose();
+                foreach (var line in _extractor.ExtractValues())
+                {
+                    ct.ThrowIfCancellationRequested();
+
+                    foreach (var loader in _factLoaders)
+                        loader.StageLine(line);
+
+                    _loaded++;
+                    _inBatch++;
+
+                    if (_inBatch >= _batchSize)
+                    {
+                        transaction.Commit();
+                        MainThreadLog.Log($"Staged facts batch, total={_loaded}");
+                        transaction.Dispose();
+                        transaction = connection.BeginTransaction();
+
+                        foreach (var loader in _factLoaders)
+                            loader.StartBatch(transaction);
+
+                        _inBatch = 0;
+                    }
+                }
+
+                transaction.Commit();
+                MainThreadLog.Log($"Staged facts batch, total={_loaded}");
+            }
+            finally
+            {
+                transaction?.Dispose();
+            }
         }
 
         private void MergeFacts(Mono.Data.Sqlite.SqliteConnection connection)

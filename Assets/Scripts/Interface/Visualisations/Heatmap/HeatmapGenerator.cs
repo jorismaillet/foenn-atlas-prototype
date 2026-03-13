@@ -41,11 +41,11 @@ namespace Assets.Scripts.Components.Visualisations.Heatmap
 
             var pixelMeasures = (scale == 1f) ? fullPixelMeasures : DownscalePixelMeasures(fullPixelMeasures, scale);
 
-            // Keep world-space look consistent: pixel distances must scale with the render resolution.
-            float invScale = (scale <= 0f) ? 1f : 1f / scale;
+            // Keep world-space look consistent: when rendering at lower resolution, pixel distances shrink.
+            // So radius/cell settings must be scaled down with the same factor.
             var scaledSettings = (scale == 1f)
                 ? settings
-                : new HeatmapSettings(settings.idwPower, settings.maxNeighbors, settings.maxRadiusPx * invScale, Mathf.Max(1, Mathf.RoundToInt(settings.cellSizePx * invScale)));
+                : new HeatmapSettings(settings.idwPower, settings.maxNeighbors, Mathf.Max(1f, settings.maxRadiusPx * scale), Mathf.Max(1, Mathf.RoundToInt(settings.cellSizePx * scale)));
 
             int cellSize = Mathf.Max(2, scaledSettings.cellSizePx);
             int gridCols = Mathf.CeilToInt(render.width / (float)cellSize);

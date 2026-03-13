@@ -27,7 +27,15 @@ namespace Assets.Scripts.ETL.Loaders
                 int csvIdx = FindCsvIndex(lookupCsvColumn, csvFieldNames);
                 _valueResolvers.Add(line =>
                 {
-                    return cache.Get(line[csvIdx]);
+                    try
+                    {
+                        return cache.Get(line[csvIdx]);
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        Debug.LogError($"Value '{line[csvIdx]}' not found in dimension '{refField.referencedDimension.name}' for column '{lookupCsvColumn}'");
+                        throw;
+                    }
                 });
                 _stageParams[colIndex] = new SqliteParameter($"@{refField.name}", refField.dbType);
                 _stageCommand.Parameters.Add(_stageParams[colIndex]);

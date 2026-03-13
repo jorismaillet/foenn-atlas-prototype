@@ -3,7 +3,7 @@ using Assets.Scripts.Models.Activities;
 using Assets.Scripts.Models.Condition;
 using Assets.Scripts.Models.Condition.Definitions;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
-using Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory.coreFacts;
 using Assets.Scripts.OLAP.Engine;
 using NUnit.Framework;
 
@@ -49,18 +49,18 @@ namespace Assets.Editor.Tests.Models
         [Test]
         public void TestInsideMetricRangeCondition()
         {
-            var c = new FloatRangeCondition(WeatherFact.temperature, 20, 25);
+            var c = new FloatRangeCondition(WeatherCoreFact.temperature, 20, 25);
             var row = new Row();
-            row.values[WeatherFact.temperature] = 20;
+            row.values[WeatherCoreFact.temperature] = 20;
             Assert.IsTrue(c.IsMatch(row));
         }
 
         [Test]
         public void TestOutsideMetricRangeCondition()
         {
-            var c = new FloatRangeCondition(WeatherFact.temperature, 20, 25);
+            var c = new FloatRangeCondition(WeatherCoreFact.temperature, 20, 25);
             var row = new Row();
-            row.values[WeatherFact.temperature] = 30;
+            row.values[WeatherCoreFact.temperature] = 30;
             Assert.IsFalse(c.IsMatch(row));
         }
 

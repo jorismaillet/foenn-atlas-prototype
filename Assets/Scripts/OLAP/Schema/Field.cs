@@ -38,6 +38,10 @@ namespace Assets.Scripts.OLAP.Schema
         public static Field IntAttribute(string name) => new Field(name, DbType.Int32, AnalyticsType.ATTRIBUTE);
         public static Field FloatAttribute(string name) => new Field(name, DbType.Single, AnalyticsType.ATTRIBUTE);
 
+        //Geo attributes
+        public static Field GeoLatAttribute(string name) => new Field(name, DbType.Single, AnalyticsType.ATTRIBUTE) { analyticsType = AnalyticsType.GEO_LAT };
+        public static Field GeoLonAttribute(string name) => new Field(name, DbType.Single, AnalyticsType.ATTRIBUTE) { analyticsType = AnalyticsType.GEO_LON };
+
         //Metrics
         public static Field IntMetric(string name) => new Field(name, DbType.Int32, AnalyticsType.METRIC);
         public static Field FloatMetric(string name) => new Field(name, DbType.Single, AnalyticsType.METRIC);

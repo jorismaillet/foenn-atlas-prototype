@@ -2,16 +2,16 @@ using System.Collections.Generic;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Schema;
 
-namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
+namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.coreFacts
 {
-    public class WeatherExtraFact : IFact
+    public class WeatherWindFact : IFact
     {
-        public string name => "weather_history_extra_facts";
+        public string name => "weather_advanced_wind_facts";
 
         public Field PrimaryKey => Field.PK();
 
-        public static Field temperature10 = Field.FloatMetric("temperature_10");
-        public static Field temperature20 = Field.FloatMetric("temperature_20");
+        public static Field gust = Field.FloatMetric("wind_gust");
+        public static Field gust3S = Field.FloatMetric("wind_gust_3s");
 
         public Field timeRef, locationRef;
 
@@ -25,13 +25,13 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
 
         public List<FieldMap> Mappings => new List<FieldMap>()
         {
-            FieldMap.Map(new SourceAttribute("T10", SourceAttributeType.Float), temperature10),
-            FieldMap.Map(new SourceAttribute("T20", SourceAttributeType.Float), temperature20)
+            FieldMap.Map(new SourceAttribute("FXI", SourceAttributeType.Float), gust),
+            FieldMap.Map(new SourceAttribute("FXI3S", SourceAttributeType.Float), gust3S),
         };
 
         private List<IDimension> _dimensions;
 
-        public WeatherExtraFact(TimeDimension time, LocationDimension location)
+        public WeatherWindFact(TimeDimension time, LocationDimension location)
         {
             _dimensions = new List<IDimension>() { time, location };
             timeRef = Field.Ref(this, time, "time_id");

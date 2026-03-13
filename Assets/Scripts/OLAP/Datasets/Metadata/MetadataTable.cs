@@ -16,14 +16,15 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
         public Field PrimaryKey => Field.PK();
 
         private Field fileName = Field.TextAttribute("File");
+        public List<Field> References => new List<Field>();
 
         public List<IndexDefinition> Indexes => new List<IndexDefinition>() {
             new IndexDefinition(true, fileName),
         };
 
+        public List<Field> Columns => new List<Field>() { PrimaryKey, fileName };
+        
         public List<FieldMap> Mappings => new List<FieldMap>();
-
-        public List<Field> References => new List<Field>();
 
         public MetadataTable(string table)
         {
@@ -33,11 +34,6 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
         public static string MakeTableName(string table)
         {
             return $"{table}_metadata";
-        }
-
-        public void InitTable(SqliteConnection connection)
-        {
-            SqliteHelper.CreateTable(connection, this);
         }
 
         public List<string> FilesToLoad(SqliteConnection connection)
@@ -70,7 +66,7 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
                 connection,
                 name,
                 new List<Field>() { fileName },
-                new List<string>() { "", file }
+                new List<string>() { file }
             );
         }
     }

@@ -19,10 +19,10 @@ namespace Assets.Scripts.OLAP.Schema
         {
             return type switch
             {
-                SourceAttributeType.String => s => string.IsNullOrEmpty(s) ? DBNull.Value : (object)s,
-                SourceAttributeType.Float => s => string.IsNullOrEmpty(s) ? DBNull.Value : (object)double.Parse(s, CultureInfo.InvariantCulture),
-                SourceAttributeType.Int => s => string.IsNullOrEmpty(s) ? DBNull.Value : (object)int.Parse(s, CultureInfo.InvariantCulture),
-                _ => s => string.IsNullOrEmpty(s) ? DBNull.Value : (object)s
+                SourceAttributeType.String => s => string.IsNullOrEmpty(s) ? DBNull.Value : s,
+                SourceAttributeType.Float => s => string.IsNullOrEmpty(s) ? DBNull.Value : double.Parse(s, CultureInfo.InvariantCulture),
+                SourceAttributeType.Int => s => string.IsNullOrEmpty(s) ? DBNull.Value : int.Parse(s, CultureInfo.InvariantCulture),
+                _ => throw new NotImplementedException()
             };
         }
     }

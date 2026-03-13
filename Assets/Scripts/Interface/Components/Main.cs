@@ -5,7 +5,7 @@ using Assets.Scripts.Components;
 using Assets.Scripts.Database;
 using Assets.Scripts.OLAP.Datasets.Metadata;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
-using Mono.Data.Sqlite;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory.coreFacts;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -20,22 +20,29 @@ namespace Assets.Scripts
         {
             Env.SetDatabasePath(SqliteHelper.DATABASE_PATH);
             DatabaseHelper.CreateDb();
+
+            List<string> filesToLoad;
+            var metadataTable = new MetadataTable(WeatherHistoryDataset.coreFact.name);
+
             using (var sqliteConnection = SqliteHelper.CreateConnection())
             {
                 WeatherHistoryDataset.InitTables(sqliteConnection);
-                var metadataTable = new MetadataTable(WeatherHistoryDataset.fact.name);
-                metadataTable.InitTable(sqliteConnection);
-                StartCoroutine(Init(sqliteConnection, metadataTable.FilesToLoad(sqliteConnection), metadataTable));
+                SqliteHelper.CreateTable(sqliteConnection, metadataTable);
+                filesToLoad = metadataTable.FilesToLoad(sqliteConnection);
             }
+
+            StartCoroutine(Init(filesToLoad, metadataTable));
         }
 
-        IEnumerator Init(SqliteConnection connection, List<string> filesToLoad, MetadataTable metadata)
+        IEnumerator Init(List<string> filesToLoad, MetadataTable metadata)
         {
             if (filesToLoad.Any())
             {
                 Application.runInBackground = true;
-                yield return StartCoroutine(etlHandler.PrepareData(connection, filesToLoad, metadata));
+                Application.targetFrameRate = 1;
+                yield return StartCoroutine(etlHandler.PrepareData(filesToLoad, metadata));
                 Application.runInBackground = false;
+                Application.targetFrameRate = 60;
             }
             map.Initialize();
         }

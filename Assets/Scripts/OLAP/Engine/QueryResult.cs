@@ -52,8 +52,8 @@ namespace Assets.Scripts.OLAP.Engine
             getGeo = (object[] rawLine) =>
             {
                 return new GeoPoint(
-                    float.Parse((string)rawLine[geoIndexes["lat"]], CultureInfo.InvariantCulture),
-                    float.Parse((string)rawLine[geoIndexes["lon"]], CultureInfo.InvariantCulture)
+                    (float)rawLine[geoIndexes["lat"]],
+                    (float)rawLine[geoIndexes["lon"]]
                 );
             };
         }

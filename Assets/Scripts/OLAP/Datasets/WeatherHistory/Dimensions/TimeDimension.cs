@@ -23,6 +23,7 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
 
         public List<IndexDefinition> Indexes => new List<IndexDefinition>()
         {
+            new IndexDefinition(true, LookupField),
         };
 
 

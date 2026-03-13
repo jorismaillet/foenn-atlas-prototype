@@ -5,7 +5,7 @@ using Assets.Scripts.Database;
 using Assets.Scripts.OLAP.Datasets.Metadata;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
-using Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory.coreFacts;
 using Assets.Scripts.OLAP.Engine;
 using Assets.Scripts.OLAP.Schema;
 using NUnit.Framework;
@@ -30,19 +30,19 @@ namespace Assets.Editor.Tests.OLAP
                 SqliteHelper.Insert(connection, WeatherHistoryDataset.location.name,
                     new List<Field> { LocationDimension.Department, LocationDimension.PostName },
                     new List<string> { "29", "Station météo Brest" });
-                SqliteHelper.Insert(connection, WeatherHistoryDataset.fact.name,
-                    new List<Field> { WeatherFact.temperature, WeatherHistoryDataset.fact.locationRef, WeatherHistoryDataset.fact.timeRef },
+                SqliteHelper.Insert(connection, WeatherHistoryDataset.coreFact.name,
+                    new List<Field> { WeatherCoreFact.temperature, WeatherHistoryDataset.coreFact.locationRef, WeatherHistoryDataset.coreFact.timeRef },
                     new List<string> { "20", "1", "1" });
-                SqliteHelper.Insert(connection, WeatherHistoryDataset.fact.name,
-                    new List<Field> { WeatherFact.temperature, WeatherHistoryDataset.fact.locationRef, WeatherHistoryDataset.fact.timeRef },
+                SqliteHelper.Insert(connection, WeatherHistoryDataset.coreFact.name,
+                    new List<Field> { WeatherCoreFact.temperature, WeatherHistoryDataset.coreFact.locationRef, WeatherHistoryDataset.coreFact.timeRef },
                     new List<string> { "21", "2", "1" });
 
-                var queryRequest = new QueryRequest(WeatherHistoryDataset.fact)
-                    .SelectAvg(WeatherFact.temperature)
+                var queryRequest = new QueryRequest(WeatherHistoryDataset.coreFact)
+                    .SelectAvg(WeatherCoreFact.temperature)
                     .Select(LocationDimension.PostName, TimeDimension.hour)
                     .WhereEq(LocationDimension.Department, "29")
-                    .Join(WeatherHistoryDataset.fact.locationRef)
-                    .Join(WeatherHistoryDataset.fact.timeRef)
+                    .Join(WeatherHistoryDataset.coreFact.locationRef)
+                    .Join(WeatherHistoryDataset.coreFact.timeRef)
                     .GroupBy(LocationDimension.PostName);
 
                 var queryResult = queryRequest.Execute(connection);
@@ -51,12 +51,12 @@ namespace Assets.Editor.Tests.OLAP
 
                 Assert.AreEqual(queryResult.rows[0].values.Count, 3);
                 Assert.AreEqual(queryResult.rows[0].values[LocationDimension.PostName], "Station météo Brest");
-                Assert.AreEqual(queryResult.rows[0].values[WeatherFact.temperature], 21F);
+                Assert.AreEqual(queryResult.rows[0].values[WeatherCoreFact.temperature], 21F);
                 Assert.AreEqual(queryResult.rows[0].values[TimeDimension.hour], 18);
 
                 Assert.AreEqual(queryResult.rows[1].values.Count, 3);
                 Assert.AreEqual(queryResult.rows[1].StringValue(LocationDimension.PostName), "Station météo Plomelin");
-                Assert.AreEqual(queryResult.rows[1].FloatValue(WeatherFact.temperature), 20F);
+                Assert.AreEqual(queryResult.rows[1].FloatValue(WeatherCoreFact.temperature), 20F);
                 Assert.AreEqual(queryResult.rows[1].IntValue(TimeDimension.hour), 18);
             }
         }

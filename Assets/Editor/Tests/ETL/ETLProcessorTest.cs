@@ -22,7 +22,7 @@ namespace Assets.Editor.Tests.ETL
                 var processor = new ETLProcessor(fileName, WeatherHistoryDataset.Dimensions, WeatherHistoryDataset.Facts);
                 processor.ProcessETL(connection);
 
-                var res = new QueryRequest(WeatherHistoryDataset.fact).Execute(connection);
+                var res = new QueryRequest(WeatherHistoryDataset.coreFact).Execute(connection);
                 Assert.AreEqual(res.rows.Count, 4);
             }
         }

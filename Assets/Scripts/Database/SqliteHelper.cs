@@ -7,7 +7,6 @@ using Assets.Scripts.OLAP.Schema;
 using Mono.Data.Sqlite;
 using SqlKata;
 using SqlKata.Compilers;
-using UnityEngine.UIElements;
 
 namespace Assets.Scripts.Database
 {
@@ -25,7 +24,7 @@ namespace Assets.Scripts.Database
             var path = DatabaseHelper.ResolveDatabasePath(Env.DatabasePath());
             string connString = Env.DatabasePath() == ":memory" ?
                 "Data Source=:memory:;Version=3;New=True;Cache=Shared;" :
-                $"Data Source={path};Version=3;Pooling=True;Default Timeout=15;";
+                $"Data Source={path};Version=3;Pooling=False;Default Timeout=15;";
             var conn = new SqliteConnection(connString);
             conn.Open();
             using (var command = conn.CreateCommand())
@@ -148,14 +147,12 @@ namespace Assets.Scripts.Database
                 columns.Add($"{column.name} {FieldToSql(column, skipPK: true)}");
             });
             var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{table.name}_staging\" ({string.Join(", ", columns)});";
-            UnityEngine.Debug.Log(createTableSql);
             Execute(connection, createTableSql);
         }
 
         public static void DropStagingTable(SqliteConnection connection, ITable table)
         {
             var sql = $"DROP TABLE IF EXISTS {table.name}_staging;";
-            UnityEngine.Debug.Log(sql);
             Execute(connection, sql);
         }
 

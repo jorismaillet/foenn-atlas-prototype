@@ -11,6 +11,7 @@ namespace Assets.Scripts.ETL.Loaders
         public readonly IDimension _dimension;
 
         private readonly Dictionary<string, int> _cache = new Dictionary<string, int>();
+        private readonly HashSet<string> _stagedLookupValues = new HashSet<string>();
 
         public DimensionCache(IDimension dimension)
         {
@@ -29,6 +30,15 @@ namespace Assets.Scripts.ETL.Loaders
                     _cache[lookupValue] = id;
                 }
             }
+        }
+
+        public bool ShouldStage(string lookupValue)
+        {
+            lookupValue = lookupValue ?? string.Empty;
+            if (_cache.ContainsKey(lookupValue))
+                return false;
+
+            return _stagedLookupValues.Add(lookupValue);
         }
 
         public int Get(string lookupValue)

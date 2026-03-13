@@ -9,13 +9,14 @@ namespace Assets.Editor.Tests.ETL
         [Test]
         public void TestCSVExtraction()
         {
-            var fileName = "Tests/Weathers/H_29_latest-2023-2024.csv";
+            var fileName = "Tests/Weathers/H_06_truncated_test.csv";
             var extractor = new CSVExtractor(fileName);
             var headers = extractor.ExtractFieldNames();
             Assert.AreEqual(204, headers.Length);
             var lines = extractor.ExtractValues().ToList();
-            Assert.AreEqual(4, lines.Count);
+            Assert.AreEqual(26936, lines.Count);
             Assert.AreEqual(204, lines[0].Length);
+            Assert.AreEqual("06004002", lines[0][0]);
         }
     }
 }

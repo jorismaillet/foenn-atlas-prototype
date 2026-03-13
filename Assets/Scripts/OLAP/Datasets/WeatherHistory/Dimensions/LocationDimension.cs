@@ -9,17 +9,17 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
 
         public Field PrimaryKey => Field.PK();
         public Field LookupField => PostNumber;
-        public SourceAttribute LookupSourceAttribute => new SourceAttribute("NUM_POSTE", SourceAttributeType.Int);
+        public SourceAttribute LookupSourceAttribute => new SourceAttribute("NUM_POSTE", SourceAttributeType.String);
 
-        public static Field PostNumber = Field.IntAttribute("post_number");
-        public static Field Latitude = Field.FloatAttribute("lat");
-        public static Field Longitude = Field.FloatAttribute("lon");
+        public static Field PostNumber = Field.TextAttribute("post_number");
+        public static Field Latitude = Field.GeoLatAttribute("lat");
+        public static Field Longitude = Field.GeoLonAttribute("lon");
         public static Field Altitude = Field.IntAttribute("altitude");
         public static Field PostName = Field.TextAttribute("post_name");
-        public static Field Department = Field.IntAttribute("department");
+        public static Field Department = Field.TextAttribute("department");
 
         public List<IndexDefinition> Indexes => new List<IndexDefinition>() {
-            new IndexDefinition(true, PostNumber),
+            new IndexDefinition(true, LookupField),
             new IndexDefinition(false, Department)
         };
 
@@ -29,7 +29,7 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
             FieldMap.Map(new SourceAttribute("LAT", SourceAttributeType.Float), Latitude),
             FieldMap.Map(new SourceAttribute("LON", SourceAttributeType.Float), Longitude),
             FieldMap.Map(new SourceAttribute("NOM_USUEL", SourceAttributeType.String), PostName),
-            FieldMap.Compute(new SourceAttribute("NUM_POSTE", SourceAttributeType.Int), Department, s => s.Substring(0, 2)),
+            FieldMap.Compute(new SourceAttribute("NUM_POSTE", SourceAttributeType.String), Department, s => s.Substring(0, 2)),
             FieldMap.Map(new SourceAttribute("ALTI", SourceAttributeType.Int), Altitude)
         };
     }

@@ -28,11 +28,13 @@ namespace Assets.Scripts.ETL.Loaders
             SqliteHelper.CreateStagingTable(connection, Table);
 
             var mappings = Table.Mappings;
+            var insertFields = mappings.Select(c => c.targetField).Concat(Table.References).ToList();
+
+            _stageCommand?.Dispose();
 
             _stageCommand = connection.CreateCommand();
-            _stageCommand.Transaction = transaction;
-            var colNames = string.Join(", ", mappings.Select(c => c.targetField.name));
-            var paramNames = string.Join(", ", mappings.Select(c => $"@{c.targetField.name}"));
+            var colNames = string.Join(", ", insertFields.Select(c => c.name));
+            var paramNames = string.Join(", ", insertFields.Select(c => $"@{c.name}"));
             _stageCommand.CommandText = $"INSERT INTO \"{Table.name}_staging\" ({colNames}) VALUES ({paramNames})";
 
             _stageParams = new SqliteParameter[mappings.Count + Table.References.Count];
@@ -49,7 +51,7 @@ namespace Assets.Scripts.ETL.Loaders
                 {
                     _valueResolvers.Add(line =>
                     {
-                        var raw = csvIdx >= 0 ? line[csvIdx] : string.Empty;
+                        var raw = line[csvIdx];
                         if (string.IsNullOrEmpty(raw)) return DBNull.Value;
                         var transformed = mapping.transform(raw);
                         return converter(transformed);
@@ -59,17 +61,31 @@ namespace Assets.Scripts.ETL.Loaders
                 {
                     _valueResolvers.Add(line =>
                     {
-                        var raw = csvIdx >= 0 ? line[csvIdx] : string.Empty;
-                        return converter(raw);
+                        return converter(line[csvIdx]);
                     });
                 }
             }
         }
 
+        public virtual void StartBatch(SqliteTransaction transaction)
+        {
+            _stageCommand.Transaction = transaction;
+        }
+
         public virtual void StageLine(string[] csvLine)
         {
+            bool allNullValues = true;
             for (int i = 0; i < _stageParams.Length; i++)
-                _stageParams[i].Value = _valueResolvers[i](csvLine);
+            {
+                var value = _valueResolvers[i](csvLine);
+                _stageParams[i].Value = value;
+
+                if (value != null && value != DBNull.Value)
+                    allNullValues = false;
+            }
+
+            if (allNullValues)
+                return;
 
             _stageCommand.ExecuteNonQuery();
         }
