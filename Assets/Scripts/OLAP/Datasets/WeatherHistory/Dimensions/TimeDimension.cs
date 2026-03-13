@@ -7,23 +7,27 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
 {
     public class TimeDimension : IDimension
     {
-        public string name => "time_dimension";
+        public static string Name => "time_dimension";
+        public string name => Name;
 
-        public Field PrimaryKey => Field.PK();
+        public Field PrimaryKey => Field.PK(Name);
         public Field LookupField => yyyyMMddHH;
         public SourceAttribute LookupSourceAttribute => new SourceAttribute("AAAAMMJJHH", SourceAttributeType.String);
 
-        public static Field yyyyMMddHH = Field.TextAttribute("yyyyMMddHH");
-        public static Field timestamp = Field.IntAttribute("timestamp");
-        public static Field year = Field.IntAttribute("year");
-        public static Field month = Field.IntAttribute("month");
-        public static Field day = Field.IntAttribute("day");
-        public static Field hour = Field.IntAttribute("hour");
-        public static Field duration = Field.IntAttribute("duration");
+        public static Field yyyyMMddHH = Field.TextAttribute(Name, "yyyyMMddHH");
+        public static Field timestamp = Field.IntAttribute(Name, "timestamp");
+        public static Field year = Field.IntAttribute(Name, "year");
+        public static Field month = Field.IntAttribute(Name, "month");
+        public static Field day = Field.IntAttribute(Name, "day");
+        public static Field hour = Field.IntAttribute(Name, "hour");
+        public static Field duration = Field.IntAttribute(Name, "duration");
 
         public List<IndexDefinition> Indexes => new List<IndexDefinition>()
         {
             new IndexDefinition(true, LookupField),
+            new IndexDefinition(false, year, month, day),
+            new IndexDefinition(false, year, month),
+            new IndexDefinition(false, year),
         };
 
 

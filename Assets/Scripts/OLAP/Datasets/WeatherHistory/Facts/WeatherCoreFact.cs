@@ -6,16 +6,17 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.coreFacts
 {
     public class WeatherCoreFact : IFact
     {
-        public string name => "weather_history_facts";
+        public string name => Name;
+        public static string Name => "weather_history_facts";
 
-        public Field PrimaryKey => Field.PK();
+        public Field PrimaryKey => Field.PK(Name);
 
-        public static Field temperature = Field.FloatMetric("temperature");
-        public static Field dewPoint = Field.FloatMetric("dew_point");
-        public static Field humidity = Field.FloatMetric("humidity");
-        public static Field rain = Field.FloatMetric("rain");
-        public static Field windSpeed = Field.FloatMetric("wind_speed");
-        public static Field windDirection = Field.FloatMetric("wind_direction");
+        public static Field temperature = Field.FloatMetric(Name, "temperature");
+        public static Field dewPoint = Field.FloatMetric(Name, "dew_point");
+        public static Field humidity = Field.FloatMetric(Name, "humidity");
+        public static Field rain = Field.FloatMetric(Name, "rain");
+        public static Field windSpeed = Field.FloatMetric(Name, "wind_speed");
+        public static Field windDirection = Field.FloatMetric(Name, "wind_direction");
 
         public Field timeRef, locationRef;
 

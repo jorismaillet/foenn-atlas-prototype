@@ -6,12 +6,13 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.coreFacts
 {
     public class WeatherWindFact : IFact
     {
-        public string name => "weather_advanced_wind_facts";
+        public string name => Name;
+        public static string Name => "weather_advanced_wind_facts";
 
-        public Field PrimaryKey => Field.PK();
+        public Field PrimaryKey => Field.PK(name);
 
-        public static Field gust = Field.FloatMetric("wind_gust");
-        public static Field gust3S = Field.FloatMetric("wind_gust_3s");
+        public static Field gust = Field.FloatMetric(Name, "wind_gust");
+        public static Field gust3S = Field.FloatMetric(Name, "wind_gust_3s");
 
         public Field timeRef, locationRef;
 

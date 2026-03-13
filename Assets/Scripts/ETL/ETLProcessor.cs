@@ -65,7 +65,6 @@ namespace Assets.Scripts.ETL
             {
                 foreach (var loader in _dimensionLoaders)
                 {
-                    loader.Cache.LoadFromDatabase(connection);
                     loader.StartStaging(connection, transaction, fieldNames);
                     loader.StartBatch(transaction);
                 }
@@ -129,7 +128,11 @@ namespace Assets.Scripts.ETL
 
             try
             {
-                foreach (var loader in _factLoaders)
+                foreach (var loader in _dimensionLoaders)
+                {
+                    loader.Cache.LoadFromDatabase(connection);
+                }
+                    foreach (var loader in _factLoaders)
                 {
                     loader.StartStaging(connection, transaction, fieldNames, caches);
                     loader.StartBatch(transaction);

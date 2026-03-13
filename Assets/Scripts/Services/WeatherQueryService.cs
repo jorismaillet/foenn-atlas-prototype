@@ -14,17 +14,16 @@ namespace Assets.Scripts.Services
     {
         public static List<GeoMeasure> DayObservationsForPost(int dayOfMonth, int month, int year, string dpt, string key)
         {
-            var factTable = WeatherHistoryDataset.coreFact;
+            var coreFact = WeatherHistoryDataset.coreFact;
             var fieldToMeasure = FieldFor(key);
-            var query = new QueryRequest(factTable)
+            var query = new QueryRequest(coreFact)
                 .Select(
                     LocationDimension.Longitude,
                     LocationDimension.Latitude,
                     LocationDimension.PostName)
                 .SelectAvg(fieldToMeasure)
-                .Join(factTable.locationRef)
-                .Join(factTable.timeRef)
-                .GroupBy(LocationDimension.PostName)
+                .Join(coreFact.locationRef)
+                .Join(coreFact.timeRef)
                 .WhereEq(LocationDimension.Department, dpt)
                 .WhereEq(TimeDimension.day, dayOfMonth)
                 .WhereEq(TimeDimension.month, month)

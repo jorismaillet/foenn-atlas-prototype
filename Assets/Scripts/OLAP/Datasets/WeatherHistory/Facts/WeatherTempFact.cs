@@ -6,14 +6,15 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.coreFacts
 {
     public class WeatherTempFact : IFact
     {
-        public string name => "weather_vertical_temp_facts";
+        public string name => Name;
+        public static string Name => "weather_vertical_temp_facts";
 
-        public Field PrimaryKey => Field.PK();
+        public Field PrimaryKey => Field.PK(Name);
 
-        public static Field temperature10 = Field.FloatMetric("temperature_10");
-        public static Field temperature20 = Field.FloatMetric("temperature_20");
-        public static Field temperature50 = Field.FloatMetric("temperature_50");
-        public static Field temperature100 = Field.FloatMetric("temperature_100");
+        public static Field temperature10 = Field.FloatMetric(Name, "temperature_10");
+        public static Field temperature20 = Field.FloatMetric(Name, "temperature_20");
+        public static Field temperature50 = Field.FloatMetric(Name, "temperature_50");
+        public static Field temperature100 = Field.FloatMetric(Name, "temperature_100");
 
         public Field timeRef, locationRef;
 

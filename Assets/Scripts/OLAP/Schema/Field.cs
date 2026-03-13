@@ -10,7 +10,7 @@ namespace Assets.Scripts.OLAP.Schema
 
         public AnalyticsType analyticsType;
 
-        public ITable table;
+        public string prefix;
 
         public bool isPrimaryKey;
 
@@ -23,39 +23,39 @@ namespace Assets.Scripts.OLAP.Schema
 
         public bool IsReference => referencedDimension != null;
 
-        private Field(string name, DbType type, AnalyticsType analyticsType)
+        private Field(string prefix, string name, DbType type, AnalyticsType analyticsType)
         {
+            this.prefix = prefix;
             this.name = name;
             this.dbType = type;
             this.analyticsType = analyticsType;
         }
 
         // Primary key
-        public static Field PK(string name = "ID") => new Field(name, DbType.Int32, AnalyticsType.ATTRIBUTE) { isPrimaryKey = true, autoIncrement = true };
+        public static Field PK(string prefix, string name = "ID") => new Field(prefix, name, DbType.Int32, AnalyticsType.ATTRIBUTE) { isPrimaryKey = true, autoIncrement = true };
 
         //Attributes
-        public static Field TextAttribute(string name) => new Field(name, DbType.String, AnalyticsType.ATTRIBUTE);
-        public static Field IntAttribute(string name) => new Field(name, DbType.Int32, AnalyticsType.ATTRIBUTE);
-        public static Field FloatAttribute(string name) => new Field(name, DbType.Single, AnalyticsType.ATTRIBUTE);
+        public static Field TextAttribute(string prefix, string name) => new Field(prefix, name, DbType.String, AnalyticsType.ATTRIBUTE);
+        public static Field IntAttribute(string prefix, string name) => new Field(prefix, name, DbType.Int32, AnalyticsType.ATTRIBUTE);
+        public static Field FloatAttribute(string prefix, string name) => new Field(prefix, name, DbType.Single, AnalyticsType.ATTRIBUTE);
 
         //Geo attributes
-        public static Field GeoLatAttribute(string name) => new Field(name, DbType.Single, AnalyticsType.ATTRIBUTE) { analyticsType = AnalyticsType.GEO_LAT };
-        public static Field GeoLonAttribute(string name) => new Field(name, DbType.Single, AnalyticsType.ATTRIBUTE) { analyticsType = AnalyticsType.GEO_LON };
+        public static Field GeoLatAttribute(string prefix, string name) => new Field(prefix, name, DbType.Single, AnalyticsType.ATTRIBUTE) { analyticsType = AnalyticsType.GEO_LAT };
+        public static Field GeoLonAttribute(string prefix, string name) => new Field(prefix, name, DbType.Single, AnalyticsType.ATTRIBUTE) { analyticsType = AnalyticsType.GEO_LON };
 
         //Metrics
-        public static Field IntMetric(string name) => new Field(name, DbType.Int32, AnalyticsType.METRIC);
-        public static Field FloatMetric(string name) => new Field(name, DbType.Single, AnalyticsType.METRIC);
+        public static Field IntMetric(string prefix, string name) => new Field(prefix, name, DbType.Int32, AnalyticsType.METRIC);
+        public static Field FloatMetric(string prefix, string name) => new Field(prefix, name, DbType.Single, AnalyticsType.METRIC);
 
         // Foreign key
-        public static Field Ref(ITable current, IDimension foreign, string foreignKey) => new Field(foreignKey, foreign.PrimaryKey.dbType, AnalyticsType.ATTRIBUTE)
+        public static Field Ref(ITable current, IDimension foreign, string foreignKey) => new Field(current.name, foreignKey, foreign.PrimaryKey.dbType, AnalyticsType.ATTRIBUTE)
         {
-            table = current,
             referencedDimension = foreign
         };
 
         public string Identifier()
         {
-            return $"{table.name}.{name}";
+            return $"{prefix}.{name}";
         }
     }
 }

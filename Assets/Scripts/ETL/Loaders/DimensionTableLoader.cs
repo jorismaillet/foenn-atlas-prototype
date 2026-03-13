@@ -37,11 +37,5 @@ namespace Assets.Scripts.ETL.Loaders
             StageLine(csvLine);
             return true;
         }
-
-        public override void Merge(SqliteConnection connection)
-        {
-            base.Merge(connection);
-            Cache.LoadFromDatabase(connection);
-        }
     }
 }

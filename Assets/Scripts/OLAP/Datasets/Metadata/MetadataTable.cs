@@ -13,9 +13,9 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
     {
         public string name { get; set; }
 
-        public Field PrimaryKey => Field.PK();
+        public Field PrimaryKey => Field.PK(name);
 
-        private Field fileName = Field.TextAttribute("File");
+        private Field fileName;
         public List<Field> References => new List<Field>();
 
         public List<IndexDefinition> Indexes => new List<IndexDefinition>() {
@@ -29,6 +29,7 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
         public MetadataTable(string table)
         {
             name = MakeTableName(table);
+            fileName = Field.TextAttribute(name, "File");
         }
 
         public static string MakeTableName(string table)

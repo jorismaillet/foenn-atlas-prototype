@@ -5,18 +5,19 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
 {
     public class LocationDimension : IDimension
     {
-        public string name => "location_dimension";
+        public static string Name => "location_dimension";
+        public string name => Name;
 
-        public Field PrimaryKey => Field.PK();
+        public Field PrimaryKey => Field.PK(Name);
         public Field LookupField => PostNumber;
         public SourceAttribute LookupSourceAttribute => new SourceAttribute("NUM_POSTE", SourceAttributeType.String);
 
-        public static Field PostNumber = Field.TextAttribute("post_number");
-        public static Field Latitude = Field.GeoLatAttribute("lat");
-        public static Field Longitude = Field.GeoLonAttribute("lon");
-        public static Field Altitude = Field.IntAttribute("altitude");
-        public static Field PostName = Field.TextAttribute("post_name");
-        public static Field Department = Field.TextAttribute("department");
+        public static Field PostNumber = Field.TextAttribute(Name, "post_number");
+        public static Field Latitude = Field.GeoLatAttribute(Name, "lat");
+        public static Field Longitude = Field.GeoLonAttribute(Name, "lon");
+        public static Field Altitude = Field.IntAttribute(Name, "altitude");
+        public static Field PostName = Field.TextAttribute(Name, "post_name");
+        public static Field Department = Field.TextAttribute(Name, "department");
 
         public List<IndexDefinition> Indexes => new List<IndexDefinition>() {
             new IndexDefinition(true, LookupField),
