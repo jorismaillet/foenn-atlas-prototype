@@ -1,38 +1,32 @@
 using System.Collections.Generic;
-using Assets.Scripts.Database;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.coreFacts;
-using Assets.Scripts.OLAP.Schema;
-using Mono.Data.Sqlite;
+using Assets.Scripts.OLAP.Schema.Tables;
 
 namespace Assets.Scripts.OLAP.Datasets.WeatherHistory
 {
-    public class WeatherHistoryDataset
+    public class WeatherHistoryDataset : Dataset
     {
-        public static TimeDimension time = new TimeDimension();
+        public static WeatherHistoryDataset Instance = new WeatherHistoryDataset();
 
-        public static LocationDimension location = new LocationDimension();
+        public TimeDimension time;
+        public LocationDimension location;
 
-        public static WeatherCoreFact coreFact = new WeatherCoreFact(time, location);
-        public static WeatherWindFact windFact = new WeatherWindFact(time, location);
-        public static WeatherTempFact tempFact = new WeatherTempFact(time, location);
+        public WeatherCoreFact coreFact;
+        public WeatherWindFact windFact;
+        public WeatherTempFact tempFact;
 
-        public static List<IDimension> Dimensions => new List<IDimension>() { time, location };
+        public override List<Dimension> Dimensions => new List<Dimension>() { time, location };
+        public override List<Fact> Facts => new List<Fact>() { coreFact, windFact, tempFact };
 
-        public static List<IFact> Facts => new List<IFact>() { coreFact, windFact, tempFact };
-
-        public static List<ITable> Tables => new List<ITable>() { coreFact, windFact, tempFact, time, location };
-
-        public WeatherHistoryDataset()
+        public WeatherHistoryDataset() : base("weather_history")
         {
-        }
+            time = new TimeDimension();
+            location = new LocationDimension();
 
-        public static void InitTables(SqliteConnection connection)
-        {
-            foreach (var table in Tables)
-            {
-                SqliteHelper.CreateTable(connection, table);
-            }
+            coreFact = new WeatherCoreFact(time, location);
+            windFact = new WeatherWindFact(time, location);
+            tempFact = new WeatherTempFact(time, location);
         }
     }
 }

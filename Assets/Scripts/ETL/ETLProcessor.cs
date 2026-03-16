@@ -4,7 +4,7 @@ using Assets.Scripts.Components.Logger;
 using Assets.Scripts.Database;
 using Assets.Scripts.ETL.Extractors;
 using Assets.Scripts.ETL.Loaders;
-using Assets.Scripts.OLAP.Schema;
+using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
 
 namespace Assets.Scripts.ETL
@@ -17,7 +17,7 @@ namespace Assets.Scripts.ETL
 
         private List<FactTableLoader> _factLoaders = new List<FactTableLoader>();
 
-        public ETLProcessor(string csvFileName, List<IDimension> dimensions, List<IFact> facts)
+        public ETLProcessor(string csvFileName, List<Dimension> dimensions, List<Fact> facts)
         {
             _extractor = new CSVExtractor(csvFileName);
 
@@ -57,7 +57,7 @@ namespace Assets.Scripts.ETL
             }
         }
 
-        private void StageDimensions(Mono.Data.Sqlite.SqliteConnection connection, string[] fieldNames, CancellationToken ct)
+        private void StageDimensions(SqliteConnection connection, string[] fieldNames, CancellationToken ct)
         {
             var transaction = connection.BeginTransaction();
 
@@ -103,7 +103,7 @@ namespace Assets.Scripts.ETL
             }
         }
 
-        private void MergeDimensions(Mono.Data.Sqlite.SqliteConnection connection)
+        private void MergeDimensions(SqliteConnection connection)
         {
             foreach (var loader in _dimensionLoaders)
                 loader.Merge(connection);
@@ -111,15 +111,15 @@ namespace Assets.Scripts.ETL
             MainThreadLog.Log("Merged dimensions");
         }
 
-        private Dictionary<IDimension, DimensionCache> BuildDimensionCaches()
+        private Dictionary<Dimension, DimensionCache> BuildDimensionCaches()
         {
-            var caches = new Dictionary<IDimension, DimensionCache>();
+            var caches = new Dictionary<Dimension, DimensionCache>();
             foreach (var loader in _dimensionLoaders)
                 caches[loader.Dimension] = loader.Cache;
             return caches;
         }
 
-        private void StageFacts(Mono.Data.Sqlite.SqliteConnection connection, string[] fieldNames, Dictionary<IDimension, DimensionCache> caches, CancellationToken ct)
+        private void StageFacts(SqliteConnection connection, string[] fieldNames, Dictionary<Dimension, DimensionCache> caches, CancellationToken ct)
         {
             _loaded = 0;
             _inBatch = 0;
@@ -171,7 +171,7 @@ namespace Assets.Scripts.ETL
             }
         }
 
-        private void MergeFacts(Mono.Data.Sqlite.SqliteConnection connection)
+        private void MergeFacts(SqliteConnection connection)
         {
             foreach (var loader in _factLoaders)
                 loader.Merge(connection);

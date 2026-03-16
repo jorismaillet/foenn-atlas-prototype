@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Assets.Scripts.Models.Geo;
-using Assets.Scripts.OLAP.Schema;
+using Assets.Scripts.OLAP.Schema.Fields;
 
 namespace Assets.Scripts.OLAP.Engine
 {

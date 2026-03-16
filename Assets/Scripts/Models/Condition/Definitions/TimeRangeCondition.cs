@@ -1,24 +1,25 @@
 ﻿using System;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Engine;
-using Assets.Scripts.OLAP.Schema;
 
 namespace Assets.Scripts.Models.Condition.Definitions
 {
     public class TimeRangeCondition : ICondition
     {
+        private TimeDimension dimension;
         public DateTime start, end;
 
-        public TimeRangeCondition(DateTime min, DateTime max)
+        public TimeRangeCondition(TimeDimension dimension, DateTime min, DateTime max)
         {
+            this.dimension = dimension;
             this.start = min;
             this.end = max;
         }
 
         public bool IsMatch(Row row)
         {
-            var time = TimeDimension.FromTimestamp(row.StringValue(TimeDimension.timestamp));
-            var duration = row.IntValue(TimeDimension.duration);
+            var time = TimeDimension.FromTimestamp(row.StringValue(dimension.timestamp));
+            var duration = row.IntValue(dimension.duration);
             var timeEnd = time.AddHours(duration);
 
             return time >= start && timeEnd <= end;

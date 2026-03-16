@@ -7,8 +7,6 @@ namespace Assets.Scripts.ETL.Extractors
     {
         public static char[] STRING_SPLIT = { ';' };
 
-        private const string DECIMAL_SPLIT = ".";
-
         private string fileName;
 
         public CSVExtractor(string fileName)

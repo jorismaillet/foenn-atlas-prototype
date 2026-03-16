@@ -4,18 +4,17 @@ using Assets.Scripts.Models.Condition.Definitions;
 using Assets.Scripts.Models.Geo;
 using Assets.Scripts.Models.Locations;
 using Assets.Scripts.Models.Plannings;
-using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
-using Assets.Scripts.OLAP.Datasets.WeatherHistory.coreFacts;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 
 namespace Assets.Scripts
 {
     public class Seeds
     {
-        public static FloatRangeCondition pasDePluie = new FloatRangeCondition(WeatherCoreFact.rain, 0, 0);
+        public static FloatRangeCondition pasDePluie = new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.rain, 0, 0);
 
-        public static FloatRangeCondition peuDeVent = new FloatRangeCondition(WeatherCoreFact.windSpeed, 0, 50);
+        public static FloatRangeCondition peuDeVent = new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.windSpeed, 0, 50);
 
-        public static FloatRangeCondition peuDeRafales = new FloatRangeCondition(WeatherWindFact.gust, 0, 30);
+        public static FloatRangeCondition peuDeRafales = new FloatRangeCondition(WeatherHistoryDataset.Instance.windFact.gust, 0, 30);
 
         public static NamedCondition beauTemps = new NamedCondition("Beau temps", new AllCondition(pasDePluie, peuDeRafales, peuDeVent));
 
@@ -28,33 +27,33 @@ namespace Assets.Scripts
 
         public static PolygonLocation plageIleTudy = new PolygonLocation("Plage Ile Tudy", new GeoPoint(47.8518F, -4.1495F), new GeoPoint(47.8465F, -4.1617F), new GeoPoint(47.8383F, -4.1661F), new GeoPoint(47.8412F, -4.1726F), new GeoPoint(47.8515F, -4.1682F));
 
-        public static Activity piscine = new Activity("Piscine", beauTemps, new FloatRangeCondition(WeatherCoreFact.temperature, 25, 33));
+        public static Activity piscine = new Activity("Piscine", beauTemps, new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.temperature, 25, 33));
 
         public static Activity kayak = new Activity("Kayak", beauTemps);
 
-        public static Activity plage = new Activity("Plage", beauTemps, new FloatRangeCondition(WeatherCoreFact.temperature, 25, 33), new IntRangeCondition(TimeDimension.hour, 14, 18));
+        public static Activity plage = new Activity("Plage", beauTemps, new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.temperature, 25, 33), new IntRangeCondition(WeatherHistoryDataset.Instance.time.hour, 14, 18));
 
-        public static Activity velo = new Activity("Vélo", new FloatRangeCondition(WeatherCoreFact.temperature, 17, 24),
-            new FloatRangeCondition(WeatherCoreFact.rain, 0, 0),
-            new FloatRangeCondition(WeatherCoreFact.windSpeed, 0, 2));
+        public static Activity velo = new Activity("Vélo", new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.temperature, 17, 24),
+            new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.rain, 0, 0),
+            new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.windSpeed, 0, 2));
 
-        public static Activity jardin = new Activity("Jardin", new FloatRangeCondition(WeatherCoreFact.temperature, 16, 30),
-            new FloatRangeCondition(WeatherCoreFact.rain, 0, 0),
-            new FloatRangeCondition(WeatherCoreFact.windSpeed, 0, 2));
+        public static Activity jardin = new Activity("Jardin", new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.temperature, 16, 30),
+            new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.rain, 0, 0),
+            new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.windSpeed, 0, 2));
 
-        public static Activity tennis = new Activity("Tennis", new FloatRangeCondition(WeatherCoreFact.temperature, 10, 27),
-            new FloatRangeCondition(WeatherCoreFact.rain, 0, 1),
-            new FloatRangeCondition(WeatherCoreFact.windSpeed, 0, 0));
+        public static Activity tennis = new Activity("Tennis", new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.temperature, 10, 27),
+            new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.rain, 0, 1),
+            new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.windSpeed, 0, 0));
 
-        public static Activity ville = new Activity("Ville", new FloatRangeCondition(WeatherCoreFact.temperature, 0, 30),
-            new FloatRangeCondition(WeatherCoreFact.rain, 0, 0),
-            new FloatRangeCondition(WeatherCoreFact.windSpeed, 0, 3));
+        public static Activity ville = new Activity("Ville", new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.temperature, 0, 30),
+            new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.rain, 0, 0),
+            new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.windSpeed, 0, 3));
 
-        public static Activity randonee = new Activity("Randonnée", new FloatRangeCondition(WeatherCoreFact.temperature, 10, 24),
-            new FloatRangeCondition(WeatherCoreFact.rain, 0, 0),
-            new FloatRangeCondition(WeatherCoreFact.windSpeed, 0, 1));
+        public static Activity randonee = new Activity("Randonnée", new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.temperature, 10, 24),
+            new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.rain, 0, 0),
+            new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.windSpeed, 0, 1));
 
-        public static Activity dinner = new Activity("Diner en extérieur", beauTemps, new IntRangeCondition(TimeDimension.hour, 18, 22));
+        public static Activity dinner = new Activity("Diner en extérieur", beauTemps, new IntRangeCondition(WeatherHistoryDataset.Instance.time.hour, 18, 22));
 
         public static Planning planningSportif = new Planning("Planning sportif",
             new PlannedActivity(randonee, procheMaison),

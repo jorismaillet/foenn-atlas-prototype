@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Assets.Scripts.Components.Logger;
 using Assets.Scripts.Database;
 using Assets.Scripts.ETL;
-using Assets.Scripts.OLAP.Datasets.Metadata;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using UnityEngine;
 
@@ -45,7 +44,7 @@ namespace Assets.Scripts.Components
             ct = null;
         }
 
-        public IEnumerator PrepareData(List<string> filesToLoad, MetadataTable metadata)
+        public IEnumerator PrepareData(Dataset dataset, List<string> filesToLoad)
         {
             var sw = new Stopwatch();
             sw.Start();
@@ -53,19 +52,18 @@ namespace Assets.Scripts.Components
             foreach (var fileName in filesToLoad)
             {
                 MainThreadLog.Log($"Check {fileName}");
-                string dpt = fileName.Split('_')[1];
-                yield return LoadFile(fileName, metadata);
+                yield return LoadFile(dataset, fileName);
             }
             sw.Stop();
-            MainThreadLog.Log($"Data prepared in {sw.ElapsedMilliseconds}ms");
+            MainThreadLog.Log($"Data prepared in {sw.Elapsed}s");
         }
 
-        public IEnumerator LoadFile(string fileName, MetadataTable metadata)
+        public IEnumerator LoadFile(Dataset dataset, string fileName)
         {
             var processor = new ETLProcessor(
                     fileName,
-                    WeatherHistoryDataset.Dimensions,
-                    WeatherHistoryDataset.Facts
+                    dataset.Dimensions,
+                    dataset.Facts
                 );
             ct = new CancellationTokenSource();
             task = Task.Run(() =>
@@ -85,7 +83,7 @@ namespace Assets.Scripts.Components
             {
                 using (var connection = SqliteHelper.CreateConnection())
                 {
-                    metadata.FlagProcessed(connection, fileName);
+                    dataset.MetadataTable.FlagProcessed(connection, fileName);
                 }
             }
             CleanupRunningWork();

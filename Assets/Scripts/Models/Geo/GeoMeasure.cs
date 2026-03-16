@@ -1,5 +1,5 @@
 ﻿using Assets.Scripts.Models.Locations;
-using Assets.Scripts.OLAP.Schema;
+using Assets.Scripts.OLAP.Schema.Fields;
 
 namespace Assets.Scripts.Models.Geo
 {

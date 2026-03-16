@@ -1,28 +1,28 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Assets.Scripts.OLAP.Schema;
+using Assets.Scripts.OLAP.Schema.Fields;
+using Assets.Scripts.OLAP.Schema.Tables;
 
 namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
 {
-    public class TimeDimension : IDimension
+    public class TimeDimension : Dimension
     {
-        public static string Name => "time_dimension";
-        public string name => Name;
+        public override string Name { get; }
+        public override Field PrimaryKey => Field.PK(Name);
+        public override Field LookupField => yyyyMMddHH;
+        public override SourceField LookupSourceAttribute { get; }
 
-        public Field PrimaryKey => Field.PK(Name);
-        public Field LookupField => yyyyMMddHH;
-        public SourceAttribute LookupSourceAttribute => new SourceAttribute("AAAAMMJJHH", SourceAttributeType.String);
+        public Field
+            yyyyMMddHH,
+            timestamp,
+            year,
+            month,
+            day,
+            hour,
+            duration;
 
-        public static Field yyyyMMddHH = Field.TextAttribute(Name, "yyyyMMddHH");
-        public static Field timestamp = Field.IntAttribute(Name, "timestamp");
-        public static Field year = Field.IntAttribute(Name, "year");
-        public static Field month = Field.IntAttribute(Name, "month");
-        public static Field day = Field.IntAttribute(Name, "day");
-        public static Field hour = Field.IntAttribute(Name, "hour");
-        public static Field duration = Field.IntAttribute(Name, "duration");
-
-        public List<IndexDefinition> Indexes => new List<IndexDefinition>()
+        public override List<IndexDefinition> Indexes => new List<IndexDefinition>()
         {
             new IndexDefinition(true, LookupField),
             new IndexDefinition(false, year, month, day),
@@ -30,8 +30,7 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
             new IndexDefinition(false, year),
         };
 
-
-        public List<FieldMap> Mappings => new List<FieldMap>()
+        public override List<FieldMap> Mappings => new List<FieldMap>()
         {
             FieldMap.Map(LookupSourceAttribute, yyyyMMddHH),
             FieldMap.Compute(LookupSourceAttribute, timestamp, ToTimestamp),
@@ -41,6 +40,20 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
             FieldMap.Compute(LookupSourceAttribute, hour, s => s.Substring(8, 2)),
             FieldMap.Compute(LookupSourceAttribute, duration, s => "1")
         };
+
+        public TimeDimension()
+        {
+            Name = "time_dimension";
+            LookupSourceAttribute = new SourceField("AAAAMMJJHH", SourceFieldType.String);
+
+            yyyyMMddHH = Field.TextAttribute(Name, "yyyyMMddHH");
+            timestamp = Field.IntAttribute(Name, "timestamp");
+            year = Field.IntAttribute(Name, "year");
+            month = Field.IntAttribute(Name, "month");
+            day = Field.IntAttribute(Name, "day");
+            hour = Field.IntAttribute(Name, "hour");
+            duration = Field.IntAttribute(Name, "duration");
+        }
 
         public static DateTime ToDateTime(string yyyyMMddHH) => DateTime.SpecifyKind(DateTime.ParseExact(yyyyMMddHH, "yyyyMMddHH", CultureInfo.InvariantCulture),
             DateTimeKind.Utc

@@ -1,4 +1,4 @@
-namespace Assets.Scripts.OLAP.Schema
+namespace Assets.Scripts.OLAP.Schema.Fields
 {
     public enum AnalyticsType
     {

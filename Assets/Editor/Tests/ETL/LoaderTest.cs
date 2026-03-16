@@ -1,4 +1,5 @@
-﻿using Assets.Scripts;
+﻿using System.Data;
+using Assets.Scripts;
 using Assets.Scripts.Database;
 using Assets.Scripts.ETL.Loaders;
 using Assets.Scripts.OLAP.Datasets.Metadata;
@@ -18,9 +19,10 @@ namespace Assets.Editor.Tests.ETL
             Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
             using (var connection = SqliteHelper.CreateConnection())
             {
-                WeatherHistoryDataset.InitTables(connection);
-                SqliteHelper.Execute(connection, $"INSERT INTO \"{WeatherHistoryDataset.coreFact.name}\" (temperature) VALUES (20);");
-                var res = new QueryRequest(WeatherHistoryDataset.coreFact).Execute(connection);
+                var dataset = WeatherHistoryDataset.Instance;
+                dataset.InitTables(connection);
+                SqliteHelper.Execute(connection, $"INSERT INTO \"{dataset.coreFact.Name}\" (temperature) VALUES (20);");
+                var res = new QueryRequest(dataset.coreFact).Execute(connection);
                 Assert.AreEqual(res.rows.Count, 1);
             }
         }
@@ -31,7 +33,8 @@ namespace Assets.Editor.Tests.ETL
             Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
             using (var connection = SqliteHelper.CreateConnection())
             {
-                var loader = new SqliteTableLoader(WeatherHistoryDataset.location);
+                var dataset = WeatherHistoryDataset.Instance;
+                var loader = new SqliteTableLoader(dataset.location);
                 using (var transaction = connection.BeginTransaction())
                 {
                     var csvHeaders = new[] { "NOM_USUEL", "ALTI", "LON", "NUM_POSTE", "LAT" };

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Assets.Scripts.Database;
-using Assets.Scripts.OLAP.Schema;
+using Assets.Scripts.OLAP.Schema.Fields;
+using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
 using SqlKata;
 
@@ -11,9 +12,9 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
 {
     public class MetadataTable : ITable
     {
-        public string name { get; set; }
+        public string Name { get; }
 
-        public Field PrimaryKey => Field.PK(name);
+        public Field PrimaryKey => Field.PK(Name);
 
         private Field fileName;
         public List<Field> References => new List<Field>();
@@ -26,10 +27,10 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
         
         public List<FieldMap> Mappings => new List<FieldMap>();
 
-        public MetadataTable(string table)
+        public MetadataTable(string datasetName)
         {
-            name = MakeTableName(table);
-            fileName = Field.TextAttribute(name, "File");
+            Name = MakeTableName(datasetName);
+            fileName = Field.TextAttribute(Name, "File");
         }
 
         public static string MakeTableName(string table)
@@ -51,7 +52,7 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
                 .Select(f => Path.Combine("Weathers", Path.GetFileName(f)));
 
             var existingFiles = new List<string>();
-            using (var reader = SqliteHelper.ExecuteReader(connection, new Query(name).Select(fileName.name)))
+            using (var reader = SqliteHelper.ExecuteReader(connection, new Query(Name).Select(fileName.fieldName)))
             {
                 while (reader.Read())
                 {
@@ -65,7 +66,7 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
         {
             SqliteHelper.Insert(
                 connection,
-                name,
+                Name,
                 new List<Field>() { fileName },
                 new List<string>() { file }
             );

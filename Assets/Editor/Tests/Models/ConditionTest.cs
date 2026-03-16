@@ -6,6 +6,7 @@ using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.coreFacts;
 using Assets.Scripts.OLAP.Engine;
 using NUnit.Framework;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 
 namespace Assets.Editor.Tests.Models
 {
@@ -30,18 +31,20 @@ namespace Assets.Editor.Tests.Models
         [Test]
         public void TestInsideHourRangeCondition()
         {
-            var c = new IntRangeCondition(TimeDimension.hour, 8, 10);
+            var time = WeatherHistoryDataset.Instance.time;
+            var c = new IntRangeCondition(time.hour, 8, 10);
             var row = new Row();
-            row.values[TimeDimension.hour] = 8;
+            row.values[time.hour] = 8;
             Assert.IsTrue(c.IsMatch(row));
         }
 
         [Test]
         public void TestEdgeHourRangeCondition()
         {
-            var c = new IntRangeCondition(TimeDimension.hour, 8, 10);
+            var time = WeatherHistoryDataset.Instance.time;
+            var c = new IntRangeCondition(time.hour, 8, 10);
             var row = new Row();
-            row.values[TimeDimension.hour] = 11;
+            row.values[time.hour] = 11;
             Assert.IsFalse(c.IsMatch(row));
         }
 
@@ -49,38 +52,42 @@ namespace Assets.Editor.Tests.Models
         [Test]
         public void TestInsideMetricRangeCondition()
         {
-            var c = new FloatRangeCondition(WeatherCoreFact.temperature, 20, 25);
+            var time = WeatherHistoryDataset.Instance.time;
+            var c = new FloatRangeCondition(time.hour, 20, 25);
             var row = new Row();
-            row.values[WeatherCoreFact.temperature] = 20;
+            row.values[time.hour] = 20;
             Assert.IsTrue(c.IsMatch(row));
         }
 
         [Test]
         public void TestOutsideMetricRangeCondition()
         {
-            var c = new FloatRangeCondition(WeatherCoreFact.temperature, 20, 25);
+            var time = WeatherHistoryDataset.Instance.time;
+            var c = new FloatRangeCondition(time.hour, 20, 25);
             var row = new Row();
-            row.values[WeatherCoreFact.temperature] = 30;
+            row.values[time.hour] = 30;
             Assert.IsFalse(c.IsMatch(row));
         }
 
         [Test]
         public void TestEdgeTimeRangeCondition()
         {
-            var c = new TimeRangeCondition(TimeDimension.ToDateTime("2022080110"), TimeDimension.ToDateTime("2022080112"));
+            var time = WeatherHistoryDataset.Instance.time;
+            var c = new TimeRangeCondition(time, TimeDimension.ToDateTime("2022080110"), TimeDimension.ToDateTime("2022080112"));
             var row = new Row();
-            row.values[TimeDimension.timestamp] = TimeDimension.ToTimestamp("2022080112");
-            row.values[TimeDimension.duration] = 1;
+            row.values[time.timestamp] = TimeDimension.ToTimestamp("2022080112");
+            row.values[time.duration] = 1;
             Assert.IsFalse(c.IsMatch(row));
         }
 
         [Test]
         public void TestInsideTimeRangeCondition()
         {
-            var c = new TimeRangeCondition(TimeDimension.ToDateTime("2022080110"), TimeDimension.ToDateTime("2022080112"));
+            var time = WeatherHistoryDataset.Instance.time;
+            var c = new TimeRangeCondition(time, TimeDimension.ToDateTime("2022080110"), TimeDimension.ToDateTime("2022080112"));
             var row = new Row();
-            row.values[TimeDimension.timestamp] = TimeDimension.ToTimestamp("2022080110");
-            row.values[TimeDimension.duration] = 1;
+            row.values[time.timestamp] = TimeDimension.ToTimestamp("2022080110");
+            row.values[time.duration] = 1;
             Assert.IsTrue(c.IsMatch(row));
         }
 

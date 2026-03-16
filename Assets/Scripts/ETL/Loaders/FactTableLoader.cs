@@ -1,6 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
-using Assets.Scripts.OLAP.Schema;
+using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
 using UnityEngine;
 
@@ -8,22 +7,20 @@ namespace Assets.Scripts.ETL.Loaders
 {
     public class FactTableLoader : SqliteTableLoader
     {
-        public IFact Fact => (IFact)Table;
+        public Fact Fact => (Fact)Table;
 
-        public FactTableLoader(IFact fact) : base(fact)
+        public FactTableLoader(Fact fact) : base(fact)
         {
         }
 
-        public void StartStaging(SqliteConnection connection, SqliteTransaction transaction, string[] csvFieldNames, Dictionary<IDimension, DimensionCache> caches)
+        public void StartStaging(SqliteConnection connection, SqliteTransaction transaction, string[] csvFieldNames, Dictionary<Dimension, DimensionCache> caches)
         {
             base.StartStaging(connection, transaction, csvFieldNames);
 
-            for (int i = 0; i < Fact.References.Count; i++)
+            foreach (var dimension in Fact.dimensions)
             {
-                var refField = Fact.References[i];
-                var cache = caches[refField.referencedDimension];
-                int colIndex = Fact.Mappings.Count + i;
-                string lookupCsvColumn = refField.referencedDimension.LookupSourceAttribute.name;
+                var cache = caches[dimension];
+                string lookupCsvColumn = dimension.LookupSourceAttribute.name;
                 int csvIdx = FindCsvIndex(lookupCsvColumn, csvFieldNames);
                 _valueResolvers.Add(line =>
                 {
@@ -33,12 +30,10 @@ namespace Assets.Scripts.ETL.Loaders
                     }
                     catch (KeyNotFoundException)
                     {
-                        Debug.LogError($"Value '{line[csvIdx]}' not found in dimension '{refField.referencedDimension.name}' for column '{lookupCsvColumn}'");
+                        Debug.LogError($"Value '{line[csvIdx]}' not found in dimension '{dimension.Name}' for column '{lookupCsvColumn}'");
                         throw;
                     }
                 });
-                _stageParams[colIndex] = new SqliteParameter($"@{refField.name}", refField.dbType);
-                _stageCommand.Parameters.Add(_stageParams[colIndex]);
             }
         }
     }

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Assets.Scripts.Database;
-using Assets.Scripts.OLAP.Schema;
+using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
 using SqlKata;
 
@@ -8,12 +8,12 @@ namespace Assets.Scripts.ETL.Loaders
 {
     public class DimensionCache
     {
-        public readonly IDimension _dimension;
+        public readonly Dimension _dimension;
 
         private readonly Dictionary<string, int> _cache = new Dictionary<string, int>();
         private readonly HashSet<string> _stagedLookupValues = new HashSet<string>();
 
-        public DimensionCache(IDimension dimension)
+        public DimensionCache(Dimension dimension)
         {
             _dimension = dimension;
         }
@@ -21,7 +21,7 @@ namespace Assets.Scripts.ETL.Loaders
         public void LoadFromDatabase(SqliteConnection connection)
         {
             _cache.Clear();
-            using (var reader = SqliteHelper.ExecuteReader(connection, new Query(_dimension.name).Select(_dimension.PrimaryKey.name, _dimension.LookupField.name)))
+            using (var reader = SqliteHelper.ExecuteReader(connection, new Query(_dimension.Name).Select(_dimension.PrimaryKey.fieldName, _dimension.LookupField.fieldName)))
             {
                 while (reader.Read())
                 {

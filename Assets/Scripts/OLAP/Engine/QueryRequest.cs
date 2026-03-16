@@ -3,11 +3,10 @@ using System.Diagnostics;
 using System.Linq;
 using Assets.Scripts.Components.Logger;
 using Assets.Scripts.Database;
-using Assets.Scripts.OLAP.Schema;
+using Assets.Scripts.OLAP.Schema.Fields;
+using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
 using SqlKata;
-using SqlKata.Compilers;
-using UnityEditor.Graphs;
 
 namespace Assets.Scripts.OLAP.Engine
 {
@@ -18,7 +17,7 @@ namespace Assets.Scripts.OLAP.Engine
 
         public QueryRequest(ITable from)
         {
-            query = new Query(from.name);
+            query = new Query(from.Name);
             selectedFields = new List<Field>();
         }
 
@@ -45,7 +44,7 @@ namespace Assets.Scripts.OLAP.Engine
 
         public QueryRequest Join(Field refField)
         {
-            query.Join(refField.referencedDimension.name, $"{refField.Identifier()}", $"{refField.referencedDimension.PrimaryKey.Identifier()}");
+            query.Join(refField.referencedDimension.Name, $"{refField.Identifier()}", $"{refField.referencedDimension.PrimaryKey.Identifier()}");
             return this;
         }
 

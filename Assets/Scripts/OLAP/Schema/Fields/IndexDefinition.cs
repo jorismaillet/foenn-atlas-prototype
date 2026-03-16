@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Assets.Scripts.OLAP.Schema
+namespace Assets.Scripts.OLAP.Schema.Fields
 {
     public class IndexDefinition
     {
@@ -19,13 +19,13 @@ namespace Assets.Scripts.OLAP.Schema
             this.fields = new List<Field>(fields);
         }
 
-        private static string IndexName(bool unique, Field[] fields)
+        public static string IndexName(bool unique, Field[] fields)
         {
             string prefix = unique ? "UIDX" : "IDX";
 
             var fieldNames = fields
-                .Select(f => f.name.ToUpper());
-            var normalizedFields = fieldNames.Select(f => Regex.Replace(f.ToLower(), "[^a-z0-9_]", "_"));
+                .Select(f => f.fieldName.ToUpper());
+            var normalizedFields = fieldNames.Select(f => Regex.Replace(f.ToLower(), "[^a-z0-9_]", "_").ToUpper());
             return $"{prefix}_{string.Join("_", normalizedFields)}";
         }
     }

@@ -1,40 +1,39 @@
 using System.Collections.Generic;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
-using Assets.Scripts.OLAP.Schema;
+using Assets.Scripts.OLAP.Schema.Fields;
+using Assets.Scripts.OLAP.Schema.Tables;
 
 namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.coreFacts
 {
-    public class WeatherWindFact : IFact
+    public class WeatherWindFact : Fact
     {
-        public string name => Name;
-        public static string Name => "weather_advanced_wind_facts";
+        public override string Name { get; }
 
-        public Field PrimaryKey => Field.PK(name);
+        public Field
+            gust,
+            gust3S,
+            timeRef,
+            locationRef;
 
-        public static Field gust = Field.FloatMetric(Name, "wind_gust");
-        public static Field gust3S = Field.FloatMetric(Name, "wind_gust_3s");
-
-        public Field timeRef, locationRef;
-
-        public List<IndexDefinition> Indexes => new List<IndexDefinition>() {
+        public override List<IndexDefinition> Indexes => new List<IndexDefinition>() {
             new IndexDefinition(true, timeRef, locationRef)
         };
 
-        public List<IDimension> Dimensions => _dimensions;
+        public override List<Field> References => new List<Field>() { timeRef, locationRef };
 
-        public List<Field> References => new List<Field>() { timeRef, locationRef };
-
-        public List<FieldMap> Mappings => new List<FieldMap>()
+        public override List<FieldMap> Mappings => new List<FieldMap>()
         {
-            FieldMap.Map(new SourceAttribute("FXI", SourceAttributeType.Float), gust),
-            FieldMap.Map(new SourceAttribute("FXI3S", SourceAttributeType.Float), gust3S),
+            FieldMap.Map(new SourceField("FXI", SourceFieldType.Float), gust),
+            FieldMap.Map(new SourceField("FXI3S", SourceFieldType.Float), gust3S),
         };
 
-        private List<IDimension> _dimensions;
-
-        public WeatherWindFact(TimeDimension time, LocationDimension location)
+        public WeatherWindFact(TimeDimension time, LocationDimension location) : base(new List<Dimension>() { time, location })
         {
-            _dimensions = new List<IDimension>() { time, location };
+            Name = "weather_advanced_wind_facts";
+
+            gust = Field.FloatMetric(Name, "wind_gust");
+            gust3S = Field.FloatMetric(Name, "wind_gust_3s");
+
             timeRef = Field.Ref(this, time, "time_id");
             locationRef = Field.Ref(this, location, "location_id");
         }
