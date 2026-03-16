@@ -5,7 +5,7 @@ namespace Assets.Scripts.Models.Plannings
 {
     public class PlannedActivity
     {
-        public Activity activity;
+        public readonly Activity activity;
 
         public ILocation location;
 

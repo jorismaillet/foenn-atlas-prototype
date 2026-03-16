@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Assets.Scripts.Components.Layers.OpenStreetMap;
+using Assets.Scripts.Interface.Visualisations.Tiles;
 using Assets.Scripts.Models.Geo;
 
-namespace Assets.Scripts.Components.Visualisations.Heatmap.Render
+namespace Assets.Scripts.Interface.Visualisations.Heatmap.Render
 {
     public static class GeoMeasurePixelExtension
     {

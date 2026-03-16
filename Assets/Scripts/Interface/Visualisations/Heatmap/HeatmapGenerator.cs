@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.Components.Layers.OpenStreetMap;
-using Assets.Scripts.Components.Visualisations.Heatmap.Drawer;
-using Assets.Scripts.Components.Visualisations.Heatmap.Render;
+using Assets.Scripts.Interface.Visualisations.Heatmap.Drawer;
+using Assets.Scripts.Interface.Visualisations.Heatmap.Render;
+using Assets.Scripts.Interface.Visualisations.Tiles;
 using Assets.Scripts.Models.Geo;
 using UnityEngine;
-using RenderSettings = Assets.Scripts.Components.Visualisations.Heatmap.Render.RenderSettings;
+using RenderSettings = Assets.Scripts.Interface.Visualisations.Heatmap.Render.RenderSettings;
 
-namespace Assets.Scripts.Components.Visualisations.Heatmap
+namespace Assets.Scripts.Interface.Visualisations.Heatmap
 {
     public class HeatmapGenerator
     {

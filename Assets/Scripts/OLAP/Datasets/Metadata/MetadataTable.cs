@@ -17,6 +17,7 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
         public Field PrimaryKey => Field.PK(Name);
 
         private Field fileName;
+
         public List<Field> References => new List<Field>();
 
         public List<IndexDefinition> Indexes => new List<IndexDefinition>() {
@@ -24,7 +25,7 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
         };
 
         public List<Field> Columns => new List<Field>() { PrimaryKey, fileName };
-        
+
         public List<FieldMap> Mappings => new List<FieldMap>();
 
         public MetadataTable(string datasetName)
@@ -40,8 +41,6 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
 
         public List<string> FilesToLoad(SqliteConnection connection)
         {
-            var connector = new SqliteHelper();
-
             var weathersDir = Path.Combine(UnityEngine.Application.dataPath, "Resources", "Weathers");
             if (!Directory.Exists(weathersDir))
             {
@@ -66,7 +65,7 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
         {
             SqliteHelper.Insert(
                 connection,
-                Name,
+                this,
                 new List<Field>() { fileName },
                 new List<string>() { file }
             );

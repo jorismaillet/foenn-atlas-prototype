@@ -16,11 +16,10 @@ namespace Assets.Scripts.Database
     public class SqliteHelper
     {
         public const string DATABASE_PATH = "Resources/sqlite/foenn.db";
+
         public const string DATABASE_TEST_PATH = ":memory";
 
         private const int SQLITE_BUSY_TIMEOUT_MS = 15000;
-        private const int SQLITE_LOCK_RETRY_COUNT = 5;
-        private const int SQLITE_LOCK_RETRY_DELAY_MS = 100;
 
         public static string ResolveDatabasePath(string databasePath)
         {
@@ -31,7 +30,7 @@ namespace Assets.Scripts.Database
 
         public static void CreateDb()
         {
-            var fullPath = ResolveDatabasePath(Env.DatabasePath());
+            var fullPath = ResolveDatabasePath(Env.DatabasePath);
             var dir = Path.GetDirectoryName(fullPath);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
@@ -42,8 +41,8 @@ namespace Assets.Scripts.Database
 
         public static SqliteConnection CreateConnection()
         {
-            var path = ResolveDatabasePath(Env.DatabasePath());
-            string connString = Env.DatabasePath() == ":memory" ?
+            var path = ResolveDatabasePath(Env.DatabasePath);
+            string connString = Env.DatabasePath == ":memory" ?
                 "Data Source=:memory:;Version=3;New=True;Cache=Shared;" :
                 $"Data Source={path};Version=3;Pooling=False;Default Timeout=15;";
             var conn = new SqliteConnection(connString);
@@ -99,12 +98,19 @@ namespace Assets.Scripts.Database
 
         public static void MergeStagingTable(SqliteConnection connection, ITable table)
         {
-            using var command = connection.CreateCommand();
-            command.CommandText = @$"
+            var sql = @$"
                 INSERT OR IGNORE INTO {table.Name}
                 SELECT * FROM {table.Name}_staging;
             ";
-            ExecuteNonQueryWithRetry(command);
+            ExecuteRaw(connection, sql);
+        }
+
+        public static void Insert(SqliteConnection connection, ITable table, List<Field> columns, List<string> values)
+        {
+            var data = new Dictionary<string, object>(columns.Count);
+            for (int i = 0; i < columns.Count; i++)
+                data[columns[i].fieldName] = string.IsNullOrEmpty(values[i]) ? null : (object)values[i];
+            ExecuteNonQuery(connection, new Query(table.Name).AsInsert(data));
         }
 
         public static string FieldToSql(Field field, bool skipPK = false)
@@ -125,36 +131,18 @@ namespace Assets.Scripts.Database
             return res;
         }
 
-        public static bool Exists(SqliteConnection connection, string table, string column, string value)
+        public static bool Exists(SqliteConnection connection, ITable table, Field field, string value)
         {
-            var sql = $"SELECT COUNT(*) FROM \"{table}\" WHERE \"{column}\" = '{value}' LIMIT 1;";
-            return ExecuteScalar(connection, sql) > 0;
+            var query = new Query(table.Name)
+                .Where(field.fieldName, value)
+                .Limit(1);
+            return ExecuteScalar(connection, query) > 0;
         }
 
-        public static void Insert(SqliteConnection connection, string table, List<Field> columns, List<string> values)
+        private static void ExecuteNonQuery(SqliteConnection connection, Query query)
         {
-            var columnsString = string.Join(", ", columns.Select(c => c.fieldName));
-            var valuesString = string.Join(", ", values.Select((val, i) => ValueToSql(val, columns[i].dbType)));
-            var sql = $"INSERT INTO \"{table}\" ({columnsString}) VALUES ({valuesString});";
-            Execute(connection, sql);
-        }
-
-        private static string ValueToSql(string rawValue, DbType type)
-        {
-            if (string.IsNullOrEmpty(rawValue)) return "NULL";
-            switch (type)
-            {
-                case DbType.String:
-                    return $"\"{rawValue}\"";
-                case DbType.Single:
-                case DbType.Double:
-                case DbType.Int64:
-                case DbType.Int32:
-                case DbType.Int16:
-                    return rawValue;
-                default:
-                    throw new System.NotImplementedException();
-            }
+            using var command = CreateCommand(connection, query);
+            command.ExecuteNonQuery();
         }
 
         public static void CreateTable(SqliteConnection connection, ITable table)
@@ -169,8 +157,8 @@ namespace Assets.Scripts.Database
                 string unique = index.unique ? "UNIQUE " : string.Empty;
                 createTableSql += $"CREATE {unique}INDEX IF NOT EXISTS \"{index.name}\" ON \"{table.Name}\"({cols});";
             });
-            UnityEngine.Debug.Log(createTableSql);
-            Execute(connection, createTableSql);
+            Debug.Log(createTableSql);
+            ExecuteRaw(connection, createTableSql);
         }
 
         public static void CreateStagingTable(SqliteConnection connection, ITable table)
@@ -181,23 +169,35 @@ namespace Assets.Scripts.Database
                 columns.Add($"{column.fieldName} {FieldToSql(column, skipPK: true)}");
             });
             var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{table.Name}_staging\" ({string.Join(", ", columns)});";
-            Execute(connection, createTableSql);
+            ExecuteRaw(connection, createTableSql);
         }
 
         public static void DropStagingTable(SqliteConnection connection, ITable table)
         {
             var sql = $"DROP TABLE IF EXISTS {table.Name}_staging;";
-            Execute(connection, sql);
+            ExecuteRaw(connection, sql);
         }
 
-        public static void Execute(SqliteConnection connection, string sql)
+        private static void ExecuteRaw(SqliteConnection connection, string sql)
         {
             using var command = connection.CreateCommand();
             command.CommandText = sql;
-            ExecuteNonQueryWithRetry(command);
+            command.ExecuteNonQuery();
         }
 
         public static SqliteDataReader ExecuteReader(SqliteConnection connection, Query query)
+        {
+            var command = CreateCommand(connection, query);
+            return command.ExecuteReader();
+        }
+
+        public static int ExecuteScalar(SqliteConnection connection, Query query)
+        {
+            using var command = CreateCommand(connection, query);
+            return (int)command.ExecuteScalar();
+        }
+
+        private static SqliteCommand CreateCommand(SqliteConnection connection, Query query)
         {
             var compiled = new SqliteCompiler().Compile(query);
             UnityEngine.Debug.Log(compiled.Sql);
@@ -210,52 +210,7 @@ namespace Assets.Scripts.Database
                 command.Parameters.Add(new SqliteParameter($"@p{i}", compiled.Bindings[i] ?? DBNull.Value));
             }
 
-            return command.ExecuteReader();
-        }
-
-        public static int ExecuteScalar(SqliteConnection connection, string sql)
-        {
-            using var command = connection.CreateCommand();
-            command.CommandText = sql;
-            return ExecuteScalarWithRetry(command);
-        }
-
-        private static void ExecuteNonQueryWithRetry(SqliteCommand command)
-        {
-            for (int attempt = 0; ; attempt++)
-            {
-                try
-                {
-                    command.ExecuteNonQuery();
-                    return;
-                }
-                catch (SqliteException ex) when (IsLockedException(ex) && attempt < SQLITE_LOCK_RETRY_COUNT)
-                {
-                    Thread.Sleep(SQLITE_LOCK_RETRY_DELAY_MS * (attempt + 1));
-                }
-            }
-        }
-
-        private static int ExecuteScalarWithRetry(SqliteCommand command)
-        {
-            for (int attempt = 0; ; attempt++)
-            {
-                try
-                {
-                    return (int)command.ExecuteScalar();
-                }
-                catch (SqliteException ex) when (IsLockedException(ex) && attempt < SQLITE_LOCK_RETRY_COUNT)
-                {
-                    Thread.Sleep(SQLITE_LOCK_RETRY_DELAY_MS * (attempt + 1));
-                }
-            }
-        }
-
-        private static bool IsLockedException(SqliteException ex)
-        {
-            var message = ex?.Message;
-            return !string.IsNullOrEmpty(message)
-                && message.IndexOf("locked", System.StringComparison.OrdinalIgnoreCase) >= 0;
+            return command;
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Assets.Scripts.ETL.Loaders
         public readonly Dimension _dimension;
 
         private readonly Dictionary<string, int> _cache = new Dictionary<string, int>();
+
         private readonly HashSet<string> _stagedLookupValues = new HashSet<string>();
 
         public DimensionCache(Dimension dimension)

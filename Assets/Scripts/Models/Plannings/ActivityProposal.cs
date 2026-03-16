@@ -5,13 +5,13 @@ namespace Assets.Scripts.Models.Plannings
 {
     public class ActivityProposal
     {
-        public Activity activity;
+        public readonly Activity activity;
 
-        public DateTime startTime;
+        public readonly DateTime startTime;
 
-        public int duration;
+        public readonly int duration;
 
-        public int recommendationScore;
+        public readonly int recommendationScore;
 
         public ActivityProposal(Activity activity, DateTime startTime, int duration, int recommendationScore)
         {

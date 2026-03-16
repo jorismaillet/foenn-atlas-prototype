@@ -13,24 +13,24 @@ namespace Assets.Editor.Tests.OLAP
         [Test]
         public void TestQueryExecuteAndResult()
         {
-            Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
+            Env.DatabasePath = SqliteHelper.DATABASE_TEST_PATH;
             using (var connection = SqliteHelper.CreateConnection())
             {
                 var dataset = WeatherHistoryDataset.Instance;
                 dataset.InitTables(connection);
-                SqliteHelper.Insert(connection, dataset.time.Name,
+                SqliteHelper.Insert(connection, dataset.time,
                     new List<Field> { dataset.time.hour },
                     new List<string> { "18" });
-                SqliteHelper.Insert(connection, dataset.location.Name,
+                SqliteHelper.Insert(connection, dataset.location,
                     new List<Field> { dataset.location.Department, dataset.location.PostName },
                     new List<string> { "29", "Station météo Plomelin" });
-                SqliteHelper.Insert(connection, dataset.location.Name,
+                SqliteHelper.Insert(connection, dataset.location,
                     new List<Field> { dataset.location.Department, dataset.location.PostName },
                     new List<string> { "29", "Station météo Brest" });
-                SqliteHelper.Insert(connection, dataset.coreFact.Name,
+                SqliteHelper.Insert(connection, dataset.coreFact,
                     new List<Field> { dataset.coreFact.temperature, dataset.coreFact.locationRef, dataset.coreFact.timeRef },
                     new List<string> { "20", "1", "1" });
-                SqliteHelper.Insert(connection, dataset.coreFact.Name,
+                SqliteHelper.Insert(connection, dataset.coreFact,
                     new List<Field> { dataset.coreFact.temperature, dataset.coreFact.locationRef, dataset.coreFact.timeRef },
                     new List<string> { "21", "2", "1" });
 

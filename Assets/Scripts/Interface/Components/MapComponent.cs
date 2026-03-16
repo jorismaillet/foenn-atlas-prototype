@@ -36,15 +36,15 @@ namespace Assets.Scripts.Components
             pointmapContainer.Initialize(geoMeasures);
             pointLocationContainer.Initialize(new List<PointLocation>()
             {
-                Seeds.brest, Seeds.tcPontLabbe, Seeds.tcQuimper, Seeds.maison
+                Seeds.brestCenter, Seeds.pontLabbeTennis, Seeds.quimperTennis, Seeds.plomelinCenter
             });
             activityContainer.Initialize(new List<Activity>()
             {
-                Seeds.piscine, Seeds.kayak, Seeds.plage, Seeds.velo, Seeds.jardin, Seeds.tennis, Seeds.ville, Seeds.randonee, Seeds.dinner
+                Seeds.swimming, Seeds.kayak, Seeds.beach, Seeds.biking, Seeds.gardening, Seeds.tennis, Seeds.cityPromenade, Seeds.hiking, Seeds.dinner
             });
             planningsContainer.Initialize(new List<Planning>()
             {
-                Seeds.planningSportif, Seeds.ideesDeSorties
+                Seeds.sportsPlanning, Seeds.outsideActivities
             });
         }
     }

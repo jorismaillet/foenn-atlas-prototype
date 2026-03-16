@@ -3,7 +3,7 @@ using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Schema.Fields;
 using Assets.Scripts.OLAP.Schema.Tables;
 
-namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.coreFacts
+namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
 {
     public class WeatherWindFact : Fact
     {

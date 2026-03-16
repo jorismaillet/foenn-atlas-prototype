@@ -12,7 +12,7 @@ namespace Assets.Editor.Tests.ETL
         [Test]
         public void TestETLProcessor()
         {
-            Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
+            Env.DatabasePath = SqliteHelper.DATABASE_TEST_PATH;
             using (var connection = SqliteHelper.CreateConnection())
             {
                 var dataset = WeatherHistoryDataset.Instance;

@@ -5,9 +5,9 @@ namespace Assets.Scripts.Models.Plannings
 {
     public class PlanningRow
     {
-        public Row row;
+        public readonly Row row;
 
-        public List<ActivitySuit> activitySuits;
+        public readonly List<ActivitySuit> activitySuits;
 
         public PlanningRow(Row row, List<ActivitySuit> activitySuits)
         {

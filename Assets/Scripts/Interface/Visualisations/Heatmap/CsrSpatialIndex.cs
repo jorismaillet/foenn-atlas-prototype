@@ -1,6 +1,6 @@
 using System;
 
-namespace Assets.Scripts.Components.Visualisations.Heatmap
+namespace Assets.Scripts.Interface.Visualisations.Heatmap
 {
     // Compact CSR-like spatial index for a uniform grid.
     // bucketStart has length (gridCols*gridRows + 1) and bucketItems contains measure indices.

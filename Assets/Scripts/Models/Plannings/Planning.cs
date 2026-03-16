@@ -6,11 +6,11 @@ namespace Assets.Scripts.Models.Plannings
     {
         public string title;
 
-        public List<PlannedActivity> plannedActivities = new List<PlannedActivity>();
+        public readonly List<PlannedActivity> plannedActivities = new List<PlannedActivity>();
 
-        public List<ActivityProposal> activityProposals;
+        public readonly List<ActivityProposal> activityProposals;
 
-        public List<PlanningRow> planningRows;
+        public readonly List<PlanningRow> planningRows;
 
         public Planning(string title, params PlannedActivity[] plannedActivities)
         {

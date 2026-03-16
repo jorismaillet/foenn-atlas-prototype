@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Assets.Scripts.Components.Visualisations.Heatmap.Render
+namespace Assets.Scripts.Interface.Visualisations.Heatmap.Render
 {
     public readonly struct RenderSettings
     {

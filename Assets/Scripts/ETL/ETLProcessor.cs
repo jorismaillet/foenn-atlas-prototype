@@ -132,7 +132,7 @@ namespace Assets.Scripts.ETL
                 {
                     loader.Cache.LoadFromDatabase(connection);
                 }
-                    foreach (var loader in _factLoaders)
+                foreach (var loader in _factLoaders)
                 {
                     loader.StartStaging(connection, transaction, fieldNames, caches);
                     loader.StartBatch(transaction);

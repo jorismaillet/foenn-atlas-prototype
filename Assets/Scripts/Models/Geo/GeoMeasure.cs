@@ -5,10 +5,11 @@ namespace Assets.Scripts.Models.Geo
 {
     public class GeoMeasure
     {
-        public PointLocation point;
+        public readonly PointLocation point;
 
-        public Field field;
-        public float value;
+        public readonly Field field;
+
+        public readonly float value;
 
         public GeoMeasure(PointLocation point, Field field, float value)
         {

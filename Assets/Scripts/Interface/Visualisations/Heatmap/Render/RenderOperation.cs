@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Assets.Scripts.Components.Visualisations.Heatmap.Render
+namespace Assets.Scripts.Interface.Visualisations.Heatmap.Render
 {
     public static class RenderOperation
     {

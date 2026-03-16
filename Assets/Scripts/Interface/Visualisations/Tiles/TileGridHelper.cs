@@ -2,7 +2,7 @@
 using Assets.Scripts.Models.Geo;
 using UnityEngine;
 
-namespace Assets.Scripts.Components.Layers.OpenStreetMap
+namespace Assets.Scripts.Interface.Visualisations.Tiles
 {
     public static class TileGridHelper
     {

@@ -6,7 +6,7 @@ namespace Assets.Scripts.Models.Condition
 {
     public class AnyCondition : ICondition
     {
-        public List<ICondition> conditions;
+        public readonly List<ICondition> conditions;
 
         public AnyCondition(params ICondition[] conditions)
         {

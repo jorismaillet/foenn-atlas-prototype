@@ -25,7 +25,7 @@ namespace Assets.Scripts.OLAP.Schema.Fields
 
             var fieldNames = fields
                 .Select(f => f.fieldName.ToUpper());
-            var normalizedFields = fieldNames.Select(f => Regex.Replace(f.ToLower(), "[^a-z0-9_]", "_").ToUpper());
+            var normalizedFields = fieldNames.Select(f => Regex.Replace(f, "[^a-z0-9_]", "_"));
             return $"{prefix}_{string.Join("_", normalizedFields)}";
         }
     }

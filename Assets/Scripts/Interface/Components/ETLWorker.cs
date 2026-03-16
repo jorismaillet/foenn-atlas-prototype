@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Assets.Scripts.Components.Logger;
 using Assets.Scripts.Database;
 using Assets.Scripts.ETL;
-using Assets.Scripts.OLAP.Datasets.WeatherHistory;
+using Assets.Scripts.OLAP.Datasets;
 using UnityEngine;
 
 namespace Assets.Scripts.Components

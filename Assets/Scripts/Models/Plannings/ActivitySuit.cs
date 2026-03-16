@@ -4,8 +4,14 @@ namespace Assets.Scripts.Models.Plannings
 {
     public class ActivitySuit
     {
-        public Activity activity;
+        public readonly Activity activity;
 
-        public int suitScore;
+        public readonly int suitScore;
+
+        public ActivitySuit(Activity activity, int suitScore)
+        {
+            this.activity = activity;
+            this.suitScore = suitScore;
+        }
     }
 }

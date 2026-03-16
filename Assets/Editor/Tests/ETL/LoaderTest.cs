@@ -1,12 +1,10 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
 using Assets.Scripts;
 using Assets.Scripts.Database;
 using Assets.Scripts.ETL.Loaders;
-using Assets.Scripts.OLAP.Datasets.Metadata;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
-using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Engine;
-using Mono.Data.Sqlite;
+using Assets.Scripts.OLAP.Schema.Fields;
 using NUnit.Framework;
 
 namespace Assets.Editor.Tests.ETL
@@ -16,12 +14,14 @@ namespace Assets.Editor.Tests.ETL
         [Test]
         public void TestInsert()
         {
-            Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
+            Env.DatabasePath = SqliteHelper.DATABASE_TEST_PATH;
             using (var connection = SqliteHelper.CreateConnection())
             {
                 var dataset = WeatherHistoryDataset.Instance;
                 dataset.InitTables(connection);
-                SqliteHelper.Execute(connection, $"INSERT INTO \"{dataset.coreFact.Name}\" (temperature) VALUES (20);");
+                SqliteHelper.Insert(connection, dataset.coreFact,
+                    new List<Field> { dataset.coreFact.temperature },
+                    new List<string> { "20" });
                 var res = new QueryRequest(dataset.coreFact).Execute(connection);
                 Assert.AreEqual(res.rows.Count, 1);
             }
@@ -30,7 +30,7 @@ namespace Assets.Editor.Tests.ETL
         [Test]
         public void TestStageLine_MapsCsvColumnsToExpectedSqlParameters()
         {
-            Env.SetDatabasePath(SqliteHelper.DATABASE_TEST_PATH);
+            Env.DatabasePath = SqliteHelper.DATABASE_TEST_PATH;
             using (var connection = SqliteHelper.CreateConnection())
             {
                 var dataset = WeatherHistoryDataset.Instance;

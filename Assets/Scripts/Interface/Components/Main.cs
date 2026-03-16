@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Components;
 using Assets.Scripts.Database;
-using Assets.Scripts.OLAP.Datasets.Metadata;
+using Assets.Scripts.OLAP.Datasets;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using UnityEngine;
 
@@ -17,7 +17,7 @@ namespace Assets.Scripts
 
         void Start()
         {
-            Env.SetDatabasePath(SqliteHelper.DATABASE_PATH);
+            Env.DatabasePath = SqliteHelper.DATABASE_PATH;
             SqliteHelper.CreateDb();
 
             var dataset = WeatherHistoryDataset.Instance;

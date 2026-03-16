@@ -1,9 +1,10 @@
 using System;
+using Assets.Scripts.Interface.Visualisations.Heatmap;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
-namespace Assets.Scripts.Components.Visualisations.Heatmap.Drawer
+namespace Assets.Scripts.Interface.Visualisations.Heatmap.Drawer
 {
     internal static class HeatmapDrawerJobs
     {

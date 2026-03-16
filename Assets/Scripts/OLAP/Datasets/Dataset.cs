@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using Assets.Scripts.Database;
 using Assets.Scripts.OLAP.Datasets.Metadata;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
 
-namespace Assets.Scripts.OLAP.Datasets.WeatherHistory
+namespace Assets.Scripts.OLAP.Datasets
 {
     public abstract class Dataset
     {
         private string name;
+
         public abstract List<Dimension> Dimensions { get; }
+
         public abstract List<Fact> Facts { get; }
 
         public Dataset(string name)

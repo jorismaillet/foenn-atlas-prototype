@@ -3,6 +3,7 @@ using System.Linq;
 using Assets.Scripts.Components.Commons.Containers;
 using Assets.Scripts.Components.Commons.Holders;
 using Assets.Scripts.Components.Layers.OpenStreetMap;
+using Assets.Scripts.Interface.Visualisations.Tiles;
 using Assets.Scripts.Models.Geo;
 using UnityEngine;
 

@@ -1,8 +1,9 @@
 ﻿using System;
-using RenderSettings = Assets.Scripts.Components.Visualisations.Heatmap.Render.RenderSettings;
+using Assets.Scripts.Interface.Visualisations.Heatmap;
 using UnityEngine;
+using RenderSettings = Assets.Scripts.Interface.Visualisations.Heatmap.Render.RenderSettings;
 
-namespace Assets.Scripts.Components.Visualisations.Heatmap.Drawer
+namespace Assets.Scripts.Interface.Visualisations.Heatmap.Drawer
 {
     internal static class HeatmapDrawer
     {
@@ -38,8 +39,8 @@ namespace Assets.Scripts.Components.Visualisations.Heatmap.Drawer
             byte baseAlpha = (byte)Mathf.Clamp(Mathf.RoundToInt(drawer.alpha * 255f), 0, 255);
 
             // ---- BIG perf lever ----
-            // On calcule l'IDW sur une grille coarse, puis on upscale.
-            // 1024² -> step 4 => ~256² samples => ~16x moins de boulot.
+            // IDW on coarse grid then upscale.
+            // Ex: 256^2 samples for a 1024^2 grid so 16x less compute.
             int sampleStep = ChooseSampleStep(w, h, cellSize, xs.Length, settings.maxRadiusPx);
 
             if (sampleStep <= 1)
@@ -216,7 +217,6 @@ namespace Assets.Scripts.Components.Visualisations.Heatmap.Drawer
             var coarseTemp = new float[coarseW * coarseH];
             var coarseAlpha = new byte[coarseW * coarseH];
 
-#if UNITY_2019_1_OR_NEWER
             // 1) Compute coarse field (Burst/Jobs when available)
             if (!HeatmapDrawerJobs.TryComputeCoarseField(
                 xs,
@@ -237,7 +237,6 @@ namespace Assets.Scripts.Components.Visualisations.Heatmap.Drawer
                 sampleStep,
                 coarseTemp,
                 coarseAlpha))
-#endif
             {
                 // 1) Compute coarse field (managed fallback)
                 var bestD2 = new float[64];

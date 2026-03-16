@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Components.Visualisations.Heatmap.Render;
+﻿using Assets.Scripts.Interface.Visualisations.Heatmap.Render;
 
 namespace Assets.Scripts.Models.Geo
 {

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Assets.Scripts.Components.Layers.OpenStreetMap;
 using Assets.Scripts.Components.Logger;
-using Assets.Scripts.Components.Visualisations.Heatmap.Drawer;
-using Assets.Scripts.Components.Visualisations.Heatmap.Render;
+using Assets.Scripts.Interface.Visualisations.Heatmap.Drawer;
+using Assets.Scripts.Interface.Visualisations.Heatmap;
+using Assets.Scripts.Interface.Visualisations.Heatmap.Render;
+using Assets.Scripts.Interface.Visualisations.Tiles;
 using Assets.Scripts.Models.Geo;
 using UnityEngine;
 

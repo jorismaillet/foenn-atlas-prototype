@@ -7,9 +7,9 @@ namespace Assets.Scripts.Models.Maps
 {
     public class Map
     {
-        public List<Activity> activities;
+        public readonly List<Activity> activities;
 
-        public List<PointLocation> points;
+        public readonly List<PointLocation> points;
 
         public DateTime selectedTime;
     }

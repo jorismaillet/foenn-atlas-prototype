@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Assets.Scripts.Models.Geo;
 using Assets.Scripts.OLAP.Schema.Fields;
 
@@ -9,7 +8,9 @@ namespace Assets.Scripts.OLAP.Engine
     public class QueryResult
     {
         public List<Row> rows;
+
         private List<Field> columns;
+
         private Func<object[], GeoPoint> getGeo;
 
         public QueryResult(List<Field> columns)
@@ -23,7 +24,8 @@ namespace Assets.Scripts.OLAP.Engine
                 {
                     geoIndexes["lat"] = i;
                 }
-                else if(columns[i].analyticsType.Equals(AnalyticsType.GEO_LON)) {
+                else if (columns[i].analyticsType.Equals(AnalyticsType.GEO_LON))
+                {
                     geoIndexes["lon"] = i;
                 }
             }
@@ -35,14 +37,11 @@ namespace Assets.Scripts.OLAP.Engine
 
         public void ParseLine(object[] values)
         {
-            Row row = new Row();
+            var geo = getGeo != null ? getGeo(values) : null;
+            Row row = new Row(geo);
             for (int i = 0; i < columns.Count; i++)
             {
                 row.values[columns[i]] = values[i];
-            }
-            if (getGeo != null)
-            {
-                row.geo = getGeo(values);
             }
             rows.Add(row);
         }

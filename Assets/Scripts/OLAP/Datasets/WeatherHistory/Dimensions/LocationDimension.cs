@@ -7,8 +7,11 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
     public class LocationDimension : Dimension
     {
         public override string Name { get; }
+
         public override Field PrimaryKey => Field.PK(Name);
+
         public override Field LookupField => PostNumber;
+
         public override SourceField LookupSourceAttribute { get; }
 
         public Field

@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using Assets.Scripts.Database;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
 
 namespace Assets.Scripts.ETL.Loaders
 {
-    public class SqliteTableLoader
+    public class SqliteTableLoader : IDisposable
     {
         public ITable Table { get; }
 

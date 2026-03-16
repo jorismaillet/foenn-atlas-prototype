@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Assets.Scripts.Components.Visualisations.Heatmap
+namespace Assets.Scripts.Interface.Visualisations.Heatmap
 {
     public readonly struct HeatmapSettings
     {

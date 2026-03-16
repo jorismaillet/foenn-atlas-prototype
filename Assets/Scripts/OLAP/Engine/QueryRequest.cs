@@ -13,6 +13,7 @@ namespace Assets.Scripts.OLAP.Engine
     public class QueryRequest
     {
         private Query query;
+
         private List<Field> selectedFields;
 
         public QueryRequest(ITable from)
@@ -27,7 +28,7 @@ namespace Assets.Scripts.OLAP.Engine
             foreach (var field in fields)
             {
                 query.Select(field.Identifier());
-                if(field.analyticsType != AnalyticsType.METRIC)
+                if (field.analyticsType != AnalyticsType.METRIC)
                 {
                     query.GroupBy(field.Identifier());
                 }
@@ -77,7 +78,6 @@ namespace Assets.Scripts.OLAP.Engine
             query.WhereBetween(field.Identifier(), lower, higher);
             return this;
         }
-
 
         public QueryResult Execute(SqliteConnection connection)
         {

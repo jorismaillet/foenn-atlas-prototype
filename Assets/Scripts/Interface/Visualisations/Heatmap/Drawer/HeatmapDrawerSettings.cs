@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace Assets.Scripts.Components.Visualisations.Heatmap.Drawer
+namespace Assets.Scripts.Interface.Visualisations.Heatmap.Drawer
 {
     public class HeatmapDrawerSettings
     {
-        public readonly float alpha;// 0..1 overlay alpha
+        public readonly float alpha;// 0..1
 
-        public readonly float tempMin;// for color mapping
+        public readonly float tempMin;
 
-        public readonly float tempMax;// for color mapping
+        public readonly float tempMax;
 
         public HeatmapDrawerSettings(float alpha, float tempMin, float tempMax)
         {

@@ -7,6 +7,7 @@ namespace Assets.Scripts.Models.Condition.Definitions
     public class TimeRangeCondition : ICondition
     {
         private TimeDimension dimension;
+
         public DateTime start, end;
 
         public TimeRangeCondition(TimeDimension dimension, DateTime min, DateTime max)

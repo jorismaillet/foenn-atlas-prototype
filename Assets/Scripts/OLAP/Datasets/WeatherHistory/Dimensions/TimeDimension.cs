@@ -9,8 +9,11 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
     public class TimeDimension : Dimension
     {
         public override string Name { get; }
+
         public override Field PrimaryKey => Field.PK(Name);
+
         public override Field LookupField => yyyyMMddHH;
+
         public override SourceField LookupSourceAttribute { get; }
 
         public Field
