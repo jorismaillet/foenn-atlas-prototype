@@ -7,10 +7,11 @@ namespace Assets.Scripts.ETL.Loaders
 {
     public class FactTableLoader : SqliteTableLoader
     {
-        public Fact Fact => (Fact)Table;
+        public Fact Fact;
 
         public FactTableLoader(Fact fact) : base(fact)
         {
+            Fact = (Fact)Table;
         }
 
         public void StartStaging(SqliteConnection connection, SqliteTransaction transaction, string[] csvFieldNames, Dictionary<Dimension, DimensionCache> caches)

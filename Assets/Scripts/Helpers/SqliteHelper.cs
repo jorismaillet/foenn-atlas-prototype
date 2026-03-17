@@ -69,7 +69,7 @@ namespace Assets.Scripts.Database
             command.ExecuteNonQuery();
         }
 
-        public static SqliteCommand GetStageCommand(SqliteConnection connection, ITable table)
+        public static SqliteCommand GetStageCommand(SqliteConnection connection, Table table)
         {
             var mappings = table.Mappings;
             var insertFields = mappings.Select(c => c.targetField).Concat(table.References).ToList();
@@ -96,7 +96,7 @@ namespace Assets.Scripts.Database
             return stageCommand;
         }
 
-        public static void MergeStagingTable(SqliteConnection connection, ITable table)
+        public static void MergeStagingTable(SqliteConnection connection, Table table)
         {
             var sql = @$"
                 INSERT OR IGNORE INTO {table.Name}
@@ -105,7 +105,7 @@ namespace Assets.Scripts.Database
             ExecuteRaw(connection, sql);
         }
 
-        public static void Insert(SqliteConnection connection, ITable table, List<Field> columns, List<string> values)
+        public static void Insert(SqliteConnection connection, Table table, List<Field> columns, List<string> values)
         {
             var data = new Dictionary<string, object>(columns.Count);
             for (int i = 0; i < columns.Count; i++)
@@ -131,7 +131,7 @@ namespace Assets.Scripts.Database
             return res;
         }
 
-        public static bool Exists(SqliteConnection connection, ITable table, Field field, string value)
+        public static bool Exists(SqliteConnection connection, Table table, Field field, string value)
         {
             var query = new Query(table.Name)
                 .Where(field.fieldName, value)
@@ -145,7 +145,7 @@ namespace Assets.Scripts.Database
             command.ExecuteNonQuery();
         }
 
-        public static void CreateTable(SqliteConnection connection, ITable table)
+        public static void CreateTable(SqliteConnection connection, Table table)
         {
             var columns = table.Columns.Select(column => $"\"{column.fieldName}\" {FieldToSql(column)}");
 
@@ -161,18 +161,18 @@ namespace Assets.Scripts.Database
             ExecuteRaw(connection, createTableSql);
         }
 
-        public static void CreateStagingTable(SqliteConnection connection, ITable table)
+        public static void CreateStagingTable(SqliteConnection connection, Table table)
         {
             var columns = new List<string>();
-            table.Columns.ForEach(column =>
+            foreach (var column in table.Columns)
             {
                 columns.Add($"{column.fieldName} {FieldToSql(column, skipPK: true)}");
-            });
+            }
             var createTableSql = $"CREATE TABLE IF NOT EXISTS \"{table.Name}_staging\" ({string.Join(", ", columns)});";
             ExecuteRaw(connection, createTableSql);
         }
 
-        public static void DropStagingTable(SqliteConnection connection, ITable table)
+        public static void DropStagingTable(SqliteConnection connection, Table table)
         {
             var sql = $"DROP TABLE IF EXISTS {table.Name}_staging;";
             ExecuteRaw(connection, sql);

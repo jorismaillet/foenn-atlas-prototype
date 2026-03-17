@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
+using Assets.Scripts.Helpers;
 using Assets.Scripts.OLAP.Schema.Fields;
 using Assets.Scripts.OLAP.Schema.Tables;
 
@@ -8,15 +6,9 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
 {
     public class TimeDimension : Dimension
     {
-        public override string Name { get; }
-
-        public override Field PrimaryKey => Field.PK(Name);
-
         public override Field LookupField => yyyyMMddHH;
 
-        public override SourceField LookupSourceAttribute { get; }
-
-        public Field
+        public readonly Field
             yyyyMMddHH,
             timestamp,
             year,
@@ -25,45 +17,32 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
             hour,
             duration;
 
-        public override List<IndexDefinition> Indexes => new List<IndexDefinition>()
+        public TimeDimension() : base(
+            "time_dimension",
+            new SourceField("AAAAMMJJHH", SourceFieldType.String)
+        )
         {
-            new IndexDefinition(true, LookupField),
-            new IndexDefinition(false, year, month, day),
-            new IndexDefinition(false, year, month),
-            new IndexDefinition(false, year),
-        };
+            yyyyMMddHH = Field.TextAttribute(Name, "yyyyMMddHH", "yyyyMMddHH");
+            timestamp = Field.IntAttribute(Name, "timestamp", "Timestamp");
+            year = Field.IntAttribute(Name, "year", "Year");
+            month = Field.IntAttribute(Name, "month", "Month");
+            day = Field.IntAttribute(Name, "day", "Day");
+            hour = Field.IntAttribute(Name, "hour", "Hour");
+            duration = Field.IntAttribute(Name, "duration", "Duration");
 
-        public override List<FieldMap> Mappings => new List<FieldMap>()
-        {
-            FieldMap.Map(LookupSourceAttribute, yyyyMMddHH),
-            FieldMap.Compute(LookupSourceAttribute, timestamp, ToTimestamp),
-            FieldMap.Compute(LookupSourceAttribute, year, s => s.Substring(0, 4)),
-            FieldMap.Compute(LookupSourceAttribute, month, s => s.Substring(4, 2)),
-            FieldMap.Compute(LookupSourceAttribute, day, s => s.Substring(6, 2)),
-            FieldMap.Compute(LookupSourceAttribute, hour, s => s.Substring(8, 2)),
-            FieldMap.Compute(LookupSourceAttribute, duration, s => "1")
-        };
+            Indexes.Add(new IndexDefinition(true, LookupField));
+            Indexes.Add(new IndexDefinition(false, year, hour, PrimaryKey));
+            Indexes.Add(new IndexDefinition(false, year, month, day));
+            Indexes.Add(new IndexDefinition(false, year, month));
+            Indexes.Add(new IndexDefinition(false, year));
 
-        public TimeDimension()
-        {
-            Name = "time_dimension";
-            LookupSourceAttribute = new SourceField("AAAAMMJJHH", SourceFieldType.String);
-
-            yyyyMMddHH = Field.TextAttribute(Name, "yyyyMMddHH");
-            timestamp = Field.IntAttribute(Name, "timestamp");
-            year = Field.IntAttribute(Name, "year");
-            month = Field.IntAttribute(Name, "month");
-            day = Field.IntAttribute(Name, "day");
-            hour = Field.IntAttribute(Name, "hour");
-            duration = Field.IntAttribute(Name, "duration");
+            Mappings.Add(FieldMap.Map(LookupSourceAttribute, yyyyMMddHH));
+            Mappings.Add(FieldMap.Compute(LookupSourceAttribute, timestamp, DateTimeHelper.ToTimestamp));
+            Mappings.Add(FieldMap.Compute(LookupSourceAttribute, year, s => s.Substring(0, 4)));
+            Mappings.Add(FieldMap.Compute(LookupSourceAttribute, month, s => s.Substring(4, 2)));
+            Mappings.Add(FieldMap.Compute(LookupSourceAttribute, day, s => s.Substring(6, 2)));
+            Mappings.Add(FieldMap.Compute(LookupSourceAttribute, hour, s => s.Substring(8, 2)));
+            Mappings.Add(FieldMap.Compute(LookupSourceAttribute, duration, s => "1"));
         }
-
-        public static DateTime ToDateTime(string yyyyMMddHH) => DateTime.SpecifyKind(DateTime.ParseExact(yyyyMMddHH, "yyyyMMddHH", CultureInfo.InvariantCulture),
-            DateTimeKind.Utc
-        );
-
-        public static string ToTimestamp(string yyyyMMddHH) => new DateTimeOffset(ToDateTime(yyyyMMddHH)).ToUnixTimeSeconds().ToString();
-
-        public static DateTime FromTimestamp(string timestamp) => DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(timestamp)).UtcDateTime;
-    }
+     }
 }

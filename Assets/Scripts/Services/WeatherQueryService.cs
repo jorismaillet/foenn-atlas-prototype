@@ -1,52 +1,110 @@
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Database;
 using Assets.Scripts.Models.Geo;
-using Assets.Scripts.Models.Locations;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using Assets.Scripts.OLAP.Engine;
 using Assets.Scripts.OLAP.Schema.Fields;
-using Assets.Scripts.OLAP.Schema.Tables;
 
 namespace Assets.Scripts.Services
 {
     public class WeatherQueryService
     {
-        public static List<GeoMeasure> DayObservationsForPost(int dayOfMonth, int month, int year, string dpt, string coreFactkey)
+        public static List<GeoMeasure> HoursWithoutRain(int year)
         {
             var dataset = WeatherHistoryDataset.Instance;
             var coreFact = dataset.coreFact;
-            var fieldToMeasure = FieldFor(dataset.coreFact, coreFactkey);
+            var fieldToMeasure = dataset.coreFact.temperature;
             var query = new QueryRequest(coreFact)
                 .Select(
                     dataset.location.Longitude,
                     dataset.location.Latitude,
                     dataset.location.PostName)
-                .SelectAvg(fieldToMeasure)
+                .SelectCount(fieldToMeasure)
+                .GroupBy(coreFact.locationRef)
+                .GroupBy(coreFact.timeRef)
                 .Join(coreFact.locationRef)
                 .Join(coreFact.timeRef)
-                .WhereEq(dataset.location.Department, dpt)
-                .WhereEq(dataset.time.day, dayOfMonth)
-                .WhereEq(dataset.time.month, month)
                 .WhereEq(dataset.time.year, year)
+                .WhereBetween(dataset.time.hour, 8, 20)
                 .WhereNotNull(fieldToMeasure);
 
             using (var connection = SqliteHelper.CreateConnection())
             {
                 var result = query.Execute(connection);
-                var res = new List<GeoMeasure>();
-                foreach (var row in result.rows)
-                {
-                    string postName = (string)row.values[dataset.location.PostName];
-                    var measure = row.FloatValue(fieldToMeasure);
-                    res.Add(new GeoMeasure(new PointLocation(postName, row.geo.lat, row.geo.lon), fieldToMeasure, measure));
-                }
-                return res;
+                return result.ToPostMeasures(dataset.location, fieldToMeasure);
             }
         }
-
-        private static Field FieldFor(Fact fact, string key)
+        public static List<GeoMeasure> MaxYearMeasure(int year, Field coreFactField)
         {
-            return ((ITable)fact).Columns.Find(c => c.fieldName == key);
+            var dataset = WeatherHistoryDataset.Instance;
+            var coreFact = dataset.coreFact;
+            var query = new QueryRequest(coreFact)
+                .Select(
+                    dataset.location.Longitude,
+                    dataset.location.Latitude,
+                    dataset.location.PostName)
+                .SelectMax(coreFactField)
+                .GroupBy(coreFact.locationRef)
+                .GroupBy(coreFact.timeRef)
+                .Join(coreFact.locationRef)
+                .Join(coreFact.timeRef)
+                .WhereEq(dataset.time.year, year)
+                .WhereNotNull(coreFactField);
+
+            using (var connection = SqliteHelper.CreateConnection())
+            {
+                var result = query.Execute(connection);
+                return result.ToPostMeasures(dataset.location, coreFactField);
+            }
+        }
+        public static List<Row> DayObservationsForPost(int dayOfMonth, int month, int year, int locationId)
+        {
+            var dataset = WeatherHistoryDataset.Instance;
+            var coreFact = dataset.coreFact;
+            var query = new QueryRequest(dataset.coreFact)
+                .Select(
+                    dataset.time.hour)
+                .Select(
+                    dataset.coreFact.temperature,
+                    dataset.coreFact.rain,
+                    dataset.coreFact.windSpeed)
+                .Join(coreFact.locationRef)
+                .Join(coreFact.timeRef)
+                .WhereEq(dataset.location.PrimaryKey, locationId)
+                .WhereEq(dataset.time.day, dayOfMonth)
+                .WhereEq(dataset.time.month, month)
+                .WhereEq(dataset.time.year, year)
+                .OrderByAsc(dataset.time.hour);
+
+            using (var connection = SqliteHelper.CreateConnection())
+            {
+                return query.Execute(connection).rows;
+            }
+        }
+        public static List<float> HoursTempForYear(int locationId, int year)
+        {
+            var dataset = WeatherHistoryDataset.Instance;
+            var coreFact = dataset.coreFact;
+            var fieldToMeasure = dataset.coreFact.temperature;
+            var query = new QueryRequest(coreFact)
+                .Select(
+                    coreFact.temperature
+                )
+                .Join(coreFact.locationRef)
+                .Join(coreFact.timeRef)
+                .WhereEq(dataset.location.PrimaryKey, locationId)
+                .WhereEq(dataset.time.year, year)
+                .GroupBy(dataset.time.yyyyMMddHH)
+                .OrderByAsc(dataset.time.year)
+                .OrderByAsc(dataset.time.month)
+                .OrderByAsc(dataset.time.day);
+
+            using (var connection = SqliteHelper.CreateConnection())
+            {
+                var result = query.Execute(connection);
+                return result.rows.Select(r => r.FloatValue(coreFact.temperature)).ToList();
+            }
         }
     }
 }

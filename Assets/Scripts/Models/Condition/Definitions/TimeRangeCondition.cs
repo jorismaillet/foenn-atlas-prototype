@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Scripts.Helpers;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Engine;
 
@@ -19,7 +20,7 @@ namespace Assets.Scripts.Models.Condition.Definitions
 
         public bool IsMatch(Row row)
         {
-            var time = TimeDimension.FromTimestamp(row.StringValue(dimension.timestamp));
+            var time = DateTimeHelper.FromTimestamp(row.StringValue(dimension.timestamp));
             var duration = row.IntValue(dimension.duration);
             var timeEnd = time.AddHours(duration);
 

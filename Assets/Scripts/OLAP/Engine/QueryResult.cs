@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Assets.Scripts.Models.Geo;
+using Assets.Scripts.Models.Locations;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Schema.Fields;
+using Assets.Scripts.OLAP.Schema.Tables;
+using Codice.CM.Common;
 
 namespace Assets.Scripts.OLAP.Engine
 {
@@ -55,6 +59,18 @@ namespace Assets.Scripts.OLAP.Engine
                     (float)rawLine[geoIndexes["lon"]]
                 );
             };
+        }
+
+        public List<GeoMeasure> ToPostMeasures(LocationDimension location, Field fieldToMeasure)
+        {
+            var res = new List<GeoMeasure>();
+            foreach (var row in rows)
+            {
+                string postName = (string)row.values[location.PostName];
+                var measure = row.FloatValue(fieldToMeasure);
+                res.Add(new GeoMeasure(new PointLocation(postName, row.geo.lat, row.geo.lon), fieldToMeasure, measure));
+            }
+            return res;
         }
     }
 }

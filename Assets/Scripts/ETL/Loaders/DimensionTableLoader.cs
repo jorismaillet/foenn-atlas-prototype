@@ -6,7 +6,7 @@ namespace Assets.Scripts.ETL.Loaders
 {
     public class DimensionTableLoader : SqliteTableLoader
     {
-        public Dimension Dimension => (Dimension)Table;
+        public Dimension Dimension { get; }
 
         public DimensionCache Cache { get; }
 
@@ -14,6 +14,7 @@ namespace Assets.Scripts.ETL.Loaders
 
         public DimensionTableLoader(Dimension dimension) : base(dimension)
         {
+            Dimension = (Dimension)Table;
             Cache = new DimensionCache(dimension);
         }
 

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using Assets.Scripts.Components.Logger;
 using Assets.Scripts.Database;
+using Assets.Scripts.Models.Geo;
 using Assets.Scripts.OLAP.Schema.Fields;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
@@ -16,7 +17,7 @@ namespace Assets.Scripts.OLAP.Engine
 
         private List<Field> selectedFields;
 
-        public QueryRequest(ITable from)
+        public QueryRequest(Table from)
         {
             query = new Query(from.Name);
             selectedFields = new List<Field>();
@@ -28,11 +29,13 @@ namespace Assets.Scripts.OLAP.Engine
             foreach (var field in fields)
             {
                 query.Select(field.Identifier());
-                if (field.analyticsType != AnalyticsType.METRIC)
-                {
-                    query.GroupBy(field.Identifier());
-                }
             }
+            return this;
+        }
+
+        public QueryRequest Distinct()
+        {
+            query.Distinct();
             return this;
         }
 
@@ -40,6 +43,20 @@ namespace Assets.Scripts.OLAP.Engine
         {
             selectedFields.Add(field);
             query.SelectAvg(field.Identifier());
+            return this;
+        }
+
+        public QueryRequest SelectCount(Field field)
+        {
+            selectedFields.Add(field);
+            query.SelectCount(field.Identifier());
+            return this;
+        }
+
+        public QueryRequest SelectMax(Field field)
+        {
+            selectedFields.Add(field);
+            query.SelectMax(field.Identifier());
             return this;
         }
 
@@ -76,6 +93,12 @@ namespace Assets.Scripts.OLAP.Engine
         public QueryRequest WhereBetween<T>(Field field, T lower, T higher)
         {
             query.WhereBetween(field.Identifier(), lower, higher);
+            return this;
+        }
+
+        public QueryRequest OrderByAsc(Field field)
+        {
+            query.OrderBy(field.Identifier());
             return this;
         }
 

@@ -23,9 +23,8 @@ namespace Assets.Scripts.OLAP.Schema.Fields
         {
             string prefix = unique ? "UIDX" : "IDX";
 
-            var fieldNames = fields
-                .Select(f => f.fieldName.ToUpper());
-            var normalizedFields = fieldNames.Select(f => Regex.Replace(f, "[^a-z0-9_]", "_"));
+            var fieldNames = fields.Select(f => f.fieldName.ToUpperInvariant());
+            var normalizedFields = fieldNames.Select(f => Regex.Replace(f, "[^A-Z0-9_]", "_"));
             return $"{prefix}_{string.Join("_", normalizedFields)}";
         }
     }

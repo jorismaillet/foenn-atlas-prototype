@@ -8,7 +8,7 @@ namespace Assets.Scripts.ETL.Loaders
 {
     public class SqliteTableLoader : IDisposable
     {
-        public ITable Table { get; }
+        public Table Table { get; }
 
         protected SqliteCommand _stageCommand;
 
@@ -16,7 +16,7 @@ namespace Assets.Scripts.ETL.Loaders
 
         protected List<Func<string[], object>> _valueResolvers;
 
-        public SqliteTableLoader(ITable table)
+        public SqliteTableLoader(Table table)
         {
             Table = table;
         }

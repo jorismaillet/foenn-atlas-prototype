@@ -6,15 +6,9 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
 {
     public class LocationDimension : Dimension
     {
-        public override string Name { get; }
-
-        public override Field PrimaryKey => Field.PK(Name);
-
         public override Field LookupField => PostNumber;
 
-        public override SourceField LookupSourceAttribute { get; }
-
-        public Field
+        public readonly Field
             PostNumber,
             Latitude,
             Longitude,
@@ -22,32 +16,27 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
             PostName,
             Department;
 
-        public override List<IndexDefinition> Indexes => new List<IndexDefinition>() {
-            new IndexDefinition(true, LookupField),
-            new IndexDefinition(false, Department)
-        };
-
-        public override List<FieldMap> Mappings => new List<FieldMap>()
+        public LocationDimension() : base(
+            "location_dimension",
+            new SourceField("NUM_POSTE", SourceFieldType.String)
+        )
         {
-            FieldMap.Map(LookupSourceAttribute, PostNumber),
-            FieldMap.Map(new SourceField("LAT", SourceFieldType.Float), Latitude),
-            FieldMap.Map(new SourceField("LON", SourceFieldType.Float), Longitude),
-            FieldMap.Map(new SourceField("NOM_USUEL", SourceFieldType.String), PostName),
-            FieldMap.Compute(new SourceField("NUM_POSTE", SourceFieldType.String), Department, s => s.Substring(0, 2)),
-            FieldMap.Map(new SourceField("ALTI", SourceFieldType.Int), Altitude)
-        };
+            PostNumber = Field.TextAttribute(Name, "post_number", "Post number");
+            Latitude = Field.GeoLatAttribute(Name, "lat", "Latitude");
+            Longitude = Field.GeoLonAttribute(Name, "lon", "Longitude");
+            Altitude = Field.IntAttribute(Name, "altitude", "Altitude");
+            PostName = Field.TextAttribute(Name, "post_name", "Post name");
+            Department = Field.TextAttribute(Name, "department", "Department");
 
-        public LocationDimension()
-        {
-            Name = "location_dimension";
-            LookupSourceAttribute = new SourceField("NUM_POSTE", SourceFieldType.String);
+            Indexes.Add(new IndexDefinition(true, LookupField));
+            Indexes.Add(new IndexDefinition(false, Department));
 
-            PostNumber = Field.TextAttribute(Name, "post_number");
-            Latitude = Field.GeoLatAttribute(Name, "lat");
-            Longitude = Field.GeoLonAttribute(Name, "lon");
-            Altitude = Field.IntAttribute(Name, "altitude");
-            PostName = Field.TextAttribute(Name, "post_name");
-            Department = Field.TextAttribute(Name, "department");
+            Mappings.Add(FieldMap.Map(LookupSourceAttribute, PostNumber));
+            Mappings.Add(FieldMap.Map(new SourceField("LAT", SourceFieldType.Float), Latitude));
+            Mappings.Add(FieldMap.Map(new SourceField("LON", SourceFieldType.Float), Longitude));
+            Mappings.Add(FieldMap.Map(new SourceField("NOM_USUEL", SourceFieldType.String), PostName));
+            Mappings.Add(FieldMap.Compute(new SourceField("NUM_POSTE", SourceFieldType.String), Department, s => s.Substring(0, 2)));
+            Mappings.Add(FieldMap.Map(new SourceField("ALTI", SourceFieldType.Int), Altitude));
         }
     }
 }

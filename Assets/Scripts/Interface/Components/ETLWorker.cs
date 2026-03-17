@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Assets.Scripts.Components.Logger;
 using Assets.Scripts.Database;
 using Assets.Scripts.ETL;
 using Assets.Scripts.OLAP.Datasets;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using UnityEngine;
 
 namespace Assets.Scripts.Components
@@ -14,34 +16,35 @@ namespace Assets.Scripts.Components
     public class ETLWorker : MonoBehaviour
     {
         private CancellationTokenSource ct;
-
         private Task task;
 
-        void OnDisable()
+        private void Start()
         {
-            CleanupRunningWork();
-        }
+            SqliteHelper.CreateDb();
 
-        void OnApplicationQuit()
-        {
-            CleanupRunningWork();
-        }
+            var dataset = WeatherHistoryDataset.Instance;
+            List<string> filesToLoad;
 
-        void CleanupRunningWork()
-        {
-            try { ct?.Cancel(); } catch { }
-
-            if (task != null)
+            using (var sqliteConnection = SqliteHelper.CreateConnection())
             {
-                try { task.Wait(2000); }
-                catch { }
-                task.Dispose();
+                WeatherHistoryDataset.Instance.InitTables(sqliteConnection);
+                SqliteHelper.CreateTable(sqliteConnection, dataset.MetadataTable);
+                filesToLoad = dataset.MetadataTable.FilesToLoad(sqliteConnection);
             }
 
-            task = null;
+            StartCoroutine(Init(dataset, filesToLoad));
+        }
 
-            ct?.Dispose();
-            ct = null;
+        IEnumerator Init(Dataset dataset, List<string> filesToLoad)
+        {
+            if (filesToLoad.Any())
+            {
+                Application.runInBackground = true;
+                Application.targetFrameRate = 1;
+                yield return StartCoroutine(PrepareData(dataset, filesToLoad));
+                Application.runInBackground = false;
+                Application.targetFrameRate = 60;
+            }
         }
 
         public IEnumerator PrepareData(Dataset dataset, List<string> filesToLoad)
@@ -86,6 +89,33 @@ namespace Assets.Scripts.Components
                     dataset.MetadataTable.FlagProcessed(connection, fileName);
                 }
             }
+            CleanupRunningWork();
+        }
+
+        void CleanupRunningWork()
+        {
+            try { ct?.Cancel(); } catch { }
+
+            if (task != null)
+            {
+                try { task.Wait(2000); }
+                catch { }
+                task.Dispose();
+            }
+
+            task = null;
+
+            ct?.Dispose();
+            ct = null;
+        }
+
+        void OnDisable()
+        {
+            CleanupRunningWork();
+        }
+
+        void OnApplicationQuit()
+        {
             CleanupRunningWork();
         }
     }

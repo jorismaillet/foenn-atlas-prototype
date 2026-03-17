@@ -19,7 +19,10 @@ namespace Assets.Scripts.Components.Models
 
         public void SetValue(TMP_Text text)
         {
-            text.text = element.value.ToString();
+            var value = element.value.ToString("F2");
+            text.text = string.IsNullOrEmpty(element.field?.format)
+                ? value
+                : $"{value} {element.field.format}";
         }
     }
 }

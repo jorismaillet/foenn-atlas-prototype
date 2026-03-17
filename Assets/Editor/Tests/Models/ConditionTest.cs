@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Models.Condition;
+﻿using Assets.Scripts.Helpers;
+using Assets.Scripts.Models.Condition;
 using Assets.Scripts.Models.Condition.Definitions;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
@@ -70,9 +71,9 @@ namespace Assets.Editor.Tests.Models
         public void TestEdgeTimeRangeCondition()
         {
             var time = WeatherHistoryDataset.Instance.time;
-            var c = new TimeRangeCondition(time, TimeDimension.ToDateTime("2022080110"), TimeDimension.ToDateTime("2022080112"));
+            var c = new TimeRangeCondition(time, DateTimeHelper.ToDateTime("2022080110"), DateTimeHelper.ToDateTime("2022080112"));
             var row = new Row();
-            row.values[time.timestamp] = TimeDimension.ToTimestamp("2022080112");
+            row.values[time.timestamp] = DateTimeHelper.ToTimestamp("2022080112");
             row.values[time.duration] = 1;
             Assert.IsFalse(c.IsMatch(row));
         }
@@ -81,9 +82,9 @@ namespace Assets.Editor.Tests.Models
         public void TestInsideTimeRangeCondition()
         {
             var time = WeatherHistoryDataset.Instance.time;
-            var c = new TimeRangeCondition(time, TimeDimension.ToDateTime("2022080110"), TimeDimension.ToDateTime("2022080112"));
+            var c = new TimeRangeCondition(time, DateTimeHelper.ToDateTime("2022080110"), DateTimeHelper.ToDateTime("2022080112"));
             var row = new Row();
-            row.values[time.timestamp] = TimeDimension.ToTimestamp("2022080110");
+            row.values[time.timestamp] = DateTimeHelper.ToTimestamp("2022080110");
             row.values[time.duration] = 1;
             Assert.IsTrue(c.IsMatch(row));
         }

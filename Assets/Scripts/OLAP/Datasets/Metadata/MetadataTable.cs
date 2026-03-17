@@ -10,28 +10,16 @@ using SqlKata;
 
 namespace Assets.Scripts.OLAP.Datasets.Metadata
 {
-    public class MetadataTable : ITable
+    public class MetadataTable : Table
     {
-        public string Name { get; }
-
-        public Field PrimaryKey => Field.PK(Name);
-
         private Field fileName;
+		public override IEnumerable<Field> Columns { get; }
 
-        public List<Field> References => new List<Field>();
-
-        public List<IndexDefinition> Indexes => new List<IndexDefinition>() {
-            new IndexDefinition(true, fileName),
-        };
-
-        public List<Field> Columns => new List<Field>() { PrimaryKey, fileName };
-
-        public List<FieldMap> Mappings => new List<FieldMap>();
-
-        public MetadataTable(string datasetName)
+		public MetadataTable(string datasetName) : base(MakeTableName(datasetName))
         {
-            Name = MakeTableName(datasetName);
-            fileName = Field.TextAttribute(Name, "File");
+            fileName = Field.TextAttribute(Name, "File", "");
+            Indexes.Add(new IndexDefinition(true, fileName));
+            Columns = new List<Field>() { PrimaryKey, fileName };
         }
 
         public static string MakeTableName(string table)

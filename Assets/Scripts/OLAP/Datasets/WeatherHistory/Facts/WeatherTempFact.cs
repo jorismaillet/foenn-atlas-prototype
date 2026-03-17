@@ -1,46 +1,27 @@
-using System.Collections.Generic;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Schema.Fields;
-using Assets.Scripts.OLAP.Schema.Tables;
 
 namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
 {
-    public class WeatherTempFact : Fact
+    public class WeatherTempFact : WeatherBaseFact
     {
-        public override string Name { get; }
-
-        public Field
+        public readonly Field
             temperature10,
             temperature20,
             temperature50,
-            temperature100,
-            timeRef,
-            locationRef;
+            temperature100;
 
-        public override List<IndexDefinition> Indexes => new List<IndexDefinition>() {
-            new IndexDefinition(true, timeRef, locationRef)
-        };
-
-        public override List<Field> References => new List<Field>() { timeRef, locationRef };
-
-        public override List<FieldMap> Mappings => new List<FieldMap>()
+        public WeatherTempFact(TimeDimension time, LocationDimension location) : base("weather_vertical_temp_facts", time, location)
         {
-            FieldMap.Map(new SourceField("T10", SourceFieldType.Float), temperature10),
-            FieldMap.Map(new SourceField("T20", SourceFieldType.Float), temperature20),
-            FieldMap.Map(new SourceField("T50", SourceFieldType.Float), temperature50),
-            FieldMap.Map(new SourceField("T100", SourceFieldType.Float), temperature100),
-        };
+            temperature10 = Field.FloatMetric(Name, "temperature_10", "Temperature (10m)", "°C");
+            temperature20 = Field.FloatMetric(Name, "temperature_20", "Temperature (20m)", "°C");
+            temperature50 = Field.FloatMetric(Name, "temperature_50", "Temperature (50m)", "°C");
+            temperature100 = Field.FloatMetric(Name, "temperature_100", "Temperature (100m)", "°C");
 
-        public WeatherTempFact(TimeDimension time, LocationDimension location) : base(new List<Dimension>() { time, location })
-        {
-            Name = "weather_vertical_temp_facts";
-            temperature10 = Field.FloatMetric(Name, "temperature_10");
-            temperature20 = Field.FloatMetric(Name, "temperature_20");
-            temperature50 = Field.FloatMetric(Name, "temperature_50");
-            temperature100 = Field.FloatMetric(Name, "temperature_100");
-
-            timeRef = Field.Ref(this, time, "time_id");
-            locationRef = Field.Ref(this, location, "location_id");
+            Mappings.Add(FieldMap.Map(new SourceField("T10", SourceFieldType.Float), temperature10));
+            Mappings.Add(FieldMap.Map(new SourceField("T20", SourceFieldType.Float), temperature20));
+            Mappings.Add(FieldMap.Map(new SourceField("T50", SourceFieldType.Float), temperature50));
+            Mappings.Add(FieldMap.Map(new SourceField("T100", SourceFieldType.Float), temperature100));
         }
     }
 }

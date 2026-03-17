@@ -17,6 +17,7 @@ namespace Assets.Scripts.OLAP.Datasets
         public Dataset(string name)
         {
             this.name = name;
+            MetadataTable = new MetadataTable(name);
         }
 
         public void InitTables(SqliteConnection connection)
@@ -31,6 +32,6 @@ namespace Assets.Scripts.OLAP.Datasets
             }
         }
 
-        public MetadataTable MetadataTable => new MetadataTable(name);
+        public MetadataTable MetadataTable;
     }
 }

@@ -4,22 +4,13 @@ using Assets.Scripts.OLAP.Schema.Fields;
 
 namespace Assets.Scripts.OLAP.Schema.Tables
 {
-    public abstract class Dimension : ITable
+    public abstract class Dimension : Table
     {
-        public abstract string Name { get; }
-
-        public abstract Field PrimaryKey { get; }
-
-        public abstract List<IndexDefinition> Indexes { get; }
-
-        public abstract List<FieldMap> Mappings { get; }
-
         public abstract Field LookupField { get; }
+        public readonly SourceField LookupSourceAttribute;
 
-        public abstract SourceField LookupSourceAttribute { get; }
-
-        public List<Field> References => new List<Field>();
-
-        public List<Field> Columns => Mappings.Select(m => m.targetField).Prepend(PrimaryKey).Concat(References).Distinct().ToList();
+        public Dimension(string name, SourceField LookupSourceAttribute) : base(name) {
+            this.LookupSourceAttribute = LookupSourceAttribute;
+        }
     }
 }
