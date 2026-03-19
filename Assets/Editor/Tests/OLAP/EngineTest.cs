@@ -36,7 +36,7 @@ namespace Assets.Editor.Tests.OLAP
 
                 var queryRequest = new QueryRequest(dataset.coreFact)
                     .SelectAvg(dataset.coreFact.temperature)
-                    .Select(dataset.location.PostName, dataset.time.hour)
+                    .SelectGroup(dataset.location.PostName, dataset.time.hour)
                     .WhereEq(dataset.location.Department, "29")
                     .Join(dataset.coreFact.locationRef)
                     .Join(dataset.coreFact.timeRef)

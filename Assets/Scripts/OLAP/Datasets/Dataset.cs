@@ -8,15 +8,12 @@ namespace Assets.Scripts.OLAP.Datasets
 {
     public abstract class Dataset
     {
-        private string name;
-
         public abstract List<Dimension> Dimensions { get; }
 
         public abstract List<Fact> Facts { get; }
 
         public Dataset(string name)
         {
-            this.name = name;
             MetadataTable = new MetadataTable(name);
         }
 

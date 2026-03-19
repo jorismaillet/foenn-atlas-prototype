@@ -12,7 +12,7 @@ namespace Assets.Scripts.Services
     {
         public static Dictionary<int,Row> RetrieveIdAndFields(Table table, params Field[] fields)
         {
-            var query = new QueryRequest(table).Select(table.PrimaryKey).Select(fields).Distinct();
+            var query = new QueryRequest(table).SelectGroup(table.PrimaryKey).SelectGroup(fields).Distinct();
             List<Row> rows;
             using (var connection = SqliteHelper.CreateConnection())
             {
@@ -27,7 +27,7 @@ namespace Assets.Scripts.Services
         }
         public static List<T> RetrieveMembers<T>(Table table, Field field)
         {
-            var query = new QueryRequest(table).Select(field).Distinct();
+            var query = new QueryRequest(table).SelectGroup(field).Distinct();
             using (var connection = SqliteHelper.CreateConnection())
             {
                 return query.Execute(connection).rows.Select(row => {

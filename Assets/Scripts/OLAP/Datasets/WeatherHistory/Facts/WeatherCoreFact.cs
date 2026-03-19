@@ -19,7 +19,7 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
             dewPoint = Field.FloatMetric(Name, "dew_point", "Dew point", "°C");
             humidity = Field.FloatMetric(Name, "humidity", "Humidity", "%");
             rain = Field.FloatMetric(Name, "rain", "Rain", "mm");
-            windSpeed = Field.FloatMetric(Name, "wind_speed", "Wind speed", "kmh");
+            windSpeed = Field.FloatMetric(Name, "wind_speed", "Wind speed", "ms");
             windDirection = Field.FloatMetric(Name, "wind_direction", "Wind direction", "°");
 
             Mappings.Add(FieldMap.Map(new SourceField("T", SourceFieldType.Float), temperature));

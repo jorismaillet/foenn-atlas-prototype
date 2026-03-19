@@ -33,6 +33,17 @@ namespace Assets.Scripts.OLAP.Engine
             return this;
         }
 
+        public QueryRequest SelectGroup(params Field[] fields)
+        {
+            selectedFields.AddRange(fields);
+            foreach (var field in fields)
+            {
+                query.Select(field.Identifier());
+                GroupBy(field);
+            }
+            return this;
+        }
+
         public QueryRequest Distinct()
         {
             query.Distinct();

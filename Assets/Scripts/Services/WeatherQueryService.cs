@@ -14,25 +14,24 @@ namespace Assets.Scripts.Services
         {
             var dataset = WeatherHistoryDataset.Instance;
             var coreFact = dataset.coreFact;
-            var fieldToMeasure = dataset.coreFact.temperature;
+            var fieldToMeasure = dataset.coreFact.rain;
             var query = new QueryRequest(coreFact)
-                .Select(
+                .SelectGroup(
                     dataset.location.Longitude,
                     dataset.location.Latitude,
                     dataset.location.PostName)
-                .SelectCount(fieldToMeasure)
-                .GroupBy(coreFact.locationRef)
-                .GroupBy(coreFact.timeRef)
+                .SelectCount(coreFact.PrimaryKey)
                 .Join(coreFact.locationRef)
                 .Join(coreFact.timeRef)
                 .WhereEq(dataset.time.year, year)
+                .WhereEq(fieldToMeasure, 0)
                 .WhereBetween(dataset.time.hour, 8, 20)
                 .WhereNotNull(fieldToMeasure);
 
             using (var connection = SqliteHelper.CreateConnection())
             {
                 var result = query.Execute(connection);
-                return result.ToPostMeasures(dataset.location, fieldToMeasure);
+                return result.ToPostMeasures(dataset.location, coreFact.PrimaryKey);
             }
         }
         public static List<GeoMeasure> MaxYearMeasure(int year, Field coreFactField)
@@ -40,13 +39,11 @@ namespace Assets.Scripts.Services
             var dataset = WeatherHistoryDataset.Instance;
             var coreFact = dataset.coreFact;
             var query = new QueryRequest(coreFact)
-                .Select(
+                .SelectGroup(
                     dataset.location.Longitude,
                     dataset.location.Latitude,
                     dataset.location.PostName)
                 .SelectMax(coreFactField)
-                .GroupBy(coreFact.locationRef)
-                .GroupBy(coreFact.timeRef)
                 .Join(coreFact.locationRef)
                 .Join(coreFact.timeRef)
                 .WhereEq(dataset.time.year, year)
@@ -63,14 +60,12 @@ namespace Assets.Scripts.Services
             var dataset = WeatherHistoryDataset.Instance;
             var coreFact = dataset.coreFact;
             var query = new QueryRequest(dataset.coreFact)
-                .Select(
+                .SelectGroup(
                     dataset.time.hour)
                 .Select(
                     dataset.coreFact.temperature,
                     dataset.coreFact.rain,
                     dataset.coreFact.windSpeed)
-                .Join(coreFact.locationRef)
-                .Join(coreFact.timeRef)
                 .WhereEq(dataset.location.PrimaryKey, locationId)
                 .WhereEq(dataset.time.day, dayOfMonth)
                 .WhereEq(dataset.time.month, month)
@@ -95,7 +90,6 @@ namespace Assets.Scripts.Services
                 .Join(coreFact.timeRef)
                 .WhereEq(dataset.location.PrimaryKey, locationId)
                 .WhereEq(dataset.time.year, year)
-                .GroupBy(dataset.time.yyyyMMddHH)
                 .OrderByAsc(dataset.time.year)
                 .OrderByAsc(dataset.time.month)
                 .OrderByAsc(dataset.time.day);

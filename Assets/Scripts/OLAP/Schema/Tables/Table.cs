@@ -16,7 +16,7 @@ namespace Assets.Scripts.OLAP.Schema.Tables
 
         public readonly List<Field> References;
 
-        public virtual IEnumerable<Field> Columns => Mappings.Select(m => m.targetField).Prepend(PrimaryKey);
+        public virtual IEnumerable<Field> Columns => Mappings.Select(m => m.targetField).Prepend(PrimaryKey).Concat(References);
 
         public Table(string name)
         {
