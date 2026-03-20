@@ -26,5 +26,12 @@ namespace Assets.Scripts.Models.Condition.Definitions
 
             return time >= start && timeEnd <= end;
         }
+
+        public QueryRequest AddToQuery(QueryRequest query)
+        {
+            var startTimestamp = new DateTimeOffset(start).ToUnixTimeSeconds();
+            var endTimestamp = new DateTimeOffset(end).ToUnixTimeSeconds();
+            return query.WhereBetween(dimension.timestamp, startTimestamp, endTimestamp);
+        }
     }
 }

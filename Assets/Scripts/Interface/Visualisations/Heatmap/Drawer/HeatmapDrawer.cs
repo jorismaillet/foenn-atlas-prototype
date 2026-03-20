@@ -167,7 +167,7 @@ namespace Assets.Scripts.Interface.Visualisations.Heatmap.Drawer
                         ref bestCount,
                         out float exactValue))
                     {
-                        outPixels[idxPix] = TempToColor(exactValue, drawer.tempMin, drawer.tempMax, baseAlpha);
+                        outPixels[idxPix] = drawer.GetColor(exactValue);
                         continue;
                     }
 
@@ -184,7 +184,7 @@ namespace Assets.Scripts.Interface.Visualisations.Heatmap.Drawer
                     fade = Mathf.Clamp01(fade);
                     byte alphaByte = (byte)Mathf.Clamp(Mathf.RoundToInt(baseAlpha * fade), 0, 255);
 
-                    outPixels[idxPix] = TempToColor(temp, drawer.tempMin, drawer.tempMax, alphaByte);
+                    outPixels[idxPix] = drawer.GetColor(temp);
                 }
             }
         }
@@ -364,7 +364,7 @@ namespace Assets.Scripts.Interface.Visualisations.Heatmap.Drawer
                         alpha = (byte)(sumAlpha / validCount);
                     }
 
-                    outPixels[idxPix] = TempToColor(temp, drawer.tempMin, drawer.tempMax, alpha);
+                    outPixels[idxPix] = drawer.GetColor(temp);
                 }
             }
         }
@@ -530,38 +530,6 @@ namespace Assets.Scripts.Interface.Visualisations.Heatmap.Drawer
             }
 
             return (float)(tSum / wSum);
-        }
-
-        private static Color32 TempToColor(float temp, float tMin, float tMax, byte alpha)
-        {
-            float a = (temp - tMin) / (tMax - tMin + 1e-9f);
-            a = Mathf.Clamp01(a);
-
-            byte r, g, b;
-
-            if (a < 0.33f)
-            {
-                float kk = a / 0.33f;
-                r = 0;
-                g = (byte)Mathf.Clamp(Mathf.RoundToInt(255f * kk), 0, 255);
-                b = 255;
-            }
-            else if (a < 0.66f)
-            {
-                float kk = (a - 0.33f) / 0.33f;
-                r = (byte)Mathf.Clamp(Mathf.RoundToInt(255f * kk), 0, 255);
-                g = 255;
-                b = (byte)Mathf.Clamp(Mathf.RoundToInt(255f * (1f - kk)), 0, 255);
-            }
-            else
-            {
-                float kk = (a - 0.66f) / 0.34f;
-                r = 255;
-                g = (byte)Mathf.Clamp(Mathf.RoundToInt(255f * (1f - kk)), 0, 255);
-                b = 0;
-            }
-
-            return new Color32(r, g, b, alpha);
         }
     }
 }

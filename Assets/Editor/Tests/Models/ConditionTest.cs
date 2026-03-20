@@ -21,6 +21,11 @@ namespace Assets.Editor.Tests.Models
         {
             return overrideCondition;
         }
+
+        public QueryRequest AddToQuery(QueryRequest query)
+        {
+            return query;
+        }
     }
 
     public class ConditionTest

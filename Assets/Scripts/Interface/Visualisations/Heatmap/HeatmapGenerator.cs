@@ -77,7 +77,6 @@ namespace Assets.Scripts.Interface.Visualisations.Heatmap
         private static void ValidateInputs(HeatmapSettings settings, HeatmapDrawerSettings rawImageSettings)
         {
             settings.Validate();
-            rawImageSettings.Validate();
         }
 
         static void FlattenPixelMeasures(IReadOnlyList<PixelMeasure> pixelMeasures, out int[] xs, out int[] ys, out float[] vals)

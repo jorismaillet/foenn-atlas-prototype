@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Assets.Scripts.Components.Layers.OpenStreetMap;
 using Assets.Scripts.Components.Logger;
+using Assets.Scripts.Helpers;
 using Assets.Scripts.Interface.Visualisations.Heatmap.Drawer;
 using Assets.Scripts.Interface.Visualisations.Heatmap;
 using Assets.Scripts.Interface.Visualisations.Heatmap.Render;
-using Assets.Scripts.Interface.Visualisations.Tiles;
 using Assets.Scripts.Models.Geo;
 using UnityEngine;
+using Assets.Scripts.Interface.Visualisations;
 
 namespace Assets.Scripts.Components.Visualisations.Heatmap
 {
@@ -32,14 +33,10 @@ namespace Assets.Scripts.Components.Visualisations.Heatmap
 
         [Range(0f, 1f)][SerializeField] float alpha = 0.85f;
 
-        [SerializeField] float tempMin = -10f;
-
-        [SerializeField] float tempMax = 40f;
-
-        [Min(1)][SerializeField] int cellSizePx = 32;
+        [Min(1)][SerializeField] int cellSizePx = 12;
 
         [Header("Performance")]
-        [Min(0)][SerializeField] int targetTextureSizePx = 512;
+        [Min(0)][SerializeField] int targetTextureSizePx = 2048;
 
         [Header("Mask (optional)")]
         [SerializeField] Texture2D mask;
@@ -63,6 +60,8 @@ namespace Assets.Scripts.Components.Visualisations.Heatmap
 
         Texture2D _texture;
 
+        private CustomGradient fieldGradient;
+
         void Awake()
         {
             _meshFilter = GetComponent<MeshFilter>();
@@ -72,8 +71,9 @@ namespace Assets.Scripts.Components.Visualisations.Heatmap
             EnsureMaterial();
         }
 
-        public void SetMeasures(List<GeoMeasure> measures)
+        public void SetMeasures(List<GeoMeasure> measures, CustomGradient fieldGradient)
         {
+            this.fieldGradient = fieldGradient;
             _measures = measures;
             RebuildAll();
         }
@@ -134,12 +134,9 @@ namespace Assets.Scripts.Components.Visualisations.Heatmap
             int halfGridSize = gridSize / 2;
             float tileWorldSize = tileGridRenderer.tileToWorldSize;
 
-            double centerTileXf = TileGridHelper.LonToTileX(tileGridRenderer.franceCenter.lon, zoom);
-            double centerTileYf = TileGridHelper.LatToTileY(tileGridRenderer.franceCenter.lat, zoom);
-            int centerTileX = (int)Math.Floor(centerTileXf);
-            int centerTileY = (int)Math.Floor(centerTileYf);
-            float fracX = (float)(centerTileXf - centerTileX);
-            float fracY = (float)(centerTileYf - centerTileY);
+            var center = GeoUtils.GetTileCenterData(tileGridRenderer.franceCenter, zoom);
+            float fracX = center.fracX;
+            float fracY = center.fracY;
 
             float left = (-halfGridSize - fracX) * tileWorldSize;
             float right = (halfGridSize + 1 - fracX) * tileWorldSize;
@@ -182,7 +179,7 @@ namespace Assets.Scripts.Components.Visualisations.Heatmap
             if (tileGridRenderer == null || _runtimeMaterial == null) return;
 
             var settings = new HeatmapSettings(idwPower, maxNeighbors, maxRadiusPx, cellSizePx);
-            var rawImageSettings = new HeatmapDrawerSettings(alpha, tempMin, tempMax);
+            var rawImageSettings = new HeatmapDrawerSettings(alpha, fieldGradient);
 
             var sw = new Stopwatch();
             sw.Start();

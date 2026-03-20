@@ -21,5 +21,10 @@ namespace Assets.Scripts.Models.Condition.Definitions
             var val = row.FloatValue(field);
             return min <= val && val <= max;
         }
+
+        public QueryRequest AddToQuery(QueryRequest query)
+        {
+            return query.WhereBetween(field, min, max);
+        }
     }
 }

@@ -71,6 +71,13 @@ namespace Assets.Scripts.OLAP.Engine
             return this;
         }
 
+        public QueryRequest SelectMin(Field field)
+        {
+            selectedFields.Add(field);
+            query.SelectMin(field.Identifier());
+            return this;
+        }
+
         public QueryRequest Join(Field refField)
         {
             query.Join(refField.referencedDimension.Name, $"{refField.Identifier()}", $"{refField.referencedDimension.PrimaryKey.Identifier()}");

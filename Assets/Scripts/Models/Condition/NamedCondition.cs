@@ -18,5 +18,10 @@ namespace Assets.Scripts.Models.Condition
         {
             return condition.IsMatch(row);
         }
+
+        public QueryRequest AddToQuery(QueryRequest query)
+        {
+            return condition.AddToQuery(query);
+        }
     }
 }

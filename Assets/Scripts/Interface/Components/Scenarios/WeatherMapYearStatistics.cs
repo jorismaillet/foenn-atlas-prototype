@@ -2,6 +2,7 @@
 using System.Linq;
 using Assets.Scripts.Components.Commons.Containers;
 using Assets.Scripts.Components.Visualisations.Heatmap;
+using Assets.Scripts.Interface.Visualisations;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using Assets.Scripts.Services;
 using UnityEngine;
@@ -16,9 +17,10 @@ namespace Assets.Scripts.Interface.Components.Scenarios
         public TMPro.TMP_Dropdown scenarioDropdown;
         public TMPro.TMP_Dropdown yearDropdown;
         public TMPro.TMP_Dropdown metricDropdown;
+        public TMPro.TMP_Dropdown statTypeDropdown;
 
         private const string hoursRainScenarioText = "Hours without rain";
-        private const string recordScenarioText = "Metric records";
+        private const string statScenarioText = "Metric statistics";
 
         public void OnCaseSelected()
         {
@@ -27,28 +29,31 @@ namespace Assets.Scripts.Interface.Components.Scenarios
                 case hoursRainScenarioText:
                     SetHoursRainScenario();
                     break;
-                case recordScenarioText:
-                    SetFieldRecordScenario();
+                case statScenarioText:
+                    SetFieldStatScenario();
                     break;
             }
         }
 
         public void SetHoursRainScenario()
         {
+            var dayOnly = true;
             var year = int.Parse(yearDropdown.captionText.text);
-            var geoMeasures = WeatherQueryService.HoursWithoutRain(year);
-            heatmapContainer.SetMeasures(geoMeasures);
+            var geoMeasures = WeatherQueryService.HoursWithoutRain(year, dayOnly);
+            var field = WeatherHistoryDataset.Instance.coreFact.rain;
+            var rangeMultiplier = (dayOnly ? (22 - 9) : 24) * 365;
+            heatmapContainer.SetMeasures(geoMeasures, new CustomGradient(CustomGradient.CreateDroughtGradient(), 0.864F, 0.99F, rangeMultiplier));
             pointmapContainer.Initialize(geoMeasures);
         }
 
-        public void SetFieldRecordScenario()
+        public void SetFieldStatScenario()
         {
             var metricName = metricDropdown.captionText.text;
             var fact = WeatherHistoryDataset.Instance.coreFact;
             var field = fact.Mappings.Find(m => m.targetField.fieldName.Equals(metricName)).targetField;
             var year = int.Parse(yearDropdown.captionText.text);
-            var geoMeasures = WeatherQueryService.MaxYearMeasure(year, field);
-            heatmapContainer.SetMeasures(geoMeasures);
+            var geoMeasures = WeatherQueryService.YearMeasure(year, field, statTypeDropdown.captionText.text);
+            heatmapContainer.SetMeasures(geoMeasures, new CustomGradient(field));
             pointmapContainer.Initialize(geoMeasures);
         }
 
@@ -56,8 +61,11 @@ namespace Assets.Scripts.Interface.Components.Scenarios
         {
             scenarioDropdown.ClearOptions();
             metricDropdown.ClearOptions();
-            scenarioDropdown.AddOptions(new List<string>() { hoursRainScenarioText, recordScenarioText });
-            metricDropdown.AddOptions(WeatherHistoryDataset.Instance.coreFact.Mappings.Select(m => m.targetField.fieldName).ToList());
+            scenarioDropdown.AddOptions(new List<string>() { hoursRainScenarioText, statScenarioText });
+            var coreFact = WeatherHistoryDataset.Instance.coreFact;
+            metricDropdown.AddOptions(new List<string> { coreFact.temperature.fieldName, coreFact.rain.fieldName, coreFact.windSpeed.fieldName }.ToList());
+            statTypeDropdown.ClearOptions();
+            statTypeDropdown.AddOptions(new List<string> { "Minimum", "Maximum", "Average" }.ToList());
             scenarioDropdown.onValueChanged.AddListener((_) =>
             {
                 if(scenarioDropdown.captionText.text.Equals(hoursRainScenarioText))
@@ -65,7 +73,7 @@ namespace Assets.Scripts.Interface.Components.Scenarios
                     Main.selectedScenario.Set(ScenarioKey.HOUR_NO_RAIN);
                 } else
                 {
-                    Main.selectedScenario.Set(ScenarioKey.FIELD_RECORD);
+                    Main.selectedScenario.Set(ScenarioKey.FIELD_STATS);
                 }
             });
         }

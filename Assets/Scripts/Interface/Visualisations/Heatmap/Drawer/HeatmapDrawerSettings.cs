@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Assets.Scripts.Interface.Visualisations.Heatmap.Drawer
 {
@@ -6,24 +7,16 @@ namespace Assets.Scripts.Interface.Visualisations.Heatmap.Drawer
     {
         public readonly float alpha;// 0..1
 
-        public readonly float tempMin;
+        public readonly CustomGradient gradient;
 
-        public readonly float tempMax;
-
-        public HeatmapDrawerSettings(float alpha, float tempMin, float tempMax)
+        public HeatmapDrawerSettings(float alpha, CustomGradient fieldGradient)
         {
-            this.alpha = alpha;
-            this.tempMin = tempMin;
-            this.tempMax = tempMax;
+            this.gradient = fieldGradient;
         }
 
-        public void Validate()
+        public Color32 GetColor(float temp)
         {
-            if (alpha < 0f || alpha > 1f)
-                throw new ArgumentException("Invalid alpha.");
-
-            if (tempMax <= tempMin)
-                throw new ArgumentException("Invalid temperature range.");
+            return gradient.GetColor(temp, alpha);
         }
     }
 }

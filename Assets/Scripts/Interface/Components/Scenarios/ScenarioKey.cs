@@ -3,7 +3,7 @@
     public enum ScenarioKey
     {
         HOUR_NO_RAIN,
-        FIELD_RECORD,
+        FIELD_STATS,
         TEMPORAL_HEATMAP,
         ACTIVITY,
         PLANNING,

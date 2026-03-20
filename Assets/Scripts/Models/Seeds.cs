@@ -12,11 +12,9 @@ namespace Assets.Scripts
     {
         public static FloatRangeCondition noRain = new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.rain, 0, 0);
 
-        public static FloatRangeCondition lowWind = new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.windSpeed, 0, 20);
+        public static FloatRangeCondition lowWind = new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.windSpeed, 0, 2);
 
-        public static FloatRangeCondition lowGust = new FloatRangeCondition(WeatherHistoryDataset.Instance.windFact.gust, 0, 20);
-
-        public static NamedCondition niceWeather = new NamedCondition("Beau temps", new AllCondition(noRain, lowGust, lowWind));
+        public static NamedCondition niceWeather = new NamedCondition("Beau temps", new AllCondition(noRain, lowWind));
 
         public static PointLocation brestCenter = new PointLocation("Brest", 48.3874F, -4.4952F);
 
@@ -44,9 +42,9 @@ namespace Assets.Scripts
             new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.rain, 0, 0),
             new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.windSpeed, 0, 2));
 
-        public static Activity tennis = new Activity("Tennis", new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.temperature, 10, 27),
+        public static Activity tennis = new Activity("Tennis", new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.temperature, 5, 27),
             new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.rain, 0, 1),
-            new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.windSpeed, 0, 0));
+            new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.windSpeed, 0, 2));
 
         public static Activity cityPromenade = new Activity("Promenade en ville", new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.temperature, 0, 30),
             new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.rain, 0, 0),

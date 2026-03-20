@@ -17,5 +17,14 @@ namespace Assets.Scripts.Models.Condition
         {
             return conditions.Any(condition => condition.IsMatch(record));
         }
+
+        public QueryRequest AddToQuery(QueryRequest query)
+        {
+            foreach (var condition in conditions)
+            {
+                query = condition.AddToQuery(query);
+            }
+            return query;
+        }
     }
 }

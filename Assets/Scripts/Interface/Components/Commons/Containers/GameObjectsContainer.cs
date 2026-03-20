@@ -24,7 +24,7 @@ namespace Assets.Scripts.Components.Commons.Containers
             List<GameObject> newElements = new List<GameObject>();
             foreach (var prefab in prefabs)
             {
-                var element = Instantiate(prefab, parent: transform);
+                var element = (GameObject)UnityEditor.PrefabUtility.InstantiatePrefab(prefab, transform);
                 yield return element;
                 newElements.Add(element);
             }

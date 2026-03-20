@@ -3,7 +3,7 @@ using System.Linq;
 using Assets.Scripts.Components.Commons.Containers;
 using Assets.Scripts.Components.Commons.Holders;
 using Assets.Scripts.Components.Layers.OpenStreetMap;
-using Assets.Scripts.Interface.Visualisations.Tiles;
+using Assets.Scripts.Helpers;
 using Assets.Scripts.Models.Geo;
 using UnityEngine;
 
@@ -52,50 +52,33 @@ namespace Assets.Scripts.Components.Movement
 
         void LateUpdate()
         {
-            if (worldCamera.orthographicSize == this.cameraZoom && worldCamera.transform.position == this.cameraPosition)
-            {
+            if (worldCamera.orthographicSize == cameraZoom && worldCamera.transform.position == cameraPosition)
                 return;
-            }
-            this.cameraZoom = worldCamera.orthographicSize;
-            this.cameraPosition = worldCamera.transform.position;
+
+            cameraZoom = worldCamera.orthographicSize;
+            cameraPosition = worldCamera.transform.position;
+
             UpdatePositions();
         }
 
         private void UpdatePositions()
         {
-            int mapZoom = tileGridRenderer.mapZoom;
-            GeoPoint mapCenter = tileGridRenderer.franceCenter;
-            float tileWorldSize = tileGridRenderer.tileToWorldSize;
-            double centerTileX = TileGridHelper.LonToTileX(mapCenter.lon, mapZoom);
-            double centerTileY = TileGridHelper.LatToTileY(mapCenter.lat, mapZoom);
+            if (tileGridRenderer == null || worldCamera == null)
+                return;
 
             foreach (Holder<GeoPoint> holder in pointHolders)
             {
-                var point = holder.element;
-                var rect = holder.GetComponent<RectTransform>();
-                if (rect == null) continue;
-
-                var parentRect = rect.parent as RectTransform;
-                if (parentRect == null) continue;
-
-                double tileX = TileGridHelper.LonToTileX(point.lon, mapZoom);
-                double tileY = TileGridHelper.LatToTileY(point.lat, mapZoom);
-
-                double dxTiles = tileX - centerTileX;
-                double dyTiles = tileY - centerTileY;
-
-                float localX = (float)(dxTiles * tileWorldSize);
-                float localY = (float)(-dyTiles * tileWorldSize);
-
-                Vector3 worldPos = tileGridRenderer.transform.TransformPoint(new Vector3(localX, localY, zOffset));
-                Vector3 screenPos = worldCamera.WorldToScreenPoint(worldPos);
-
-                if (screenPos.z <= 0f)
+                if (holder == null)
                     continue;
 
-                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPos, null, out var localPos))
-                    rect.anchoredPosition = localPos;
+                Vector3 screenPos = GeoUtils.GeoToScreenPoint(tileGridRenderer, worldCamera, holder.element, zOffset);
+                SetPosition(holder, screenPos);
             }
+        }
+
+        private void SetPosition(Holder<GeoPoint> holder, Vector3 screenPos)
+        {
+            GeoUtils.TrySetAnchoredPositionFromScreenPoint(holder.GetComponent<RectTransform>(), screenPos);
         }
     }
 }

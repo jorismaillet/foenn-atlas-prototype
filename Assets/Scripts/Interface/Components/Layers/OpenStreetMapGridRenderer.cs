@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Assets.Scripts.Helpers;
 using Assets.Scripts.Interface.Visualisations.Tiles;
 using Assets.Scripts.Models.Geo;
 using UnityEngine;
@@ -141,27 +142,20 @@ namespace Assets.Scripts.Components.Layers.OpenStreetMap
 
         private IEnumerator BuildGrid()
         {
-            double centerTileXf = TileGridHelper.LonToTileX(franceCenter.lon, mapZoom);
-            double centerTileYf = TileGridHelper.LatToTileY(franceCenter.lat, mapZoom);
-
-            int centerTileX = Mathf.FloorToInt((float)centerTileXf);
-            int centerTileY = Mathf.FloorToInt((float)centerTileYf);
+            var center = GeoUtils.GetTileCenterData(franceCenter, mapZoom);
 
             int halfGridSize = gridSize / 2;
-
-            float centerTileFractionX = (float)(centerTileXf - centerTileX);
-            float centerTileFractionY = (float)(centerTileYf - centerTileY);
-            Vector2 centerOffset = new Vector2(centerTileFractionX, centerTileFractionY);
+            Vector2 centerOffset = new Vector2(center.fracX, center.fracY);
 
             for (int tileOffsetY = -halfGridSize; tileOffsetY <= halfGridSize; tileOffsetY++)
             {
-                int tileY = centerTileY + tileOffsetY;
+                int tileY = center.centerTileY + tileOffsetY;
                 if (!TileGridHelper.IsValidTileY(tileY, mapZoom))
                     continue;
 
                 for (int tileOffsetX = -halfGridSize; tileOffsetX <= halfGridSize; tileOffsetX++)
                 {
-                    int rawTileX = centerTileX + tileOffsetX;
+                    int rawTileX = center.centerTileX + tileOffsetX;
                     int tileX = TileGridHelper.WrapTileX(rawTileX, mapZoom);
 
                     float localX = (tileOffsetX - centerOffset.x + 0.5f) * tileToWorldSize;
