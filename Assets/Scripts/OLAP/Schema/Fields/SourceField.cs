@@ -19,9 +19,9 @@ namespace Assets.Scripts.OLAP.Schema.Fields
         {
             return type switch
             {
-                SourceFieldType.String => s => string.IsNullOrEmpty(s) ? DBNull.Value : s,
-                SourceFieldType.Float => s => string.IsNullOrEmpty(s) ? DBNull.Value : double.Parse(s, CultureInfo.InvariantCulture),
-                SourceFieldType.Int => s => string.IsNullOrEmpty(s) ? DBNull.Value : int.Parse(s, CultureInfo.InvariantCulture),
+                SourceFieldType.String => s => s,
+                SourceFieldType.Float => s => float.Parse(s, CultureInfo.InvariantCulture),
+                SourceFieldType.Int => s => int.Parse(s, CultureInfo.InvariantCulture),
                 _ => throw new NotImplementedException()
             };
         }

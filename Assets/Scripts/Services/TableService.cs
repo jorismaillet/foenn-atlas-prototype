@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Database;
+using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using Assets.Scripts.OLAP.Engine;
 using Assets.Scripts.OLAP.Schema.Fields;
 using Assets.Scripts.OLAP.Schema.Tables;
@@ -35,6 +36,15 @@ namespace Assets.Scripts.Services
                     return val == null ? default(T) : (T)Convert.ChangeType(val, typeof(T));
                 }).ToList();
             }
+        }
+        public static object ValueFor(Table table, Field targetField, Field searchField, string searchValue)
+        {
+            return new QueryRequest(table)
+                .Select(targetField)
+                .WhereEq(searchField, searchValue)
+                .Execute(SqliteHelper.CreateConnection())
+                .rows.First()
+                .values[targetField];
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Assets.Scripts.Helpers;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
 using UnityEngine;
@@ -21,17 +22,18 @@ namespace Assets.Scripts.ETL.Loaders
             foreach (var dimension in Fact.dimensions)
             {
                 var cache = caches[dimension];
-                string lookupCsvColumn = dimension.LookupSourceAttribute.name;
-                int csvIdx = FindCsvIndex(lookupCsvColumn, csvFieldNames);
+
+                var lookupValueResolver = dimension.LookupFieldMap.GetMappingResolver(csvFieldNames);
+
                 _valueResolvers.Add(line =>
                 {
                     try
                     {
-                        return cache.Get(line[csvIdx]);
+                        return cache.Get(lookupValueResolver(line));
                     }
                     catch (KeyNotFoundException)
                     {
-                        Debug.LogError($"Value '{line[csvIdx]}' not found in dimension '{dimension.Name}' for column '{lookupCsvColumn}'");
+                        Debug.LogError($"Lookup value not found in dimension '{dimension.Name}' for column '{dimension.LookupSourceAttribute.name}'");
                         throw;
                     }
                 });

@@ -18,10 +18,10 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
             temperature50 = Field.FloatMetric(Name, "temperature_50", "Temperature (50m)", "°C");
             temperature100 = Field.FloatMetric(Name, "temperature_100", "Temperature (100m)", "°C");
 
-            Mappings.Add(FieldMap.Map(new SourceField("T10", SourceFieldType.Float), temperature10));
-            Mappings.Add(FieldMap.Map(new SourceField("T20", SourceFieldType.Float), temperature20));
-            Mappings.Add(FieldMap.Map(new SourceField("T50", SourceFieldType.Float), temperature50));
-            Mappings.Add(FieldMap.Map(new SourceField("T100", SourceFieldType.Float), temperature100));
+            Mappings.Add(new FieldMap(new SourceField("T10", SourceFieldType.Float), temperature10));
+            Mappings.Add(new FieldMap(new SourceField("T20", SourceFieldType.Float), temperature20));
+            Mappings.Add(new FieldMap(new SourceField("T50", SourceFieldType.Float), temperature50));
+            Mappings.Add(new FieldMap(new SourceField("T100", SourceFieldType.Float), temperature100));
         }
     }
 }

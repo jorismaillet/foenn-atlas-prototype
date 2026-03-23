@@ -1,4 +1,5 @@
 using System;
+using Assets.Scripts.Database;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
 
@@ -10,7 +11,7 @@ namespace Assets.Scripts.ETL.Loaders
 
         public DimensionCache Cache { get; }
 
-        private int _lookupCsvIndex = -1;
+        private Func<string[], object> _lookupValueResolver;
 
         public DimensionTableLoader(Dimension dimension) : base(dimension)
         {
@@ -21,16 +22,12 @@ namespace Assets.Scripts.ETL.Loaders
         public override void StartStaging(SqliteConnection connection, SqliteTransaction transaction, string[] csvHeaders)
         {
             base.StartStaging(connection, transaction, csvHeaders);
-            _lookupCsvIndex = FindCsvIndex(Dimension.LookupSourceAttribute.name, csvHeaders);
-            if (_lookupCsvIndex == -1)
-            {
-                throw new Exception("Lookup column not found in csv headers for dimension " + Dimension.Name);
-            }
+            _lookupValueResolver = Dimension.LookupFieldMap.GetMappingResolver(csvHeaders);
         }
 
         public bool TryStageLine(string[] csvLine)
         {
-            var lookupValue = csvLine[_lookupCsvIndex];
+            var lookupValue = _lookupValueResolver(csvLine);
             if (!Cache.ShouldStage(lookupValue))
                 return false;
             StageLine(csvLine);

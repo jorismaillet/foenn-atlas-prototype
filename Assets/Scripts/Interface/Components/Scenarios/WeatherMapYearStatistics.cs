@@ -2,6 +2,7 @@
 using System.Linq;
 using Assets.Scripts.Components.Commons.Containers;
 using Assets.Scripts.Components.Visualisations.Heatmap;
+using Assets.Scripts.Interface.Components.Layers;
 using Assets.Scripts.Interface.Visualisations;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using Assets.Scripts.Services;
@@ -18,6 +19,7 @@ namespace Assets.Scripts.Interface.Components.Scenarios
         public TMPro.TMP_Dropdown yearDropdown;
         public TMPro.TMP_Dropdown metricDropdown;
         public TMPro.TMP_Dropdown statTypeDropdown;
+        public DisplayGradient displayGradient;
 
         private const string hoursRainScenarioText = "Hours without rain";
         private const string statScenarioText = "Metric statistics";
@@ -37,12 +39,12 @@ namespace Assets.Scripts.Interface.Components.Scenarios
 
         public void SetHoursRainScenario()
         {
-            var dayOnly = true;
             var year = int.Parse(yearDropdown.captionText.text);
-            var geoMeasures = WeatherQueryService.HoursWithoutRain(year, dayOnly);
+            var geoMeasures = WeatherQueryService.HoursWithoutRain(year);
             var field = WeatherHistoryDataset.Instance.coreFact.rain;
-            var rangeMultiplier = (dayOnly ? (22 - 9) : 24) * 365;
-            heatmapContainer.SetMeasures(geoMeasures, new CustomGradient(CustomGradient.CreateDroughtGradient(), 0.864F, 0.99F, rangeMultiplier));
+            var gradient = new CustomGradient(CustomGradient.CreateDroughtGradient(), "Hours", "h", 4100, 4700, 1);
+            displayGradient.Initialize(gradient);
+            heatmapContainer.SetMeasures(geoMeasures, gradient);
             pointmapContainer.Initialize(geoMeasures);
         }
 
@@ -53,7 +55,9 @@ namespace Assets.Scripts.Interface.Components.Scenarios
             var field = fact.Mappings.Find(m => m.targetField.fieldName.Equals(metricName)).targetField;
             var year = int.Parse(yearDropdown.captionText.text);
             var geoMeasures = WeatherQueryService.YearMeasure(year, field, statTypeDropdown.captionText.text);
-            heatmapContainer.SetMeasures(geoMeasures, new CustomGradient(field));
+            var gradient = new CustomGradient(field);
+            displayGradient.Initialize(gradient);
+            heatmapContainer.SetMeasures(geoMeasures, gradient);
             pointmapContainer.Initialize(geoMeasures);
         }
 

@@ -9,7 +9,7 @@ namespace Assets.Scripts.Interface.Visualisations
 {
     public class CustomGradient
     {
-        public static CustomGradient CumulativeYearHours = new CustomGradient(CreateCumulativeYearHoursGradient(), 0f, 365f * 3f, 1);
+        public static CustomGradient CumulativeYearHours = new CustomGradient(CreateCumulativeYearHoursGradient(), "Hours", "h", 0f, 365f * 3f, 1);
         
         private static Dictionary<Field, Func<Gradient>> Gradients = new Dictionary<Field, Func<Gradient>>()
         {
@@ -19,25 +19,31 @@ namespace Assets.Scripts.Interface.Visualisations
         };
 
         private Gradient gradient;
-        private float minValue;
-        private float maxValue;
+        public float minValue;
+        public float maxValue;
+        public string title;
+        public string format;
 
         public CustomGradient(Field field, float multiplier = 1)
         {
+            this.title = field.displayName;
+            this.format = field.format;
             var range = new FieldRange(field, multiplier);
             this.minValue = range.minValue;
             this.maxValue = range.maxValue;
             this.gradient = Gradients[field].Invoke();
         }
 
-        public CustomGradient(Gradient gradient, float minValue, float maxValue, float multiplier)
+        public CustomGradient(Gradient gradient, string title, string format, float minValue, float maxValue, float multiplier)
         {
+            this.title = title;
+            this.format = format;
             this.minValue = minValue * multiplier;
             this.maxValue = maxValue * multiplier;
             this.gradient = gradient;
         }
 
-        public Color GetColor(float value, float aplha)
+        public Color GetColor(float value, float alpha)
         {
             if (gradient == null)
                 return Color.white;

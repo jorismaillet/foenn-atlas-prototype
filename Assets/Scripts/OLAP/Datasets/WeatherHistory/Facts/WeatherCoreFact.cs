@@ -1,3 +1,4 @@
+using System.Linq;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Schema.Fields;
 
@@ -22,12 +23,18 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
             windSpeed = Field.FloatMetric(Name, "wind_speed", "Wind speed", "ms");
             windDirection = Field.FloatMetric(Name, "wind_direction", "Wind direction", "°");
 
-            Mappings.Add(FieldMap.Map(new SourceField("T", SourceFieldType.Float), temperature));
-            Mappings.Add(FieldMap.Map(new SourceField("TD", SourceFieldType.Float), dewPoint));
-            Mappings.Add(FieldMap.Map(new SourceField("U", SourceFieldType.Float), humidity));
-            Mappings.Add(FieldMap.Map(new SourceField("RR1", SourceFieldType.Float), rain));
-            Mappings.Add(FieldMap.Map(new SourceField("FF", SourceFieldType.Float), windSpeed));
-            Mappings.Add(FieldMap.Map(new SourceField("DD", SourceFieldType.Float), windDirection));
+            Mappings.Add(new FieldMap(temperature, (idxs, line) => idxs.First(i => !string.IsNullOrEmpty(line[i])),
+                new SourceField("T", SourceFieldType.Float),
+                new SourceField("T10", SourceFieldType.Float),
+                new SourceField("T20", SourceFieldType.Float),
+                new SourceField("T50", SourceFieldType.Float),
+                new SourceField("T100", SourceFieldType.Float)
+            ));
+            Mappings.Add(new FieldMap(new SourceField("TD", SourceFieldType.Float), dewPoint));
+            Mappings.Add(new FieldMap(new SourceField("U", SourceFieldType.Float), humidity));
+            Mappings.Add(new FieldMap(new SourceField("RR1", SourceFieldType.Float), rain));
+            Mappings.Add(new FieldMap(new SourceField("FF", SourceFieldType.Float), windSpeed));
+            Mappings.Add(new FieldMap(new SourceField("DD", SourceFieldType.Float), windDirection));
         }
     }
 }

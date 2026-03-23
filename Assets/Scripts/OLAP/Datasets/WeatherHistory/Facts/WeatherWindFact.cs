@@ -14,8 +14,8 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
             gust = Field.FloatMetric(Name, "wind_gust", "Gust", "ms");
             gust3S = Field.FloatMetric(Name, "wind_gust_3s", "Gust (Max 3s)", "ms");
 
-            Mappings.Add(FieldMap.Map(new SourceField("FXI", SourceFieldType.Float), gust));
-            Mappings.Add(FieldMap.Map(new SourceField("FXI3S", SourceFieldType.Float), gust3S));
+            Mappings.Add(new FieldMap(new SourceField("FXI", SourceFieldType.Float), gust));
+            Mappings.Add(new FieldMap(new SourceField("FXI3S", SourceFieldType.Float), gust3S));
         }
     }
 }

@@ -12,5 +12,7 @@ namespace Assets.Scripts.OLAP.Schema.Tables
         public Dimension(string name, SourceField LookupSourceAttribute) : base(name) {
             this.LookupSourceAttribute = LookupSourceAttribute;
         }
+
+        public FieldMap LookupFieldMap => Mappings.First(m => m.targetField == LookupField);
     }
 }

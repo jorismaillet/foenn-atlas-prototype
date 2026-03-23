@@ -21,36 +21,17 @@ namespace Assets.Scripts.ETL.Loaders
             Table = table;
         }
 
-        public virtual void StartStaging(SqliteConnection connection, SqliteTransaction transaction, string[] csvFieldNames)
+        public virtual void StartStaging(SqliteConnection connection, SqliteTransaction transaction, string[] csvHeaders)
         {
+            _valueResolvers = new List<Func<string[], object>>();
+            foreach (var mapping in Table.Mappings)
+            {
+                _valueResolvers.Add(mapping.GetMappingResolver(csvHeaders));
+            }
             SqliteHelper.CreateStagingTable(connection, Table);
-            var mappings = Table.Mappings;
             _stageCommand?.Dispose();
             _stageCommand = SqliteHelper.GetStageCommand(connection, Table);
             _stageParams = _stageCommand.Parameters;
-            _valueResolvers = new List<Func<string[], object>>();
-            foreach (var mapping in mappings)
-            {
-                int csvIdx = FindCsvIndex(mapping.column.name, csvFieldNames);
-                var converter = mapping.column.GetConverter();
-                if (mapping.transform != null)
-                {
-                    _valueResolvers.Add(line =>
-                    {
-                        var raw = line[csvIdx];
-                        if (string.IsNullOrEmpty(raw)) return DBNull.Value;
-                        var transformed = mapping.transform(raw);
-                        return converter(transformed);
-                    });
-                }
-                else
-                {
-                    _valueResolvers.Add(line =>
-                    {
-                        return converter(line[csvIdx]);
-                    });
-                }
-            }
         }
 
         public virtual void StartBatch(SqliteTransaction transaction)
@@ -77,11 +58,6 @@ namespace Assets.Scripts.ETL.Loaders
         {
             SqliteHelper.MergeStagingTable(connection, Table);
             SqliteHelper.DropStagingTable(connection, Table);
-        }
-
-        protected int FindCsvIndex(string fieldName, string[] csvFieldNames)
-        {
-            return Array.FindIndex(csvFieldNames, name => name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
         }
 
         public void Dispose()

@@ -31,18 +31,18 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
             duration = Field.IntAttribute(Name, "duration", "Duration");
 
             Indexes.Add(new IndexDefinition(true, LookupField));
-            Indexes.Add(new IndexDefinition(false, year, hour, PrimaryKey));
             Indexes.Add(new IndexDefinition(false, year, month, day));
             Indexes.Add(new IndexDefinition(false, year, month));
+            Indexes.Add(new IndexDefinition(false, year, hour));
             Indexes.Add(new IndexDefinition(false, year));
 
-            Mappings.Add(FieldMap.Map(LookupSourceAttribute, yyyyMMddHH));
-            Mappings.Add(FieldMap.Compute(LookupSourceAttribute, timestamp, DateTimeHelper.ToTimestamp));
-            Mappings.Add(FieldMap.Compute(LookupSourceAttribute, year, s => s.Substring(0, 4)));
-            Mappings.Add(FieldMap.Compute(LookupSourceAttribute, month, s => s.Substring(4, 2)));
-            Mappings.Add(FieldMap.Compute(LookupSourceAttribute, day, s => s.Substring(6, 2)));
-            Mappings.Add(FieldMap.Compute(LookupSourceAttribute, hour, s => s.Substring(8, 2)));
-            Mappings.Add(FieldMap.Compute(LookupSourceAttribute, duration, s => "1"));
+            Mappings.Add(new FieldMap(LookupSourceAttribute, yyyyMMddHH));
+            Mappings.Add(new FieldMap(LookupSourceAttribute, timestamp, s => DateTimeHelper.ToTimestamp(s)));
+            Mappings.Add(new FieldMap(LookupSourceAttribute, year, s => s.Substring(0, 4)));
+            Mappings.Add(new FieldMap(LookupSourceAttribute, month, s => s.Substring(4, 2)));
+            Mappings.Add(new FieldMap(LookupSourceAttribute, day, s => s.Substring(6, 2)));
+            Mappings.Add(new FieldMap(LookupSourceAttribute, hour, s => s.Substring(8, 2)));
+            Mappings.Add(new FieldMap(LookupSourceAttribute, duration, s => "1"));
         }
      }
 }

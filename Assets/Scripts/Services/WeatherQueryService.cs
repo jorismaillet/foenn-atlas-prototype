@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Database;
@@ -11,7 +12,7 @@ namespace Assets.Scripts.Services
 {
     public class WeatherQueryService
     {
-        public static List<GeoMeasure> HoursWithoutRain(int year, bool dayOnly)
+        public static List<GeoMeasure> HoursWithoutRain(int year)
         {
             var dataset = WeatherHistoryDataset.Instance;
             var coreFact = dataset.coreFact;
@@ -25,12 +26,9 @@ namespace Assets.Scripts.Services
                 .Join(coreFact.locationRef)
                 .Join(coreFact.timeRef)
                 .WhereEq(dataset.time.year, year)
+                .WhereBetween(dataset.time.hour, 9, 22)
                 .WhereEq(fieldToMeasure, 0)
                 .WhereNotNull(fieldToMeasure);
-            if(dayOnly)
-            {
-                query.WhereBetween(dataset.time.hour, 9, 22);
-            }
             using (var connection = SqliteHelper.CreateConnection())
             {
                 var result = query.Execute(connection);
@@ -83,8 +81,13 @@ namespace Assets.Scripts.Services
                 return query.Execute(connection).rows;
             }
         }
-        public static List<float> HoursTempForYear(int locationId, int year)
+        public static List<float> HoursTempForYear(string postName, int year)
         {
+            int locationId = Convert.ToInt32(TableService.ValueFor(
+                WeatherHistoryDataset.Instance.location, 
+                WeatherHistoryDataset.Instance.location.PrimaryKey,
+                WeatherHistoryDataset.Instance.location.PostName,
+                postName));
             var dataset = WeatherHistoryDataset.Instance;
             var coreFact = dataset.coreFact;
             var fieldToMeasure = dataset.coreFact.temperature;

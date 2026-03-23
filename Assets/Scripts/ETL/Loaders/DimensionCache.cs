@@ -10,9 +10,9 @@ namespace Assets.Scripts.ETL.Loaders
     {
         public readonly Dimension _dimension;
 
-        private readonly Dictionary<string, int> _cache = new Dictionary<string, int>();
+        private readonly Dictionary<object, int> _cache = new Dictionary<object, int>();
 
-        private readonly HashSet<string> _stagedLookupValues = new HashSet<string>();
+        private readonly HashSet<object> _stagedLookupValues = new HashSet<object>();
 
         public DimensionCache(Dimension dimension)
         {
@@ -33,7 +33,7 @@ namespace Assets.Scripts.ETL.Loaders
             }
         }
 
-        public bool ShouldStage(string lookupValue)
+        public bool ShouldStage(object lookupValue)
         {
             lookupValue = lookupValue ?? string.Empty;
             if (_cache.ContainsKey(lookupValue))
@@ -42,7 +42,7 @@ namespace Assets.Scripts.ETL.Loaders
             return _stagedLookupValues.Add(lookupValue);
         }
 
-        public int Get(string lookupValue)
+        public int Get(object lookupValue)
         {
             return _cache[lookupValue];
         }
