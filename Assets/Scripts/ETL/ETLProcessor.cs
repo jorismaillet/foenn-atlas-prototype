@@ -4,6 +4,7 @@ using Assets.Scripts.Components.Logger;
 using Assets.Scripts.Database;
 using Assets.Scripts.ETL.Extractors;
 using Assets.Scripts.ETL.Loaders;
+using Assets.Scripts.OLAP.Datasets;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
 
@@ -17,15 +18,18 @@ namespace Assets.Scripts.ETL
 
         private List<FactTableLoader> _factLoaders = new List<FactTableLoader>();
 
-        public ETLProcessor(string csvFileName, List<Dimension> dimensions, List<Fact> facts)
+        private List<Fact> derivedFacts = new List<Fact>();
+
+        public ETLProcessor(string csvFileName, Dataset dataset)
         {
             _extractor = new CSVExtractor(csvFileName);
 
-            foreach (var dimension in dimensions)
+            foreach (var dimension in dataset.Dimensions)
                 _dimensionLoaders.Add(new DimensionTableLoader(dimension));
 
-            foreach (var fact in facts)
+            foreach (var fact in dataset.Facts)
                 _factLoaders.Add(new FactTableLoader(fact));
+            derivedFacts = dataset.DerivedFacts;
         }
 
         private int _loaded = 0, _inBatch = 0, _batchSize = 50000;
@@ -44,6 +48,8 @@ namespace Assets.Scripts.ETL
 
                 StageFacts(connection, fieldNames, dimensionCaches, cancellationToken);
                 MergeFacts(connection);
+
+                DeriveFacts(connection);
 
                 MainThreadLog.Log($"Finished ETL, total records={_loaded}");
             }
@@ -177,6 +183,17 @@ namespace Assets.Scripts.ETL
                 loader.Merge(connection);
 
             MainThreadLog.Log("Merged facts");
+        }
+
+        private void DeriveFacts(SqliteConnection connection)
+        {
+            foreach (var derived in derivedFacts)
+            {
+                var transaction = connection.BeginTransaction();
+                derived.BuildDerivedFact(connection);
+                transaction.Commit();
+                MainThreadLog.Log($"Derived fact {derived.Name}");
+            }
         }
     }
 }

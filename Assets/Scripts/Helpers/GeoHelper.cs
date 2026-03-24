@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Helpers
 {
-    public static class GeoUtils
+    public static class GeoHelper
     {
         public struct TileCenterData
         {

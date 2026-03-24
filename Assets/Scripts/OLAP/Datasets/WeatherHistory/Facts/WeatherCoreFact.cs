@@ -23,6 +23,8 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
             windSpeed = Field.FloatMetric(Name, "wind_speed", "Wind speed", "ms");
             windDirection = Field.FloatMetric(Name, "wind_direction", "Wind direction", "°");
 
+            Indexes.Add(new IndexDefinition(false, timeRef, rain, locationRef)); // Optimisation for rain scenario
+
             Mappings.Add(new FieldMap(temperature,
                 new SourceField("T", SourceFieldType.Float),
                 new SourceField("T10", SourceFieldType.Float),
@@ -30,6 +32,7 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
                 new SourceField("T50", SourceFieldType.Float),
                 new SourceField("T100", SourceFieldType.Float)
             ));
+
             Mappings.Add(new FieldMap(new SourceField("TD", SourceFieldType.Float), dewPoint));
             Mappings.Add(new FieldMap(new SourceField("U", SourceFieldType.Float), humidity));
             Mappings.Add(new FieldMap(new SourceField("RR1", SourceFieldType.Float), rain));

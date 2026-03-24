@@ -138,29 +138,51 @@ namespace Assets.Scripts.Interface.Visualisations.Heatmap
             int srcW = mapMask.width;
             int srcH = mapMask.height;
 
+            // Precompute srcY lookup (only depends on y)
+            int[] srcYLut = new int[targetHeight];
+            bool[] validY = new bool[targetHeight];
             for (int y = 0; y < targetHeight; y++)
             {
                 int yFromTop = (targetHeight - 1) - y;
                 double tileY = topTileY + ((yFromTop + 0.5) * gridSize / (double)targetHeight);
-
                 double lat = TileGridHelper.TileYToLat(tileY, zoom);
                 float v = (float)((lat - maskBBox.minLat) / latDenom);
-                if (v < 0f || v > 1f)
+                if (v >= 0f && v <= 1f)
+                {
+                    srcYLut[y] = Mathf.Clamp(Mathf.RoundToInt(v * (srcH - 1)), 0, srcH - 1);
+                    validY[y] = true;
+                }
+            }
+
+            // Precompute srcX lookup (only depends on x)
+            int[] srcXLut = new int[targetWidth];
+            bool[] validX = new bool[targetWidth];
+            for (int x = 0; x < targetWidth; x++)
+            {
+                double tileX = leftTileX + ((x + 0.5) * gridSize / (double)targetWidth);
+                double lon = TileGridHelper.TileXToLon(tileX, zoom);
+                float u = (float)((lon - maskBBox.minLon) / lonDenom);
+                if (u >= 0f && u <= 1f)
+                {
+                    srcXLut[x] = Mathf.Clamp(Mathf.RoundToInt(u * (srcW - 1)), 0, srcW - 1);
+                    validX[x] = true;
+                }
+            }
+
+            for (int y = 0; y < targetHeight; y++)
+            {
+                if (!validY[y])
                     continue;
 
-                int srcY = Mathf.Clamp(Mathf.RoundToInt(v * (srcH - 1)), 0, srcH - 1);
+                int srcRow = srcYLut[y] * srcW;
+                int outRow = y * targetWidth;
 
                 for (int x = 0; x < targetWidth; x++)
                 {
-                    double tileX = leftTileX + ((x + 0.5) * gridSize / (double)targetWidth);
-                    double lon = TileGridHelper.TileXToLon(tileX, zoom);
-
-                    float u = (float)((lon - maskBBox.minLon) / lonDenom);
-                    if (u < 0f || u > 1f)
+                    if (!validX[x])
                         continue;
 
-                    int srcX = Mathf.Clamp(Mathf.RoundToInt(u * (srcW - 1)), 0, srcW - 1);
-                    outMask[y * targetWidth + x] = src[srcY * srcW + srcX];
+                    outMask[outRow + x] = src[srcRow + srcXLut[x]];
                 }
             }
 

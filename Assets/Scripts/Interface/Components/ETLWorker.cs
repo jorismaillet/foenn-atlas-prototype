@@ -63,11 +63,7 @@ namespace Assets.Scripts.Components
 
         public IEnumerator LoadFile(Dataset dataset, string fileName)
         {
-            var processor = new ETLProcessor(
-                    fileName,
-                    dataset.Dimensions,
-                    dataset.Facts
-                );
+            var processor = new ETLProcessor(fileName, dataset);
             ct = new CancellationTokenSource();
             task = Task.Run(() =>
             {

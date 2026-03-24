@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mono.Data.Sqlite;
 
 namespace Assets.Scripts.OLAP.Schema.Tables
 {
@@ -10,5 +11,7 @@ namespace Assets.Scripts.OLAP.Schema.Tables
         {
             this.dimensions = dimensions;
         }
+
+        public virtual void BuildDerivedFact(SqliteConnection connection) { }
     }
 }

@@ -31,6 +31,7 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
             duration = Field.IntAttribute(Name, "duration", "Duration");
 
             Indexes.Add(new IndexDefinition(true, LookupField));
+            Indexes.Add(new IndexDefinition(false, year, month, day, hour));
             Indexes.Add(new IndexDefinition(false, year, month, day));
             Indexes.Add(new IndexDefinition(false, year, month));
             Indexes.Add(new IndexDefinition(false, year, hour));

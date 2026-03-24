@@ -142,7 +142,7 @@ namespace Assets.Scripts.Components.Layers.OpenStreetMap
 
         private IEnumerator BuildGrid()
         {
-            var center = GeoUtils.GetTileCenterData(franceCenter, mapZoom);
+            var center = GeoHelper.GetTileCenterData(franceCenter, mapZoom);
 
             int halfGridSize = gridSize / 2;
             Vector2 centerOffset = new Vector2(center.fracX, center.fracY);

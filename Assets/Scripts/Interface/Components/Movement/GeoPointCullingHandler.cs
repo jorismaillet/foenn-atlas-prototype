@@ -89,7 +89,7 @@ namespace Assets.Scripts.Interface.Components.Movement
 
                 visible.Add(holder);
                 visibleScreenPositions.Add(screenPos);
-                GeoUtils.TrySetAnchoredPositionFromScreenPoint(holder.GetComponent<RectTransform>(), screenPos);
+                GeoHelper.TrySetAnchoredPositionFromScreenPoint(holder.GetComponent<RectTransform>(), screenPos);
                 holder.gameObject.SetActive(true);
             }
         }
@@ -113,7 +113,7 @@ namespace Assets.Scripts.Interface.Components.Movement
                     tooCloseToNeighbour.RemoveAt(i);
                     visible.Add(holder);
                     visibleScreenPositions.Add(screenPos);
-                    GeoUtils.TrySetAnchoredPositionFromScreenPoint(holder.GetComponent<RectTransform>(), screenPos);
+                    GeoHelper.TrySetAnchoredPositionFromScreenPoint(holder.GetComponent<RectTransform>(), screenPos);
                     holder.gameObject.SetActive(true);
                 }
             }
@@ -154,7 +154,7 @@ namespace Assets.Scripts.Interface.Components.Movement
 
         private Vector3 ScreenPos(Holder<GeoPoint> holder)
         {
-            return GeoUtils.GeoToScreenPoint(tileGridRenderer, worldCamera, holder.element, zOffset);
+            return GeoHelper.GeoToScreenPoint(tileGridRenderer, worldCamera, holder.element, zOffset);
         }
 
         private static bool IsTooCloseToAny(Vector3 screenPos, List<Vector3> otherScreenPositions, float minDistanceSqr)

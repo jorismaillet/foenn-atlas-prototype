@@ -18,7 +18,7 @@ namespace Assets.Editor.Tests.ETL
                 var dataset = WeatherHistoryDataset.Instance;
                 dataset.InitTables(connection);
                 var fileName = "Tests/Weathers/H_29_latest-2023-2024.csv";
-                var processor = new ETLProcessor(fileName, dataset.Dimensions, dataset.Facts);
+                var processor = new ETLProcessor(fileName, dataset);
                 processor.ProcessETL(connection);
 
                 var res = new QueryRequest(dataset.coreFact).Execute(connection);

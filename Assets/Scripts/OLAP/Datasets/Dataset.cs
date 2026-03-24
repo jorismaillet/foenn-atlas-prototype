@@ -11,6 +11,7 @@ namespace Assets.Scripts.OLAP.Datasets
         public abstract List<Dimension> Dimensions { get; }
 
         public abstract List<Fact> Facts { get; }
+        public abstract List<Fact> DerivedFacts { get; }
 
         public Dataset(string name)
         {
@@ -24,6 +25,10 @@ namespace Assets.Scripts.OLAP.Datasets
                 SqliteHelper.CreateTable(connection, dim);
             }
             foreach (var fact in Facts)
+            {
+                SqliteHelper.CreateTable(connection, fact);
+            }
+            foreach (var fact in DerivedFacts)
             {
                 SqliteHelper.CreateTable(connection, fact);
             }

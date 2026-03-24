@@ -22,7 +22,7 @@ namespace Assets.Scripts.Interface.Components.Scenarios
             var temps = WeatherQueryService.HoursTempForYear(post.captionText.text, int.Parse(year.captionText.text));
             if(temps.Count % 24 != 0)
             {
-                Debug.LogError("Invalid data for temporal heatmap, hours in year should be a multiple of 24");
+                Debug.LogWarning("Invalid data for temporal heatmap, hours in year should be a multiple of 24");
                 return;
             }
             image.texture = TemporalHeatmapGenerator.BuildTemperatureTemporalHeatmap(

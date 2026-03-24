@@ -71,14 +71,14 @@ namespace Assets.Scripts.Components.Movement
                 if (holder == null)
                     continue;
 
-                Vector3 screenPos = GeoUtils.GeoToScreenPoint(tileGridRenderer, worldCamera, holder.element, zOffset);
+                Vector3 screenPos = GeoHelper.GeoToScreenPoint(tileGridRenderer, worldCamera, holder.element, zOffset);
                 SetPosition(holder, screenPos);
             }
         }
 
         private void SetPosition(Holder<GeoPoint> holder, Vector3 screenPos)
         {
-            GeoUtils.TrySetAnchoredPositionFromScreenPoint(holder.GetComponent<RectTransform>(), screenPos);
+            GeoHelper.TrySetAnchoredPositionFromScreenPoint(holder.GetComponent<RectTransform>(), screenPos);
         }
     }
 }

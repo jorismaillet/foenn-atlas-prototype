@@ -5,6 +5,7 @@ using Assets.Scripts.Components.Visualisations.Heatmap;
 using Assets.Scripts.Interface.Components.Layers;
 using Assets.Scripts.Interface.Visualisations;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
+using Assets.Scripts.OLAP.Schema.Fields;
 using Assets.Scripts.Services;
 using UnityEngine;
 
@@ -54,7 +55,12 @@ namespace Assets.Scripts.Interface.Components.Scenarios
             var fact = WeatherHistoryDataset.Instance.coreFact;
             var field = fact.Mappings.Find(m => m.targetField.fieldName.Equals(metricName)).targetField;
             var year = int.Parse(yearDropdown.captionText.text);
-            var geoMeasures = WeatherQueryService.YearMeasure(year, field, statTypeDropdown.captionText.text);
+            var geoMeasures = WeatherQueryService.YearMeasure(year, field, statTypeDropdown.captionText.text switch
+            {
+                "Minimum" => FieldAggregation.Min,
+                "Maximum" => FieldAggregation.Max,
+                _ => FieldAggregation.Avg
+            });
             var gradient = new CustomGradient(field);
             displayGradient.Initialize(gradient);
             heatmapContainer.SetMeasures(geoMeasures, gradient);

@@ -134,7 +134,7 @@ namespace Assets.Scripts.Components.Visualisations.Heatmap
             int halfGridSize = gridSize / 2;
             float tileWorldSize = tileGridRenderer.tileToWorldSize;
 
-            var center = GeoUtils.GetTileCenterData(tileGridRenderer.franceCenter, zoom);
+            var center = GeoHelper.GetTileCenterData(tileGridRenderer.franceCenter, zoom);
             float fracX = center.fracX;
             float fracY = center.fracY;
 

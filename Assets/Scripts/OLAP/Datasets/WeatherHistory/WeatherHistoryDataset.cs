@@ -19,9 +19,13 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory
 
         public WeatherTempFact tempFact;
 
+        public WeatherYearlyFact yearlyFact;
+
         public override List<Dimension> Dimensions => new List<Dimension>() { time, location };
 
         public override List<Fact> Facts => new List<Fact>() { coreFact, windFact, tempFact };
+
+        public override List<Fact> DerivedFacts => new List<Fact>() { yearlyFact };
 
         public WeatherHistoryDataset() : base("weather_history")
         {
@@ -31,6 +35,7 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory
             coreFact = new WeatherCoreFact(time, location);
             windFact = new WeatherWindFact(time, location);
             tempFact = new WeatherTempFact(time, location);
+            yearlyFact = new WeatherYearlyFact(coreFact, location);
         }
     }
 }
