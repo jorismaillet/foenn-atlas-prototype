@@ -1,4 +1,5 @@
 using System.Data;
+using Assets.Scripts.OLAP.Engine;
 using Assets.Scripts.OLAP.Schema.Tables;
 
 namespace Assets.Scripts.OLAP.Schema.Fields
@@ -62,6 +63,11 @@ namespace Assets.Scripts.OLAP.Schema.Fields
         public string Identifier()
         {
             return $"{tableName}.{fieldName}";
+        }
+
+        public string Value(Row row)
+        {
+            return $"{ row.values[this] } {format}";
         }
     }
 }

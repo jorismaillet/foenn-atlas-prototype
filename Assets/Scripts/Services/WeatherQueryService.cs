@@ -59,9 +59,14 @@ namespace Assets.Scripts.Services
                 return result.ToPostMeasures(dataset.location, coreFactField);
             }
         }
-        public static List<Row> DayObservationsForPost(int dayOfMonth, int month, int year, int locationId)
+        public static List<Row> DayObservationsForPost(string postName, int dayOfMonth, int month, int year)
         {
             var dataset = WeatherHistoryDataset.Instance;
+            int locationId = Convert.ToInt32(TableService.ValueFor(
+                dataset.location,
+                dataset.location.PrimaryKey,
+                dataset.location.PostName,
+                postName));
             var coreFact = dataset.coreFact;
             var query = new QueryRequest(dataset.coreFact)
                 .SelectGroup(
@@ -70,6 +75,8 @@ namespace Assets.Scripts.Services
                     dataset.coreFact.temperature,
                     dataset.coreFact.rain,
                     dataset.coreFact.windSpeed)
+                .Join(coreFact.timeRef)
+                .Join(coreFact.locationRef)
                 .WhereEq(dataset.location.PrimaryKey, locationId)
                 .WhereEq(dataset.time.day, dayOfMonth)
                 .WhereEq(dataset.time.month, month)
@@ -83,12 +90,12 @@ namespace Assets.Scripts.Services
         }
         public static List<float> HoursTempForYear(string postName, int year)
         {
-            int locationId = Convert.ToInt32(TableService.ValueFor(
-                WeatherHistoryDataset.Instance.location, 
-                WeatherHistoryDataset.Instance.location.PrimaryKey,
-                WeatherHistoryDataset.Instance.location.PostName,
-                postName));
             var dataset = WeatherHistoryDataset.Instance;
+            int locationId = Convert.ToInt32(TableService.ValueFor(
+                dataset.location, 
+                dataset.location.PrimaryKey,
+                dataset.location.PostName,
+                postName));
             var coreFact = dataset.coreFact;
             var fieldToMeasure = dataset.coreFact.temperature;
             var query = new QueryRequest(coreFact)
@@ -127,6 +134,32 @@ namespace Assets.Scripts.Services
             {
                 var result = query.Execute(connection);
                 return result.ToPostMeasures(dataset.location, coreFact.PrimaryKey);
+            }
+        }
+        public static List<int> HoursForActivity(Activity activity, string postName, int year, int month, int dayOfMonth)
+        {
+            var dataset = WeatherHistoryDataset.Instance;
+            int locationId = Convert.ToInt32(TableService.ValueFor(
+                dataset.location,
+                dataset.location.PrimaryKey,
+                dataset.location.PostName,
+                postName));
+            var coreFact = dataset.coreFact;
+            var query = new QueryRequest(dataset.coreFact)
+                .SelectGroup(
+                    dataset.time.hour)
+                .Join(coreFact.timeRef)
+                .Join(coreFact.locationRef)
+                .WhereEq(dataset.location.PrimaryKey, locationId)
+                .WhereEq(dataset.time.day, dayOfMonth)
+                .WhereEq(dataset.time.month, month)
+                .WhereEq(dataset.time.year, year)
+                .OrderByAsc(dataset.time.hour);
+            activity.AddToQuery(query);
+            using (var connection = SqliteHelper.CreateConnection())
+            {
+                var result = query.Execute(connection);
+                return result.rows.Select(r => r.IntValue(dataset.time.hour)).ToList();
             }
         }
     }

@@ -9,58 +9,57 @@ namespace Assets.Scripts.OLAP.Schema.Fields
     {
         public List<SourceField> sourceFields;
         public Field targetField;
-        public Func<int[], string[], int> selectIndex;
         public Func<string, string> transform;
 
 
         public FieldMap(SourceField sourceField, Field targetField, Func<string, string> transform = null)
         {
-            this.sourceFields = new List<SourceField>() { sourceField };
             this.targetField = targetField;
+            this.sourceFields = new List<SourceField>() { sourceField };
             this.transform = transform;
         }
-        public FieldMap(Field targetField, Func<int[], string[], int> selectIndex, params SourceField[] sourceFields)
+        public FieldMap(Field targetField, params SourceField[] sourceFields)
         {
-            this.sourceFields = new List<SourceField>(sourceFields);
             this.targetField = targetField;
-            this.selectIndex = selectIndex;
+            this.sourceFields = new List<SourceField>(sourceFields);
         }
 
         public Func<string[], object> GetMappingResolver(string[] csvFieldNames)
         {
-            if (selectIndex != null)
+            int count = sourceFields.Count;
+            var indices = new int[count];
+            var converters = new Func<string, object>[count];
+            for (int i = 0; i < count; i++)
             {
-                int[] csvIdxs = sourceFields.Select(c => CSVHelper.FindCsvIndex(c.name, csvFieldNames)).ToArray();
-                var converters = sourceFields.Select(f => f.GetConverter()).ToArray();
+                indices[i] = CSVHelper.FindCsvIndex(sourceFields[i].name, csvFieldNames);
+                converters[i] = sourceFields[i].GetConverter();
+            }
+
+            if (transform != null)
+            {
+                var t = transform;
                 return line =>
                 {
-                    var csvIdx = selectIndex(csvIdxs, line);
-                    var raw = line[csvIdx];
-                    return string.IsNullOrEmpty(raw) ? DBNull.Value : converters[csvIdx](raw);
+                    for (int i = 0; i < indices.Length; i++)
+                    {
+                        var raw = line[indices[i]];
+                        if (!string.IsNullOrEmpty(raw))
+                            return converters[i](t(raw));
+                    }
+                    return DBNull.Value;
                 };
             }
-            else 
+
+            return line =>
             {
-                var field = sourceFields[0];
-                var csvIdx = CSVHelper.FindCsvIndex(field.name, csvFieldNames);
-                var converter = field.GetConverter();
-                if (transform != null)
+                for (int i = 0; i < indices.Length; i++)
                 {
-                    return line =>
-                    {
-                        var raw = line[csvIdx];
-                        return string.IsNullOrEmpty(raw) ? DBNull.Value : converter(transform(raw));
-                    };
+                    var raw = line[indices[i]];
+                    if (!string.IsNullOrEmpty(raw))
+                        return converters[i](raw);
                 }
-                else
-                {
-                    return (line =>
-                    {
-                        var raw = line[csvIdx];
-                        return string.IsNullOrEmpty(raw) ? DBNull.Value : converter(raw);
-                    });
-                }
-            }
+                return DBNull.Value;
+            };
         }
     }
 }

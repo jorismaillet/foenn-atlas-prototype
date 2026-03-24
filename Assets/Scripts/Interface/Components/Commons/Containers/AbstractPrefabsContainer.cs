@@ -25,19 +25,19 @@ namespace Assets.Scripts.Components.Commons.Containers
 
         private int Initialize<Element>(GameObject gameObject, Element element)
         {
-            Holder<Element>(gameObject).Initialize(element);
+            El<Element>(gameObject).Initialize(element);
             return 0;
         }
 
-        private Holder<Element> Holder<Element>(GameObject gameObject)
+        private IElementInitializer<Element> El<Element>(GameObject gameObject)
         {
-            if (gameObject.TryGetComponent(out Holder<Element> res))
+            if (gameObject.TryGetComponent(out IElementInitializer<Element> res))
             {
                 return res;
             }
             else
             {
-                Debug.LogError($"{gameObject.name} is missing Holder<{typeof(Element)}>", gameObject);
+                Debug.LogError($"{gameObject.name} is missing Initializer<{typeof(Element)}>", gameObject);
                 return null;
             }
         }
