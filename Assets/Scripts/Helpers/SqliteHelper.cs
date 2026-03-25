@@ -178,7 +178,7 @@ namespace Assets.Scripts.Database
             ExecuteRaw(connection, sql);
         }
 
-        private static void ExecuteRaw(SqliteConnection connection, string sql)
+        public static void ExecuteRaw(SqliteConnection connection, string sql)
         {
             using var command = connection.CreateCommand();
             command.CommandText = sql;
@@ -195,6 +195,31 @@ namespace Assets.Scripts.Database
         {
             using var command = CreateCommand(connection, query);
             return (int)command.ExecuteScalar();
+        }
+
+        public static string InsertFromTableSQL(
+            ICollection<int> filterIds,
+            Table targetTable,
+            Table sourceTable,
+            Dimension joinDimension,
+            Field joinFk,
+            Field groupByField,
+            Field filterField,
+            List<string> insertColumns,
+            List<string> selectExpressions)
+        {
+            insertColumns.Insert(0, filterField.fieldName);
+            insertColumns.Insert(0, groupByField.fieldName);
+            selectExpressions.Insert(0, $"cf.{filterField.fieldName}");
+            selectExpressions.Insert(0, $"t.{groupByField.fieldName}");
+
+            return $@"
+                INSERT OR IGNORE INTO {targetTable.Name} ({string.Join(", ", insertColumns)})
+                SELECT {string.Join(", ", selectExpressions)}
+                FROM {sourceTable.Name} cf
+                JOIN {joinDimension.Name} t ON cf.{joinFk.fieldName} = t.{joinDimension.PrimaryKey.fieldName}
+                WHERE cf.{filterField.fieldName} IN ({string.Join(",", filterIds)})
+                GROUP BY t.{groupByField.fieldName}, cf.{filterField.fieldName}";
         }
 
         private static SqliteCommand CreateCommand(SqliteConnection connection, Query query)

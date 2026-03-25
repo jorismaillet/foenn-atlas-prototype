@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using Assets.Scripts.Helpers;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
-using UnityEngine;
 
 namespace Assets.Scripts.ETL.Loaders
 {
@@ -27,15 +25,7 @@ namespace Assets.Scripts.ETL.Loaders
 
                 _valueResolvers.Add(line =>
                 {
-                    try
-                    {
-                        return cache.Get(lookupValueResolver(line));
-                    }
-                    catch (KeyNotFoundException)
-                    {
-                        Debug.LogError($"Lookup value not found in dimension '{dimension.Name}' for column '{dimension.LookupSourceAttribute.name}'");
-                        throw;
-                    }
+                    return cache.Get(lookupValueResolver(line));
                 });
             }
         }

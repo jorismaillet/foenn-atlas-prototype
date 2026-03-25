@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Assets.Scripts.Database;
+using Assets.Scripts.ETL.Loaders;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Schema.Fields;
 using Assets.Scripts.OLAP.Schema.Tables;
@@ -16,9 +18,12 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
             humidityMin, humidityAvg, humidityMax,
             rainMin, rainAvg, rainMax,
             windSpeedMin, windSpeedAvg, windSpeedMax;
+        private WeatherCoreFact derivedFromFact;
 
         public WeatherYearlyFact(WeatherCoreFact coreFact, LocationDimension location) : base("weather_yearly_facts", new List<Dimension>() { location })
         {
+            this.derivedFromFact = coreFact;
+
             year  = Field.IntAttribute(Name, "year",  "Year");
             locationRef = Field.Ref(this, location, "location_id");
 
@@ -69,30 +74,23 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
 
         public readonly Dictionary<(Field fieldName, FieldAggregation aggregation), Field> aggregatedField;
 
-        public override void BuildDerivedFact(SqliteConnection connection)
+        public override void BuildDerivedFact(SqliteConnection connection, Dictionary<Dimension, DimensionCache> caches)
         {
-            var coreFact = WeatherHistoryDataset.Instance.coreFact;
+            var insertColumns = new List<string>();
+            var selectExpressions = new List<string>();
 
-            var sql = $@"
-                INSERT OR IGNORE INTO {Name} (year, location_id,
-                    temperature_min, temperature_avg, temperature_max,
-                    dew_point_min, dew_point_avg, dew_point_max,
-                    humidity_min, humidity_avg, humidity_max,
-                    rain_min, rain_avg, rain_max,
-                    wind_speed_min, wind_speed_avg, wind_speed_max)
-                SELECT t.year, cf.location_id,
-                    MIN(cf.temperature), AVG(cf.temperature), MAX(cf.temperature),
-                    MIN(cf.dew_point),   AVG(cf.dew_point),   MAX(cf.dew_point),
-                    MIN(cf.humidity),    AVG(cf.humidity),    MAX(cf.humidity),
-                    MIN(cf.rain),        AVG(cf.rain),        MAX(cf.rain),
-                    MIN(cf.wind_speed),  AVG(cf.wind_speed),  MAX(cf.wind_speed)
-                FROM {coreFact.Name} cf
-                JOIN {coreFact.dimensions[0].Name} t ON cf.time_id = t.id
-                GROUP BY t.year, cf.location_id";
+            foreach (var entry in aggregatedField)
+            {
+                var (sourceField, aggregation) = entry.Key;
+                insertColumns.Add(entry.Value.fieldName);
+                selectExpressions.Add($"{aggregation.ToString().ToUpper()}(cf.{sourceField.fieldName})");
+            }
 
-            using var cmd = connection.CreateCommand();
-            cmd.CommandText = sql;
-            cmd.ExecuteNonQuery();
+            SqliteHelper.ExecuteRaw(connection, SqliteHelper.InsertFromTableSQL(
+                caches[derivedFromFact.time].AccessedIds,
+                this, derivedFromFact, derivedFromFact.time, derivedFromFact.timeRef,
+                year, locationRef,
+                insertColumns, selectExpressions));
         }
 
         public override IEnumerable<Field> Columns

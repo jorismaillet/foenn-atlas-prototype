@@ -11,8 +11,8 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
             timeRef,
             locationRef;
 
-        protected TimeDimension time;
-        protected LocationDimension location;
+        public TimeDimension time;
+        public LocationDimension location;
 
         public WeatherBaseFact(string name, TimeDimension time, LocationDimension location) : base(name, new List<Dimension>() { time, location })
         {

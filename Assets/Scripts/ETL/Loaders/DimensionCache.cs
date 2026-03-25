@@ -14,6 +14,10 @@ namespace Assets.Scripts.ETL.Loaders
 
         private readonly HashSet<object> _stagedLookupValues = new HashSet<object>();
 
+        private readonly HashSet<int> _accessedIds = new HashSet<int>();
+
+        public ICollection<int> AccessedIds => _accessedIds;
+
         public DimensionCache(Dimension dimension)
         {
             _dimension = dimension;
@@ -22,6 +26,7 @@ namespace Assets.Scripts.ETL.Loaders
         public void LoadFromDatabase(SqliteConnection connection)
         {
             _cache.Clear();
+            _accessedIds.Clear();
             using (var reader = SqliteHelper.ExecuteReader(connection, new Query(_dimension.Name).Select(_dimension.PrimaryKey.fieldName, _dimension.LookupField.fieldName)))
             {
                 while (reader.Read())
@@ -44,7 +49,9 @@ namespace Assets.Scripts.ETL.Loaders
 
         public int Get(object lookupValue)
         {
-            return _cache[lookupValue];
+            var id = _cache[lookupValue];
+            _accessedIds.Add(id);
+            return id;
         }
     }
 }

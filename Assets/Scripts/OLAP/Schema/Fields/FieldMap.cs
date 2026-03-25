@@ -11,7 +11,6 @@ namespace Assets.Scripts.OLAP.Schema.Fields
         public Field targetField;
         public Func<string, string> transform;
 
-
         public FieldMap(SourceField sourceField, Field targetField, Func<string, string> transform = null)
         {
             this.targetField = targetField;
@@ -33,6 +32,28 @@ namespace Assets.Scripts.OLAP.Schema.Fields
             {
                 indices[i] = CSVHelper.FindCsvIndex(sourceFields[i].name, csvFieldNames);
                 converters[i] = sourceFields[i].GetConverter();
+            }
+
+            if (count == 1)
+            {
+                var idx = indices[0];
+                var converter = converters[0];
+
+                if (transform != null)
+                {
+                    var t = transform;
+                    return line =>
+                    {
+                        var raw = line[idx];
+                        return !string.IsNullOrEmpty(raw) ? converter(t(raw)) : DBNull.Value;
+                    };
+                }
+
+                return line =>
+                {
+                    var raw = line[idx];
+                    return !string.IsNullOrEmpty(raw) ? converter(raw) : DBNull.Value;
+                };
             }
 
             if (transform != null)

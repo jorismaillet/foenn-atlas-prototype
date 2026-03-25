@@ -5,9 +5,11 @@ namespace Assets.Scripts.ETL.Extractors
 {
     public class CSVExtractor
     {
-        public static char[] STRING_SPLIT = { ';' };
+        private const char SEPARATOR = ';';
 
         private string fileName;
+
+        private string[] _buffer;
 
         public CSVExtractor(string fileName)
         {
@@ -18,7 +20,7 @@ namespace Assets.Scripts.ETL.Extractors
         {
             using var sr = GetStreamReader();
             var headerStr = sr.ReadLine();
-            return headerStr.Split(STRING_SPLIT);
+            return headerStr.Split(SEPARATOR);
         }
 
         public IEnumerable<string[]> ExtractValues()
@@ -29,8 +31,30 @@ namespace Assets.Scripts.ETL.Extractors
             while ((line = sr.ReadLine()) != null)
             {
                 if (string.IsNullOrEmpty(line)) continue;
-                yield return line.Split(STRING_SPLIT);
+                SplitLine(line);
+                yield return _buffer;
             }
+        }
+
+        private void SplitLine(string line)
+        {
+            int count = 1;
+            for (int i = 0; i < line.Length; i++)
+                if (line[i] == SEPARATOR) count++;
+
+            if (_buffer == null || _buffer.Length != count)
+                _buffer = new string[count];
+
+            int start = 0, field = 0;
+            for (int i = 0; i < line.Length; i++)
+            {
+                if (line[i] == SEPARATOR)
+                {
+                    _buffer[field++] = line.Substring(start, i - start);
+                    start = i + 1;
+                }
+            }
+            _buffer[field] = line.Substring(start);
         }
 
         private StreamReader GetStreamReader()

@@ -16,6 +16,8 @@ namespace Assets.Scripts.ETL.Loaders
 
         protected List<Func<string[], object>> _valueResolvers;
 
+        private Func<string[], object>[] _resolverArray;
+
         public SqliteTableLoader(Table table)
         {
             Table = table;
@@ -34,27 +36,31 @@ namespace Assets.Scripts.ETL.Loaders
             _stageParams = _stageCommand.Parameters;
         }
 
-        public virtual void StartBatch(SqliteTransaction transaction)
+        public void StartBatch(SqliteTransaction transaction)
         {
             _stageCommand.Transaction = transaction;
+            _resolverArray = _valueResolvers.ToArray();
         }
 
-        public virtual void StageLine(string[] csvLine)
+        public void StageLine(string[] csvLine)
         {
-            bool allNullValues = true;
-            for (int i = 0; i < _stageParams.Count; i++)
+            for (int i = 0; i < csvLine.Length; i++)
             {
-                var value = _valueResolvers[i](csvLine);
-                _stageParams[i].Value = value;
-
-                if (value != null && value != DBNull.Value)
-                    allNullValues = false;
+                if (!string.IsNullOrEmpty(csvLine[i]))
+                    goto stage;
             }
-            if (!allNullValues)
-                _stageCommand.ExecuteNonQuery();
+            return;
+
+            stage:
+            var resolvers = _resolverArray;
+            for (int i = 0; i < resolvers.Length; i++)
+            {
+                _stageParams[i].Value = resolvers[i](csvLine);
+            }
+            _stageCommand.ExecuteNonQuery();
         }
 
-        public virtual void Merge(SqliteConnection connection)
+        public void Merge(SqliteConnection connection)
         {
             SqliteHelper.MergeStagingTable(connection, Table);
             SqliteHelper.DropStagingTable(connection, Table);

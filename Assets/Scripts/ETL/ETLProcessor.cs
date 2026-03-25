@@ -49,7 +49,7 @@ namespace Assets.Scripts.ETL
                 StageFacts(connection, fieldNames, dimensionCaches, cancellationToken);
                 MergeFacts(connection);
 
-                DeriveFacts(connection);
+                DeriveFacts(connection, dimensionCaches);
 
                 MainThreadLog.Log($"Finished ETL, total records={_loaded}");
             }
@@ -185,13 +185,14 @@ namespace Assets.Scripts.ETL
             MainThreadLog.Log("Merged facts");
         }
 
-        private void DeriveFacts(SqliteConnection connection)
+        private void DeriveFacts(SqliteConnection connection, Dictionary<Dimension, DimensionCache> caches)
         {
             foreach (var derived in derivedFacts)
             {
                 var transaction = connection.BeginTransaction();
-                derived.BuildDerivedFact(connection);
+                derived.BuildDerivedFact(connection, caches);
                 transaction.Commit();
+                transaction.Dispose();
                 MainThreadLog.Log($"Derived fact {derived.Name}");
             }
         }
