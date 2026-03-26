@@ -11,7 +11,7 @@ using SqlKata;
 using SqlKata.Compilers;
 using UnityEngine;
 
-namespace Assets.Scripts.Database
+namespace Assets.Scripts.Helpers
 {
     public class SqliteHelper
     {

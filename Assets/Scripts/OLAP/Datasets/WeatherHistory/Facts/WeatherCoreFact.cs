@@ -23,7 +23,7 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
             windSpeed = Field.FloatMetric(Name, "wind_speed", "Wind speed", "ms");
             windDirection = Field.FloatMetric(Name, "wind_direction", "Wind direction", "°");
 
-            Indexes.Add(new IndexDefinition(false, timeRef, rain, locationRef)); // Optimisation for rain scenario
+            Indexes.Add(new IndexDefinition(false, timeRef, rain, locationRef)); // Optimisation for rain case
 
             Mappings.Add(new FieldMap(temperature,
                 new SourceField("T", SourceFieldType.Float),

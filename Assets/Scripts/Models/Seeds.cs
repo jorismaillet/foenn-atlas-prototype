@@ -6,7 +6,7 @@ using Assets.Scripts.Models.Locations;
 using Assets.Scripts.Models.Plannings;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.Models
 {
     public class Seeds
     {

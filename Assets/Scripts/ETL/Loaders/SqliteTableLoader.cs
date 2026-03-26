@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Assets.Scripts.Database;
+using Assets.Scripts.Helpers;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
 

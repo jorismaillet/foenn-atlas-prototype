@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Assets.Scripts.Components.Commons.Mutables
+namespace Assets.Scripts.Interface.Components.Commons
 {
     public class MutableList<T> : List<T>
     {
@@ -14,10 +14,8 @@ namespace Assets.Scripts.Components.Commons.Mutables
 
         public void AddRange(List<T> addedElements)
         {
-            foreach (var el in addedElements)
-            {
-                Add(el);
-            }
+            base.AddRange(addedElements);
+            onChange.Invoke(this);
         }
 
         public new void Clear()

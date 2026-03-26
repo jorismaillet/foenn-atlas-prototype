@@ -1,5 +1,5 @@
 ﻿using System;
-using Assets.Scripts.Components.Commons;
+using Assets.Scripts.Interface.Components.Commons;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using Assets.Scripts.OLAP.Engine;
 using UnityEngine;

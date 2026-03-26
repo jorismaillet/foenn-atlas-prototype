@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Helpers;
 using Assets.Scripts.Interface.Visualisations.Heatmap.Drawer;
 using Assets.Scripts.Interface.Visualisations.Heatmap.Render;
-using Assets.Scripts.Interface.Visualisations.Tiles;
 using Assets.Scripts.Models.Geo;
 using UnityEngine;
 using RenderSettings = Assets.Scripts.Interface.Visualisations.Heatmap.Render.RenderSettings;

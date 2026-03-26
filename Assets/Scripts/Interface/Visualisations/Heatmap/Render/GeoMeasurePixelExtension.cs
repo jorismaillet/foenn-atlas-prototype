@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Assets.Scripts.Interface.Visualisations.Tiles;
+using Assets.Scripts.Helpers;
 using Assets.Scripts.Models.Geo;
 
 namespace Assets.Scripts.Interface.Visualisations.Heatmap.Render

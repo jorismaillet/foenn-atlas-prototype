@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Assets.Scripts.Components.Commons.Holders;
+using Assets.Scripts.Interface.Components.Commons;
 using TMPro;
 
 namespace Assets.Scripts.Interface.Visualisations.Planning

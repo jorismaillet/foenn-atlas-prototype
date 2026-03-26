@@ -3,7 +3,7 @@ using System.Linq;
 using Assets.Scripts.Services;
 using UnityEngine;
 
-namespace Assets.Scripts.Interface.Components.Scenarios
+namespace Assets.Scripts.Interface.Components.Views.Selectors
 {
     public class TimeSelector : MonoBehaviour
     {

@@ -1,8 +1,8 @@
-﻿using Assets.Scripts.Components.Commons.Containers;
+﻿using Assets.Scripts.Interface.Components.Commons;
 using Assets.Scripts.Services;
 using UnityEngine;
 
-namespace Assets.Scripts.Interface.Components.Scenarios
+namespace Assets.Scripts.Interface.Components.Views.Cases
 {
     public class DayReport : MonoBehaviour
     {
@@ -11,7 +11,7 @@ namespace Assets.Scripts.Interface.Components.Scenarios
         public PrefabsContainer reportContainer;
         public TMPro.TMP_Text reportTitle;
 
-        public void OnSelectScenario()
+        public void OnCaseSelected()
         {
             var day = int.Parse(this.day.captionText.text);
             var year = int.Parse(this.year.captionText.text);

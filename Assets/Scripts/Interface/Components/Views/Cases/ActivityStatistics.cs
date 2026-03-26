@@ -1,12 +1,12 @@
-﻿using Assets.Scripts.Components.Commons.Containers;
-using Assets.Scripts.Components.Visualisations.Heatmap;
+﻿using Assets.Scripts.Interface.Components.Commons;
 using Assets.Scripts.Interface.Components.Layers;
+using Assets.Scripts.Interface.Components.Views.Selectors;
 using Assets.Scripts.Interface.Visualisations;
 using Assets.Scripts.Services;
 using TMPro;
 using UnityEngine;
 
-namespace Assets.Scripts.Interface.Components.Scenarios
+namespace Assets.Scripts.Interface.Components.Views.Cases
 {
     public class ActivityStatistics : MonoBehaviour
     {

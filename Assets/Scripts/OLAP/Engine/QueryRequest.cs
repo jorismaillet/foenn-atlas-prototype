@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Assets.Scripts.Components.Logger;
-using Assets.Scripts.Database;
-using Assets.Scripts.Models.Geo;
+using Assets.Scripts.Helpers;
+using Assets.Scripts.Interface.Components.Logger;
 using Assets.Scripts.OLAP.Schema.Fields;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;

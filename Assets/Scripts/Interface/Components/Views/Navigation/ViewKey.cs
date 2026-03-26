@@ -1,6 +1,6 @@
-﻿namespace Assets.Scripts.Interface.Components.Scenarios
+﻿namespace Assets.Scripts.Interface.Components.Views.Navigation
 {
-    public enum ScenarioKey
+    public enum ViewKey
     {
         HOUR_NO_RAIN,
         FIELD_STATS,

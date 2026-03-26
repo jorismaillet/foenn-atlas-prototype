@@ -640,10 +640,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 57537394}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55f03751a3a97df409239a558019603b, type: 3}
+  m_Script: {fileID: 11500000, guid: a852aa9143c6f3843a594891aa2daed2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarioKey: 4
+  caseKey: 4
 --- !u!115 &72015475
 MonoScript:
   m_ObjectHideFlags: 0
@@ -1436,10 +1436,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 131258485}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 000000000100000003000000
+  cases: 000000000100000003000000
 --- !u!1 &132079427
 GameObject:
   m_ObjectHideFlags: 0
@@ -2080,10 +2080,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 183451490}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 050000000200000004000000
+  cases: 020000000500000004000000
 --- !u!1 &194295886
 GameObject:
   m_ObjectHideFlags: 0
@@ -2962,10 +2962,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 251722718}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55f03751a3a97df409239a558019603b, type: 3}
+  m_Script: {fileID: 11500000, guid: a852aa9143c6f3843a594891aa2daed2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarioKey: 5
+  caseKey: 5
 --- !u!1 &261912613
 GameObject:
   m_ObjectHideFlags: 0
@@ -3375,10 +3375,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 299512945}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 01000000
+  cases: 01000000
 --- !u!1 &304744516
 GameObject:
   m_ObjectHideFlags: 0
@@ -4643,10 +4643,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 403302998}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 000000000100000003000000
+  cases: 000000000100000003000000
 --- !u!1 &405894793
 GameObject:
   m_ObjectHideFlags: 0
@@ -6309,10 +6309,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 585072571}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 0500000004000000
+  cases: 0400000005000000
 --- !u!1 &588339217
 GameObject:
   m_ObjectHideFlags: 0
@@ -6401,10 +6401,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 588339217}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: a852aa9143c6f3843a594891aa2daed2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 05000000
+  caseKey: 5
 --- !u!1 &601968399
 GameObject:
   m_ObjectHideFlags: 0
@@ -6899,10 +6899,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 626170329}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 0000000001000000
+  cases: 0000000001000000
 --- !u!1 &640012151
 GameObject:
   m_ObjectHideFlags: 0
@@ -7504,10 +7504,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 664486532}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 02000000
+  cases: 02000000
 --- !u!1 &672250133
 GameObject:
   m_ObjectHideFlags: 0
@@ -7823,10 +7823,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 676362281}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 03000000
+  cases: 03000000
 --- !u!114 &676362284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8554,10 +8554,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 740370993}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 050000000200000004000000
+  cases: 020000000400000005000000
 --- !u!1 &770142037
 GameObject:
   m_ObjectHideFlags: 0
@@ -9014,9 +9014,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1473888565}
-        m_TargetAssemblyTypeName: Assets.Scripts.Interface.Components.Scenarios.PlanningSelector,
+        m_TargetAssemblyTypeName: Assets.Scripts.Interface.Components.Views.Selectors.PlanningSelector,
           Scripts
-        m_MethodName: OnSelectScenario
+        m_MethodName: OnCaseSelected
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9073,10 +9073,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 805215945}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 04000000
+  cases: 04000000
 --- !u!1 &819496025
 GameObject:
   m_ObjectHideFlags: 0
@@ -9739,9 +9739,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1473888553}
-        m_TargetAssemblyTypeName: Assets.Scripts.Interface.Components.Scenarios.WeatherMapYearStatistics,
+        m_TargetAssemblyTypeName: Assets.Scripts.Interface.Components.Views.Cases.WeatherMapYearStatistics,
           Scripts
-        m_MethodName: SetFieldStatScenario
+        m_MethodName: SetFieldStatCase
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9798,10 +9798,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 835386395}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 01000000
+  cases: 01000000
 --- !u!1 &842666745
 GameObject:
   m_ObjectHideFlags: 0
@@ -10567,10 +10567,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 874695907}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55f03751a3a97df409239a558019603b, type: 3}
+  m_Script: {fileID: 11500000, guid: a852aa9143c6f3843a594891aa2daed2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarioKey: 2
+  caseKey: 2
 --- !u!1 &882542918
 GameObject:
   m_ObjectHideFlags: 0
@@ -12044,9 +12044,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1473888560}
-        m_TargetAssemblyTypeName: Assets.Scripts.Interface.Components.Scenarios.DayReportSelector,
+        m_TargetAssemblyTypeName: Assets.Scripts.Interface.Components.Views.Cases.DayReport,
           Scripts
-        m_MethodName: OnSelectScenario
+        m_MethodName: OnCaseSelected
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12103,10 +12103,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1006685813}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 05000000
+  cases: 05000000
 --- !u!1 &1007775317
 GameObject:
   m_ObjectHideFlags: 0
@@ -12194,7 +12194,7 @@ GameObject:
   - component: {fileID: 1017416871}
   - component: {fileID: 1017416870}
   - component: {fileID: 1017416869}
-  - component: {fileID: 1017416868}
+  - component: {fileID: 1017416872}
   m_Layer: 5
   m_Name: go activity
   m_TagString: Untagged
@@ -12222,19 +12222,6 @@ RectTransform:
   m_AnchoredPosition: {x: 648, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1017416868
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1017416866}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scenarios: 03000000
 --- !u!114 &1017416869
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12330,6 +12317,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1017416866}
   m_CullTransparentMesh: 1
+--- !u!114 &1017416872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017416866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cases: 03000000
 --- !u!1 &1020205591
 GameObject:
   m_ObjectHideFlags: 0
@@ -12415,9 +12415,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1473888553}
-        m_TargetAssemblyTypeName: Assets.Scripts.Interface.Components.Scenarios.WeatherMapYearStatistics,
+        m_TargetAssemblyTypeName: Assets.Scripts.Interface.Components.Views.Cases.WeatherMapYearStatistics,
           Scripts
-        m_MethodName: SetHoursRainScenario
+        m_MethodName: SetHoursRainCase
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12474,10 +12474,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1020205591}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 00000000
+  cases: 00000000
 --- !u!1 &1027169854
 GameObject:
   m_ObjectHideFlags: 0
@@ -12940,7 +12940,7 @@ GameObject:
   - component: {fileID: 1060850170}
   - component: {fileID: 1060850169}
   - component: {fileID: 1060850168}
-  - component: {fileID: 1060850167}
+  - component: {fileID: 1060850171}
   m_Layer: 5
   m_Name: Aggregation
   m_TagString: Untagged
@@ -12970,19 +12970,6 @@ RectTransform:
   m_AnchoredPosition: {x: -324, y: 23}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1060850167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1060850165}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scenarios: 01000000
 --- !u!114 &1060850168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13081,6 +13068,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1060850165}
   m_CullTransparentMesh: 1
+--- !u!114 &1060850171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1060850165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cases: 01000000
 --- !u!1 &1083246697
 GameObject:
   m_ObjectHideFlags: 0
@@ -14857,10 +14857,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1373452045}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55f03751a3a97df409239a558019603b, type: 3}
+  m_Script: {fileID: 11500000, guid: a852aa9143c6f3843a594891aa2daed2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarioKey: 3
+  caseKey: 3
 --- !u!1 &1386467028
 GameObject:
   m_ObjectHideFlags: 0
@@ -15029,10 +15029,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1386467028}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55f03751a3a97df409239a558019603b, type: 3}
+  m_Script: {fileID: 11500000, guid: a852aa9143c6f3843a594891aa2daed2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarioKey: 0
+  caseKey: 0
 --- !u!1 &1409417756
 GameObject:
   m_ObjectHideFlags: 0
@@ -15319,7 +15319,7 @@ GameObject:
   - component: {fileID: 1463508311}
   - component: {fileID: 1463508310}
   - component: {fileID: 1463508309}
-  - component: {fileID: 1463508308}
+  - component: {fileID: 1463508312}
   m_Layer: 5
   m_Name: Planning
   m_TagString: Untagged
@@ -15349,19 +15349,6 @@ RectTransform:
   m_AnchoredPosition: {x: -324, y: 23}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1463508308
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1463508305}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scenarios: 04000000
 --- !u!114 &1463508309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15460,6 +15447,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1463508305}
   m_CullTransparentMesh: 1
+--- !u!114 &1463508312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1463508305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cases: 04000000
 --- !u!1 &1467963094
 GameObject:
   m_ObjectHideFlags: 0
@@ -15558,7 +15558,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointmapContainer: {fileID: 1467963098}
   heatmapContainer: {fileID: 345185006}
-  scenarioDropdown: {fileID: 626170331}
+  subCaseDropDown: {fileID: 626170331}
   yearDropdown: {fileID: 947292949}
   metricDropdown: {fileID: 299512947}
   statTypeDropdown: {fileID: 1060850168}
@@ -17704,10 +17704,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1815802547}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 04000000
+  cases: 04000000
 --- !u!1 &1820779632
 GameObject:
   m_ObjectHideFlags: 0
@@ -17857,10 +17857,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1820779632}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 0500000004000000
+  cases: 0400000005000000
 --- !u!1 &1823180676
 GameObject:
   m_ObjectHideFlags: 0
@@ -19105,9 +19105,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1473888562}
-        m_TargetAssemblyTypeName: Assets.Scripts.Interface.Components.Scenarios.TemporalHeatmapSelector,
+        m_TargetAssemblyTypeName: Assets.Scripts.Interface.Components.Views.Cases.TemporalHeatmap,
           Scripts
-        m_MethodName: OnSelectScenario
+        m_MethodName: OnCasesSelected
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -19164,10 +19164,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1933318888}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 02000000
+  cases: 02000000
 --- !u!1 &1943367709
 GameObject:
   m_ObjectHideFlags: 0
@@ -20699,10 +20699,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2123520612}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6f8a922088e22f43828a22a276c7f89, type: 3}
+  m_Script: {fileID: 11500000, guid: 37f25af795d7efc419bcaf0c3194524b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scenarios: 00000000010000000200000003000000
+  cases: 00000000010000000200000003000000
 --- !u!1 &2138009746
 GameObject:
   m_ObjectHideFlags: 0

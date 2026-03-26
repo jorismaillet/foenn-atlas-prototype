@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Assets.Scripts.Components.Commons.Containers;
+using Assets.Scripts.Interface.Components.Commons;
 using Assets.Scripts.Interface.Visualisations.Planning;
+using Assets.Scripts.Models;
 using Assets.Scripts.Models.Activities;
 using Assets.Scripts.Models.Plannings;
 using Assets.Scripts.Services;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Scripts.Interface.Components.Scenarios
+namespace Assets.Scripts.Interface.Components.Views.Selectors
 {
     public class PlanningSelector : MonoBehaviour
     {
@@ -28,7 +29,7 @@ namespace Assets.Scripts.Interface.Components.Scenarios
             planning.AddOptions(plannings.Select(p => p.title).ToList());
         }
 
-        public void OnSelectScenario()
+        public void OnCaseSelected()
         {
             var planning = plannings[this.planning.value];
             var day = int.Parse(this.day.captionText.text);

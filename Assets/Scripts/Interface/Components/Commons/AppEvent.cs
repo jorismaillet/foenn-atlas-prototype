@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Assets.Scripts.Components.Commons
+namespace Assets.Scripts.Interface.Components.Commons
 {
     public class AppEvent<T>
     {

@@ -6,7 +6,7 @@ using Assets.Scripts.Services;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Scripts.Interface.Components.Scenarios
+namespace Assets.Scripts.Interface.Components.Views.Cases
 {
     public class TemporalHeatmap : MonoBehaviour
     {
@@ -15,7 +15,7 @@ namespace Assets.Scripts.Interface.Components.Scenarios
         public DisplayGradient gradientDisplay;
         public RawImage image;
 
-        public void OnSelectScenario()
+        public void OnCasesSelected()
         {
             var gradient = new CustomGradient(WeatherHistoryDataset.Instance.coreFact.temperature, 1);
             gradientDisplay.Initialize(gradient);

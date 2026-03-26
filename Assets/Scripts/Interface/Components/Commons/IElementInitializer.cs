@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Components.Commons
+﻿namespace Assets.Scripts.Interface.Components.Commons
 {
     public interface IElementInitializer<T>
     {

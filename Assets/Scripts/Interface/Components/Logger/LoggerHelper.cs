@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.Scripts.Components.Logger
+namespace Assets.Scripts.Interface.Components.Logger
 {
     public class LoggerHelper : MonoBehaviour
     {

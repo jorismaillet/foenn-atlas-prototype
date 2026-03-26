@@ -1,44 +1,44 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.Components.Commons.Containers;
-using Assets.Scripts.Components.Visualisations.Heatmap;
+using Assets.Scripts.Interface.Components.Commons;
 using Assets.Scripts.Interface.Components.Layers;
+using Assets.Scripts.Interface.Components.Views.Navigation;
 using Assets.Scripts.Interface.Visualisations;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using Assets.Scripts.OLAP.Schema.Fields;
 using Assets.Scripts.Services;
 using UnityEngine;
 
-namespace Assets.Scripts.Interface.Components.Scenarios
+namespace Assets.Scripts.Interface.Components.Views.Cases
 {
     public class WeatherMapYearStatistics : MonoBehaviour
     {
         public PrefabsContainer pointmapContainer;
         public HeatmapWorldOverlay heatmapContainer;
 
-        public TMPro.TMP_Dropdown scenarioDropdown;
+        public TMPro.TMP_Dropdown subCaseDropDown;
         public TMPro.TMP_Dropdown yearDropdown;
         public TMPro.TMP_Dropdown metricDropdown;
         public TMPro.TMP_Dropdown statTypeDropdown;
         public DisplayGradient displayGradient;
 
-        private const string hoursRainScenarioText = "Hours without rain";
-        private const string statScenarioText = "Metric statistics";
+        private const string hourRainSubcaseText = "Hours without rain";
+        private const string metricStatsSubcaseText = "Metric statistics";
 
         public void OnCaseSelected()
         {
-            switch (scenarioDropdown.captionText.text)
+            switch (subCaseDropDown.captionText.text)
             {
-                case hoursRainScenarioText:
-                    SetHoursRainScenario();
+                case hourRainSubcaseText:
+                    SetHoursRainCase();
                     break;
-                case statScenarioText:
-                    SetFieldStatScenario();
+                case metricStatsSubcaseText:
+                    SetFieldStatCase();
                     break;
             }
         }
 
-        public void SetHoursRainScenario()
+        public void SetHoursRainCase()
         {
             var year = int.Parse(yearDropdown.captionText.text);
             var geoMeasures = WeatherQueryService.HoursWithoutRain(year);
@@ -49,7 +49,7 @@ namespace Assets.Scripts.Interface.Components.Scenarios
             pointmapContainer.Initialize(geoMeasures);
         }
 
-        public void SetFieldStatScenario()
+        public void SetFieldStatCase()
         {
             var metricName = metricDropdown.captionText.text;
             var fact = WeatherHistoryDataset.Instance.coreFact;
@@ -69,21 +69,21 @@ namespace Assets.Scripts.Interface.Components.Scenarios
 
         private void Start()
         {
-            scenarioDropdown.ClearOptions();
+            subCaseDropDown.ClearOptions();
             metricDropdown.ClearOptions();
-            scenarioDropdown.AddOptions(new List<string>() { hoursRainScenarioText, statScenarioText });
+            subCaseDropDown.AddOptions(new List<string>() { hourRainSubcaseText, metricStatsSubcaseText });
             var coreFact = WeatherHistoryDataset.Instance.coreFact;
             metricDropdown.AddOptions(new List<string> { coreFact.temperature.fieldName, coreFact.rain.fieldName, coreFact.windSpeed.fieldName }.ToList());
             statTypeDropdown.ClearOptions();
             statTypeDropdown.AddOptions(new List<string> { "Minimum", "Maximum", "Average" }.ToList());
-            scenarioDropdown.onValueChanged.AddListener((_) =>
+            subCaseDropDown.onValueChanged.AddListener((_) =>
             {
-                if(scenarioDropdown.captionText.text.Equals(hoursRainScenarioText))
+                if(subCaseDropDown.captionText.text.Equals(hourRainSubcaseText))
                 {
-                    Main.selectedScenario.Set(ScenarioKey.HOUR_NO_RAIN);
+                    Main.selectedView.Set(ViewKey.HOUR_NO_RAIN);
                 } else
                 {
-                    Main.selectedScenario.Set(ScenarioKey.FIELD_STATS);
+                    Main.selectedView.Set(ViewKey.FIELD_STATS);
                 }
             });
         }

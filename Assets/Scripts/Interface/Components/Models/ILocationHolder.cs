@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Components.Commons.Holders;
+﻿using Assets.Scripts.Interface.Components.Commons;
 using Assets.Scripts.Models.Locations;
 using TMPro;
 

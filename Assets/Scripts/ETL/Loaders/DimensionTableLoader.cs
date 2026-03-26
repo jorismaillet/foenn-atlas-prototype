@@ -1,5 +1,4 @@
 using System;
-using Assets.Scripts.Database;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
 

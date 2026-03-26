@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using Assets.Scripts.Helpers;
-using Assets.Scripts.Interface.Visualisations.Tiles;
 using Assets.Scripts.Models.Geo;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Assets.Scripts.Components.Layers.OpenStreetMap
+namespace Assets.Scripts.Interface.Components.Layers
 {
     public class OpenStreetMapGridRenderer : MonoBehaviour
     {

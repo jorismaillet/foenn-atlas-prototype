@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 
-namespace Assets.Scripts.Components.Commons.Holders
+namespace Assets.Scripts.Interface.Components.Commons
 {
     public class Holder<Element> : MonoBehaviour, IElementInitializer<Element>
     {

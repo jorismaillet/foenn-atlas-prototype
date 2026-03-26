@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Assets.Scripts.Database;
 using Assets.Scripts.ETL.Loaders;
+using Assets.Scripts.Helpers;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Schema.Fields;
 using Assets.Scripts.OLAP.Schema.Tables;
@@ -87,7 +87,7 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
             }
 
             SqliteHelper.ExecuteRaw(connection, SqliteHelper.InsertFromTableSQL(
-                caches[derivedFromFact.time].AccessedIds,
+                caches[dimensions[0]].AccessedIds,
                 this, derivedFromFact, derivedFromFact.time, derivedFromFact.timeRef,
                 year, locationRef,
                 insertColumns, selectExpressions));

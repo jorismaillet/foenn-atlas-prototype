@@ -6,7 +6,7 @@ using Assets.Scripts.OLAP.Engine;
 using Assets.Scripts.Services;
 using UnityEngine;
 
-namespace Assets.Scripts.Interface.Components.Scenarios
+namespace Assets.Scripts.Interface.Components.Views.Selectors
 {
     public class LocationSelector : MonoBehaviour
     {

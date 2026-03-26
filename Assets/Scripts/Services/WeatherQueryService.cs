@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.Database;
+using Assets.Scripts.Helpers;
 using Assets.Scripts.Models.Activities;
 using Assets.Scripts.Models.Geo;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;

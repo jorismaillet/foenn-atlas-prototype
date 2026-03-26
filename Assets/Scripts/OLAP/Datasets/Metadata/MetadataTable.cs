@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Assets.Scripts.Database;
+using Assets.Scripts.Helpers;
 using Assets.Scripts.OLAP.Schema.Fields;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;

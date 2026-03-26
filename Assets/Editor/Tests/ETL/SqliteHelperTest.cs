@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Assets.Scripts.Database;
+using Assets.Scripts.Helpers;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
-using Assets.Scripts.OLAP.Schema.Fields;
 using NUnit.Framework;
 
 namespace Assets.Editor.Tests.ETL

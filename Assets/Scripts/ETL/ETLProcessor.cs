@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
-using Assets.Scripts.Components.Logger;
-using Assets.Scripts.Database;
 using Assets.Scripts.ETL.Extractors;
 using Assets.Scripts.ETL.Loaders;
+using Assets.Scripts.Helpers;
+using Assets.Scripts.Interface.Components.Logger;
 using Assets.Scripts.OLAP.Datasets;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;

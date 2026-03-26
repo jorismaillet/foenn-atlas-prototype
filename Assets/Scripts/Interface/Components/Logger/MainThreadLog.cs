@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using UnityEngine;
 
-namespace Assets.Scripts.Components.Logger
+namespace Assets.Scripts.Interface.Components.Logger
 {
     public static class MainThreadLog
     {
