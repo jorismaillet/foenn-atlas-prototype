@@ -57,11 +57,13 @@ I decided to take Unity as a development platform. My goal was to move quickly, 
   - Represents a complete analytics concept. In this case, the prototype includes a **Weather History** dataset.
     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/WeatherHistoryDataset.cs#L12-L22
     - With the time dimension definition
-    https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/LocationDimension.cs#L8-L40
+    https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/TimeDimension.cs#L9-L47
     - The location dimension definition
-    https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/TimeDimension.cs#L9-L47
+    https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/LocationDimension.cs#L8-L40
     - A core fact definition for the most commonly used metrics
-    https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/TimeDimension.cs#L9-L47
+    https://github.com/jorismaillet/foenn-atlas-prototype/blob/5edf6ba9442adc2f0718b920eb3609f646255073/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherCoreFact.cs#L9-L41
+    - Specific fact tables that corresponds to how weathre posts are well equiped (wind, rain, sea, snow...)
+    https://github.com/jorismaillet/foenn-atlas-prototype/blob/5edf6ba9442adc2f0718b920eb3609f646255073/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherWindFact.cs#L12-L19
     - And a Derived fact definition for more generic BI-oriented queries
     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherYearlyFact.cs#L13-L20
 
@@ -69,13 +71,19 @@ I decided to take Unity as a development platform. My goal was to move quickly, 
   - Extraction is made with [**CSV Extractor**](https://github.com/jorismaillet/foenn-atlas-prototype/blob/main/Assets/Scripts/ETL/Extractors/CSVExtractor.cs).
     - Extract column headers to precompute value lookup
     - Stream each line into a buffer for transformation
-  - Transformation is handled by each field definition through field mapping.
+  - Transformation is handled by each field definition through field mapping. Several when loading informations had to be handled:
+     - A simple field load
+     https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherCoreFact.cs#L39
+     - A field leading to multiple attributes with different transformations
+     https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/TimeDimension.cs#L40-L46
+     - Multiple fields into one measure, as posts can deliberately chose their measure key
+     https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherCoreFact.cs#L28-L34
   - Loading is structured around similar actions:
-    - **Staging**: insert batches of rows into a temporary table without constraint validation
+    - **Staging**: insert batches of rows into a temporary table with staging pragmas and without constraint validation
     - **Merge**: ask the DBMS to move staged data into the final table while performing validation and building indexes
     - **Derivation**: transform merged data into another table through aggregations
     - **Caching**: keep track of inserted dimension IDs through lookup fields, used later for fact insertion and derivation
- - The loading process is then runwith the ETL Processor
+ - The loading process is then run with the ETL Processor
 https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537de8c3a481852644277aa/Assets/Scripts/ETL/ETLProcessor.cs#L44-L52
 
 - **Query Engine**
@@ -88,7 +96,7 @@ https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537d
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Helpers/GeoHelper.cs#L37-L47
 
 - **Heatmap Generation**
-  - [Compressed Sparsed Row**](https://en.wikipedia.org/wiki/Sparse_matrix) is used for spatial indexing and [Inverse Distance Weighting](https://en.wikipedia.org/wiki/Inverse_distance_weighting) for spatial interpolation. This CPU-based algorithm computes the metric on a low-resolution grid, then upscales it into a map layer with custom color grading, based on the displayed metric.
+  - [Compressed Sparsed Row](https://en.wikipedia.org/wiki/Sparse_matrix) is used for spatial indexing and [Inverse Distance Weighting](https://en.wikipedia.org/wiki/Inverse_distance_weighting) for spatial interpolation. This CPU-based algorithm computes the metric on a low-resolution grid, then upscales it into a map layer with custom color grading, based on the displayed metric.
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Interface/Visualisations/Heatmap/HeatmapGenerator.cs#L55-L61
 
 - **UI Orchestration**
@@ -96,40 +104,6 @@ https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537d
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Interface/Components/Views/Cases/ActivityStatistics.cs#L20-L25
   - The background map layer is generated through the **OpenStreetMap API** and cached locally.
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Interface/Components/Layers/OpenStreetMapGridRenderer.cs#L67-L74
-## Key Mechanics
-- **CSV extraction**  
-  `500 MB` files are read through a stream reader to reduce memory usage, with a string buffer to reduce allocations.  
-  Future improvements: multithreading, delegating loading to more performant tools (for example DuckDB), and moving from in-memory transformations to SQL-based transformations.
-
-- **Facts requiring dimension IDs**  
-  Use a dimension cache and lookup fields, and load dimensions before facts.
-
-- **Loading**  
-  Batch loading with staging tables and SQLite pragmas.
-
-- **Low-performance analytics**  
-  The first test used yearly derivation. Customer requests can then be redirected to pre-aggregated tables.
-
-- **Facts and weather post correlation**
-  When analyzing the source CSV files, I realized that measure reports depends on how well the posts are actually equiped. This has a strong impact on how the fact tables needs to be determined. For example, a weather post on a mountain would very likely have a snow monitoring equipment. Most ground-based posts will not have any sea monitoring equipment, etc.. So I created a fact table per category of weather post equipment, and kept a core fact table with the measures almost all post have (temperature, rain...). Then, if we need to provide statistics for a specific equipment, only the related fact table will beused, improving performances.
-
-- **Custom attribute transformation**
-  Several cases when loading informations had to be handled:
-  - A simple field load
-    https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherCoreFact.cs#L39
-  - A field leading to multiple attributes with different transformations
-    https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/TimeDimension.cs#L40-L46
-  - Multiple fields into one measure, as posts can deliberately chose their measure key
-    https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherCoreFact.cs#L28-L34
-- **Map display**  
-  Use a hardcoded zoom level to keep relying on cached data.  
-  Later: a more robust OpenStreetMap integration.
-
-- **Geolocation display**  
-  Apply zoom-based culling.
-
-- **Common OLAP methods**  
-  Start with member retrieval. Future work could include decomposition, drill-down, and related OLAP operations.
 
 # Limitations
 
@@ -142,9 +116,9 @@ This prototype is not intended to be reused as-is. The following steps simply de
 
 1. Download Open Data files for **Hourly Weather Records**:  
    https://meteo.data.gouv.fr/datasets/6569b4473bedf2e7abad3b72
-2. Run the application once to load the files into the database
-3. Set basic seed data in a seed file
-4. Run the application and explore the scenarios
+2. Set basic seed data in a seed file
+3. Run the application and wait for files to be loaded into the database
+4. Explore the scenarios
 
 The interface is organized as follows:
 
@@ -167,7 +141,7 @@ The interface is organized as follows:
 
 ### ETL
 
-- Reduce ETL time (load raw files as-is, or load Parquet instead)
+- Reduce ETL time (load raw files directly in a staging table with DuckDB for example, or load Parquet instead)
 - Pre-aggregate more facts depending on time levels and location levels.  
 
 ### Query Engine
@@ -188,7 +162,8 @@ The interface is organized as follows:
 
 - Geospatial interpolation for any request instead of relying only on fixed observation locations
 - Better customer quality of life, customization, and product features
-
+- Common OLAP operations, like decomposition, drill-down, etc.
+  
 ### Data Sources
 
 - Multiple datasets (historical + forecast)
