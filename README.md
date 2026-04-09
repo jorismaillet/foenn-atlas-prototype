@@ -69,7 +69,7 @@ I chose Unity precisely because this was a time-boxed prototype, not a productio
     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherYearlyFact.cs#L13-L20
 
 - **ETL**
-  - **CSV Extractor**
+  - [**CSV Extractor**](https://github.com/jorismaillet/foenn-atlas-prototype/blob/main/Assets/Scripts/ETL/Extractors/CSVExtractor.cs)
     - Extract column headers to precompute value lookup
     - Stream each line into a buffer for transformation
   - Transformation is handled by each field definition through field mapping.
@@ -78,16 +78,14 @@ I chose Unity precisely because this was a time-boxed prototype, not a productio
     - **Merge**: ask the DBMS to move staged data into the final table while performing validation and building indexes
     - **Derivation**: transform merged data into another table through aggregations
     - **Caching**: keep track of inserted dimension IDs through lookup fields, used later for fact insertion and derivation
-
-  The loading process is then run in two phases:
-  - A first CSV read to **stage**, **merge**, and **cache** dimensions
-  - A second CSV read to **stage**, **merge**, and **derive** facts
+ - The loading process is then runwith the ETL Processor
+https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537de8c3a481852644277aa/Assets/Scripts/ETL/ETLProcessor.cs#L44-L52
 
 - **Query Engine**
-  - A query request is built through a **Query Builder** object used for analytics requests, with **SqlKata** generating the SQL.
-  - It accepts `Field` elements and returns a `QueryResult` after execution against a SQLite connection.
+  - A [Query Request](https://github.com/jorismaillet/foenn-atlas-prototype/blob/main/Assets/Scripts/OLAP/Engine/QueryRequest.cs) is built with SQLKata **Query Builder**, accepts field elements and returns a [Query Result](https://github.com/jorismaillet/foenn-atlas-prototype/blob/main/Assets/Scripts/OLAP/Engine/QueryResult.cs).
   - `QueryResult` parses DB results and exposes geolocated rows with convenient field value access.
-
+  https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537de8c3a481852644277aa/Assets/Scripts/OLAP/Engine/QueryResult.cs#L55-L61
+  https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537de8c3a481852644277aa/Assets/Scripts/OLAP/Engine/Row.cs#L10-L12
 - **Map Rendering**
   - For each geolocated result, the selected measure is collected and positioned on the world map through a tile-to-UI converter.
 
