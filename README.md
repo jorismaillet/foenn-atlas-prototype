@@ -1,9 +1,7 @@
-
 # README #
 <img width="324" height="158" alt="Light mode (1)" src="https://github.com/user-attachments/assets/185a1790-7487-408f-bec7-5ebf311dcdd1" />
 
 This is a prototype of **Foenn**, a geospatial analytics platform.
-
 
 # Objective
 
@@ -37,7 +35,7 @@ Publishing the codebase is also a way to set a clear milestone for the project, 
 
 ## Development Platform
 
-I chose Unity precisely because this was a time-boxed prototype, not a production code foundation. The goal was to move quickly, focus on product and technical discovery, and produce concrete outcomes rather than invest in long-term code reusability. Given my experience building interactive applications in C# with Unity, and because the prototype required background processing, rendering, and navigation, Unity was the most efficient way to validate the core ideas under those constraints.
+I decided to take Unity as a development platform. My goal was to move quickly, focus on product and technical discovery, and produce concrete outcomes rather than invest in long-term code reusability. Given my experience int building interactive applications in C# with Unity, and because the prototype required background processing, rendering, and navigation, Unity was the most efficient way to validate the core ideas under those constraints. This was a time-boxed prototype, and any further development will have different constraints so different platforms.
 
 ## Architecture
 
@@ -55,21 +53,20 @@ I chose Unity precisely because this was a time-boxed prototype, not a productio
      - facts
      https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Schema/Tables/Fact.cs#L9-L9
    
-
 - **Datasets**
   - Represents a complete analytics concept. In this case, the prototype includes a **Weather History** dataset.
     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/WeatherHistoryDataset.cs#L12-L22
-    With the time dimension definition
+    - With the time dimension definition
     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/LocationDimension.cs#L8-L40
-    The location dimension definition
+    - The location dimension definition
     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/TimeDimension.cs#L9-L47
-    A core fact definition for the most commonly used metrics
+    - A core fact definition for the most commonly used metrics
     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/TimeDimension.cs#L9-L47
-    And a Derived fact definition for more generic BI-oriented queries
+    - And a Derived fact definition for more generic BI-oriented queries
     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherYearlyFact.cs#L13-L20
 
 - **ETL**
-  - [**CSV Extractor**](https://github.com/jorismaillet/foenn-atlas-prototype/blob/main/Assets/Scripts/ETL/Extractors/CSVExtractor.cs)
+  - Extraction is made with [**CSV Extractor**](https://github.com/jorismaillet/foenn-atlas-prototype/blob/main/Assets/Scripts/ETL/Extractors/CSVExtractor.cs).
     - Extract column headers to precompute value lookup
     - Stream each line into a buffer for transformation
   - Transformation is handled by each field definition through field mapping.
@@ -88,17 +85,18 @@ https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537d
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537de8c3a481852644277aa/Assets/Scripts/OLAP/Engine/Row.cs#L10-L12
 - **Map Rendering**
   - For each geolocated result, the selected measure is collected and positioned on the world map through a tile-to-UI converter.
+  https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Helpers/GeoHelper.cs#L37-L47
 
 - **Heatmap Generation**
-  - **CSR** is used for spatial indexing and **Inverse Distance Weighting (IDW)** for spatial interpolation.
-  - This CPU-based algorithm computes the metric on a low-resolution grid, then upscales it into a map layer with custom color grading based on the displayed metric.
+  - [Compressed Sparsed Row**](https://en.wikipedia.org/wiki/Sparse_matrix) is used for spatial indexing and [Inverse Distance Weighting](https://en.wikipedia.org/wiki/Inverse_distance_weighting) for spatial interpolation. This CPU-based algorithm computes the metric on a low-resolution grid, then upscales it into a map layer with custom color grading, based on the displayed metric.
+  https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Interface/Visualisations/Heatmap/HeatmapGenerator.cs#L55-L61
 
 - **UI Orchestration**
   - Each scenario has its own component, requires different input fields, and relies on the `WeatherQueryService` for execution.
+  https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Interface/Components/Views/Cases/ActivityStatistics.cs#L20-L25
   - The background map layer is generated through the **OpenStreetMap API** and cached locally.
-
+  https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Interface/Components/Layers/OpenStreetMapGridRenderer.cs#L67-L74
 ## Key Mechanics
-
 - **CSV extraction**  
   `500 MB` files are read through a stream reader to reduce memory usage, with a string buffer to reduce allocations.  
   Future improvements: multithreading, delegating loading to more performant tools (for example DuckDB), and moving from in-memory transformations to SQL-based transformations.
@@ -110,20 +108,19 @@ https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537d
   Batch loading with staging tables and SQLite pragmas.
 
 - **Low-performance analytics**  
-  Pre-aggregate facts at different time levels.  
   The first test used yearly derivation. Customer requests can then be redirected to pre-aggregated tables.
 
-- **Multiple definitions of types**  
-  Centralize type definitions into field types (source, map behavior, analytics usage, color gradient, display format).
-
-- **Heavy heatmap computation**  
-  Optimize IDW. Later options include PostGIS or GPU shaders.
-
 - **Facts and weather post correlation**
-  When analyzing the source CSV files, I realized that measure reports depends on how well the posts are actually equiped. This seems evident, but it has a strong impact on how the fact tables needs to be determined. For example, a weather post on a mountain would very likely have a snow monitoring equipment. Most ground-based posts will not have any sea-based measures, etc.. So we can create a fact table per category of weather post equipment, and keep a core fact table with the measures almost all post should have (temperature, rain...). Then, if we need to provide statistics for a specific equipment, only the related fact table will beused, improving performances.
+  When analyzing the source CSV files, I realized that measure reports depends on how well the posts are actually equiped. This has a strong impact on how the fact tables needs to be determined. For example, a weather post on a mountain would very likely have a snow monitoring equipment. Most ground-based posts will not have any sea monitoring equipment, etc.. So I created a fact table per category of weather post equipment, and kept a core fact table with the measures almost all post have (temperature, rain...). Then, if we need to provide statistics for a specific equipment, only the related fact table will beused, improving performances.
 
 - **Custom attribute transformation**
-
+  Several cases when loading informations had to be handled:
+  - A simple field load
+    https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherCoreFact.cs#L39
+  - A field leading to multiple attributes with different transformations
+    https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/TimeDimension.cs#L40-L46
+  - Multiple fields into one measure, as posts can deliberately chose their measure key
+    https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherCoreFact.cs#L28-L34
 - **Map display**  
   Use a hardcoded zoom level to keep relying on cached data.  
   Later: a more robust OpenStreetMap integration.
@@ -157,8 +154,7 @@ The interface is organized as follows:
 
 # Results
 
-
-# Evolution Paths (MVP)
+# Evolution Paths (#MVP)
 
 ## Stack
 
@@ -172,11 +168,14 @@ The interface is organized as follows:
 ### ETL
 
 - Reduce ETL time (load raw files as-is, or load Parquet instead)
+- Pre-aggregate more facts depending on time levels and location levels.  
 
 ### Query Engine
 
 - Delegate spatial querying to PostGIS
 - Add sampling based on the displayed area
+- Chose dyanmical the data depending on level of zoom
+- Chose dynamically the aggregated fact table depending on the time aggregation and navigation
 
 ### Rendering
 
@@ -184,7 +183,6 @@ The interface is organized as follows:
 - Derive aggregates for each time level (day, month, year) and location dimension (department)
 - Move more transformations to the database layer
 - Apply zoom and pan culling for display
-- Apply zoom and pan sampling for query execution
 
 ## Features
 
@@ -201,5 +199,6 @@ The interface is organized as follows:
 - Downloader service
 - Delta jobs
 - Cron jobs for derived tables (hour, day, month, year)
+
 ## Production readiness
 Scalability, multi-tenancy, reliability, sercurity... All standards to provide a real Saas product.
