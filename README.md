@@ -1,16 +1,19 @@
+
 # README #
+<img width="324" height="158" alt="Light mode (1)" src="https://github.com/user-attachments/assets/185a1790-7487-408f-bec7-5ebf311dcdd1" />
 
 This is a prototype of **Foenn**, a geospatial analytics platform.
+
 
 # Objective
 
 The goal of this prototype is to work on a project I had in mind for a while, challenge myself with new technical topics, and document findings and outcomes.
 
-Publishing the codebase is also a way to set a clear milestone for the project, helping me focus on a first iteration and write down ideas for the next steps.
-
 This first step is a **proof of concept** for a end-to-end pipeline, from ingesting raw geospatial data to displaying aggregated data on a map, while also exploring a few potential customer use cases.
 
 Building a first all-in-one software package was a deliberate choice to minimize the time required to complete a small usable prototype, focusing on technical discovery and intentionally setting aside any larger-scale implementation concerns.
+
+Publishing the codebase is also a way to set a clear milestone for the project, helping me focus on a first iteration and write down ideas for the next steps.
 
 # Scope
 
@@ -18,10 +21,10 @@ Building a first all-in-one software package was a deliberate choice to minimize
    File download automation and delta loading were intentionally excluded, considering all files used in this prototype were already complete and immutable.
 
 2. Create a **Query Execution Engine** that produces geolocated results.
-3. **SqlKata** was reused for SQL generation.
+   [SqlKata](https://sqlkata.com/) was reused for SQL generation.
 
-4. Display results on an **Interactive Map**, using the **OpenStreetMap API** to download tiles and generate **Heatmaps** with a CPU-based algorithm.  
-   Geolocated measures are displayed through Unity through prefabs generation and camera movement handlers.
+4. Display results on an **Interactive Map**, using the [OpenStreetMap API](https://www.openstreetmap.org/) to download tiles and generate **Heatmaps** with a CPU-based algorithm.  
+   Geolocated measures are displayed with Unity through prefabs generation and camera movement handlers.
 
 5. Explore a few customer use cases to see how higher-level models could be built on top of a geo engine, such as:
    1. A **Weather Day Report** for a specified location
@@ -34,24 +37,36 @@ Building a first all-in-one software package was a deliberate choice to minimize
 
 ## Development Platform
 
-Unity was, for me, the best choice for this prototype. I am very familiar with C# development through Unity, as I have always built small games with it. Unity provides a simple interface builder and useful features for background processing, texture rendering, and map navigation. C# is quite academic, but helpful when iterating on a full-stack discovery and implementation process.
-
-This was also a strategic choice: it creates a clear separation between a safe-to-publish prototype for a portfolio and a potential real SaaS product.
+I chose Unity precisely because this was a time-boxed prototype, not a production code foundation. The goal was to move quickly, focus on product and technical discovery, and produce concrete outcomes rather than invest in long-term code reusability. Given my experience building interactive applications in C# with Unity, and because the prototype required background processing, rendering, and navigation, Unity was the most efficient way to validate the core ideas under those constraints.
 
 ## Architecture
 
 - **Schema**
-  - Define key metadata for tables (name, primary key, indexes), fields (display name, DB type, analytics type), and field mappings (source file column, optional transformation)
-  - Add specific metadata for dimensions (lookup field) and fact tables (list of dimensions)
+  - Define key metadata for
+     - tables
+     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Schema/Tables/Table.cs#L9-L17
+     - fields
+     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Schema/Fields/Field.cs#L9-L25
+     - field mappings
+     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Schema/Fields/FieldMap.cs#L10-L12
+  - Add specific metadata for
+     - dimensions
+     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Schema/Tables/Dimension.cs#L9-L10
+     - facts
+     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Schema/Tables/Fact.cs#L9-L9
+   
 
 - **Datasets**
-  - Represent a complete analytics concept. In this case, the prototype includes a **Weather History** dataset, containing:
-    - A time dimension (year, hour, day, etc.)
-    - A location dimension (observation posts)
-    - Fact tables:
-      - one fact table per observation category (wind, temperature, etc.)
-      - one core fact table centralizing the most commonly used metrics
-      - one pre-aggregated fact table on time dimension for generic BI-oriented queries
+  - Represents a complete analytics concept. In this case, the prototype includes a **Weather History** dataset.
+    https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/WeatherHistoryDataset.cs#L12-L22
+    With the time dimension definition
+    https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/LocationDimension.cs#L8-L40
+    The location dimension definition
+    https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/TimeDimension.cs#L9-L47
+    A core fact definition for the most commonly used metrics
+    https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/TimeDimension.cs#L9-L47
+    And a Derived fact definition for more generic BI-oriented queries
+    https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherYearlyFact.cs#L13-L20
 
 - **ETL**
   - **CSV Extractor**
@@ -105,6 +120,11 @@ This was also a strategic choice: it creates a clear separation between a safe-t
 
 - **Heavy heatmap computation**  
   Optimize IDW. Later options include PostGIS or GPU shaders.
+
+- **Facts and weather post correlation**
+  When analyzing the source CSV files, I realized that measure reports depends on how well the posts are actually equiped. This seems evident, but it has a strong impact on how the fact tables needs to be determined. For example, a weather post on a mountain would very likely have a snow monitoring equipment. Most ground-based posts will not have any sea-based measures, etc.. So we can create a fact table per category of weather post equipment, and keep a core fact table with the measures almost all post should have (temperature, rain...). Then, if we need to provide statistics for a specific equipment, only the related fact table will beused, improving performances.
+
+- **Custom attribute transformation**
 
 - **Map display**  
   Use a hardcoded zoom level to keep relying on cached data.  
