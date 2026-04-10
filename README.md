@@ -126,7 +126,7 @@ The interface is organized as follows:
      <img width="1508" height="846" alt="image" src="https://github.com/user-attachments/assets/06258f69-78d4-4e60-af2b-af88bca92e1f" />
    - Wind: Maximum
      <img width="1515" height="849" alt="image" src="https://github.com/user-attachments/assets/2aab8ed2-67fc-4d2a-b817-a3df71d20384" />
-- Temporal Heatmap (2024)
+- Temporal Heatmap (2024) - X Axis is hour (0 - 24) and Y axis is day of year (1 - 365)
   - Montpellier
     <img width="1231" height="693" alt="image" src="https://github.com/user-attachments/assets/934ee424-b85e-4d7f-9c8a-2be19e5351b2" />
   - Quimper
