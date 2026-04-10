@@ -82,8 +82,9 @@ https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537d
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Helpers/GeoHelper.cs#L37-L47
 
 - **Heatmap Generation**
-  - [Compressed Sparsed Row](https://en.wikipedia.org/wiki/Sparse_matrix) is used for spatial indexing and [Inverse Distance Weighting](https://en.wikipedia.org/wiki/Inverse_distance_weighting) for spatial interpolation. This CPU-based algorithm computes the data on a low-resolution grid, then upscales it into a map layer with custom color grading, based on the displayed metric field.
+  - [Compressed Sparsed Row](https://en.wikipedia.org/wiki/Sparse_matrix) is used for spatial indexing and [Inverse Distance Weighting](https://en.wikipedia.org/wiki/Inverse_distance_weighting) for spatial interpolation. This CPU-based algorithm computes the data on a low-resolution grid, then upscales it into a map layer with custom color gradent, based on the displayed metric field. 
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Interface/Visualisations/Heatmap/HeatmapGenerator.cs#L55-L61
+   - The color gradient can be fixed, like temperature (blue = cold, red = hot), or relative, and depends on a query result (ex: displaying the number of hours available of an activity, red = 0, green = maximum observation value)
 
 - **UI Orchestration**
   - Each scenario has its own component, requires different input fields, and relies on the `WeatherQueryService` for execution.
@@ -129,6 +130,17 @@ The interface is organized as follows:
     <img width="1230" height="690" alt="image" src="https://github.com/user-attachments/assets/092c8a96-251c-4ceb-b351-c9a050d85ca5" />
   - Paris
     <img width="1230" height="693" alt="image" src="https://github.com/user-attachments/assets/cd9e70f9-421d-4771-a312-0dc3f3580116" />
+- Activity Heatmap. This is an example of very arbitrary conditions, but they were selected to validate the querying layer:
+  - Year: 2024, Temperature: Between 6 and 25 Celsius Degrees, Time: Between 9am and 7pm, Rain: Below 1mm per hour, Wind speed: Below 2 m/s 
+```SQL
+SELECT "location_dimension"."id", "location_dimension"."lon", "location_dimension"."lat", "location_dimension"."post_name", COUNT("weather_history_facts"."id")
+FROM "weather_history_facts" 
+INNER JOIN "location_dimension" ON "weather_history_facts"."location_id" = "location_dimension"."id"
+INNER JOIN "time_dimension" ON "weather_history_facts"."time_id" = "time_dimension"."id"
+WHERE "time_dimension"."year" = 2024 AND "weather_history_facts"."temperature" BETWEEN 6 AND 25 AND "time_dimension"."hour" BETWEEN 9 AND 19 AND "weather_history_facts"."rain" BETWEEN 0 AND 1 AND "weather_history_facts"."wind_speed" BETWEEN 0 AND 2
+GROUP BY "location_dimension"."id", "location_dimension"."lon", "location_dimension"."lat", "location_dimension"."post_name";
+```
+  <img width="1557" height="874" alt="image" src="https://github.com/user-attachments/assets/979807c2-2652-4588-8761-18619eb8b9d7" />
 
 # Evolution Paths (#MVP)
 
