@@ -35,55 +35,41 @@ Publishing the codebase is also a way to set a clear milestone for the project, 
 
 ## Development Platform
 
-I decided to take Unity as a development platform. My goal was to move quickly, focus on product and technical discovery, and produce concrete outcomes rather than invest in long-term code reusability. Given my experience int building interactive applications in C# with Unity, and because the prototype required background processing, rendering, and navigation, Unity was the most efficient way to validate the core ideas under those constraints. This was a time-boxed prototype, and any further development will have different constraints so different platforms.
+I decided to take Unity as a development platform. My goal was to move quickly, focus on product and technical discovery, and produce concrete outcomes rather than invest in long-term code reusability. Given my experience int building interactive applications in C# with Unity, and because the prototype required background processing, rendering, and navigation, Unity was the most efficient way to validate the core ideas under those constraints.
+<img width="1364" height="589" alt="Capture d&#39;écran 2026-04-10 100945" src="https://github.com/user-attachments/assets/12f25e7e-4b18-4833-8ba4-dcdb7e778a95" />
 
 ## Architecture
+ - **Application Flow Diagram**
+ <img width="3282" height="812" alt="Foenn POCArchitecture drawio" src="https://github.com/user-attachments/assets/866c811e-52d9-4810-85b7-ae54a013b1a8" />
 
-- **Schema**
-  - Define key metadata for
-     - tables
-     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Schema/Tables/Table.cs#L9-L17
-     - fields
-     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Schema/Fields/Field.cs#L9-L25
-     - field mappings
-     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Schema/Fields/FieldMap.cs#L10-L12
-  - Add specific metadata for
-     - dimensions
-     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Schema/Tables/Dimension.cs#L9-L10
-     - facts
-     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Schema/Tables/Fact.cs#L9-L9
-   
-- **Datasets**
-  - Represents a complete analytics concept. In this case, the prototype includes a **Weather History** dataset.
+- **Dataset Class Diagram**
+  <img width="1882" height="522" alt="Foenn POCDataset drawio" src="https://github.com/user-attachments/assets/e621cbd1-ba8f-4cad-a0f0-13eea5b19fb1" />
+
+- **Dataset definition**
+  - The prototype includes one dataset: **Weather History Hourly Report** with a pre-aggregation on year level to handle some BI-oriented queries.
     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/WeatherHistoryDataset.cs#L12-L22
-    - With the time dimension definition
     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/TimeDimension.cs#L9-L47
-    - The location dimension definition
     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/LocationDimension.cs#L8-L40
-    - A core fact definition for the most commonly used metrics
     https://github.com/jorismaillet/foenn-atlas-prototype/blob/5edf6ba9442adc2f0718b920eb3609f646255073/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherCoreFact.cs#L9-L41
-    - Specific fact tables that corresponds to how weathre posts are well equiped (wind, rain, sea, snow...)
-    https://github.com/jorismaillet/foenn-atlas-prototype/blob/5edf6ba9442adc2f0718b920eb3609f646255073/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherWindFact.cs#L12-L19
-    - And a Derived fact definition for more generic BI-oriented queries
+     https://github.com/jorismaillet/foenn-atlas-prototype/blob/5edf6ba9442adc2f0718b920eb3609f646255073/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherWindFact.cs#L12-L19
     https://github.com/jorismaillet/foenn-atlas-prototype/blob/2689cde933427c6a1e0db5605bed818797f9d1ba/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherYearlyFact.cs#L13-L20
 
 - **ETL**
-  - Extraction is made with [**CSV Extractor**](https://github.com/jorismaillet/foenn-atlas-prototype/blob/main/Assets/Scripts/ETL/Extractors/CSVExtractor.cs).
-    - Extract column headers to precompute value lookup
-    - Stream each line into a buffer for transformation
-  - Transformation is handled by each field definition through field mapping. Several when loading informations had to be handled:
+  - Extraction extracts CSV column headers to precompute value lookup, and stream each line into a buffer for transformation
+    https://github.com/jorismaillet/foenn-atlas-prototype/blob/c1bc9e4ad2d67ff55956eb37c98e7d2ee40dc6d7/Assets/Scripts/ETL/Extractors/CSVExtractor.cs#L26-L37
+  - Transformation is handled by each field definition through field mapping. Several cases had to be handled:
      - A simple field load
      https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherCoreFact.cs#L39
      - A field leading to multiple attributes with different transformations
      https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/OLAP/Datasets/WeatherHistory/Dimensions/TimeDimension.cs#L40-L46
-     - Multiple fields into one measure, as posts can deliberately chose their measure key
+     - Multiple fields into one metric, as posts can deliberately chose their metric key
      https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/OLAP/Datasets/WeatherHistory/Facts/WeatherCoreFact.cs#L28-L34
   - Loading is structured around similar actions:
     - **Staging**: insert batches of rows into a temporary table with staging pragmas and without constraint validation
     - **Merge**: ask the DBMS to move staged data into the final table while performing validation and building indexes
     - **Derivation**: transform merged data into another table through aggregations
     - **Caching**: keep track of inserted dimension IDs through lookup fields, used later for fact insertion and derivation
- - The loading process is then run with the ETL Processor
+   - The ETL Processor executes the operation sequence:
 https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537de8c3a481852644277aa/Assets/Scripts/ETL/ETLProcessor.cs#L44-L52
 
 - **Query Engine**
@@ -96,7 +82,7 @@ https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537d
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Helpers/GeoHelper.cs#L37-L47
 
 - **Heatmap Generation**
-  - [Compressed Sparsed Row](https://en.wikipedia.org/wiki/Sparse_matrix) is used for spatial indexing and [Inverse Distance Weighting](https://en.wikipedia.org/wiki/Inverse_distance_weighting) for spatial interpolation. This CPU-based algorithm computes the metric on a low-resolution grid, then upscales it into a map layer with custom color grading, based on the displayed metric.
+  - [Compressed Sparsed Row](https://en.wikipedia.org/wiki/Sparse_matrix) is used for spatial indexing and [Inverse Distance Weighting](https://en.wikipedia.org/wiki/Inverse_distance_weighting) for spatial interpolation. This CPU-based algorithm computes the data on a low-resolution grid, then upscales it into a map layer with custom color grading, based on the displayed metric field.
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Interface/Visualisations/Heatmap/HeatmapGenerator.cs#L55-L61
 
 - **UI Orchestration**
