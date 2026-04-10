@@ -113,6 +113,22 @@ The interface is organized as follows:
 3. Depending on the scenario, the main view displays either fixed information, scrollable content, or a navigable map with drag-and-drop and mouse wheel controls
 
 # Results
+- Heatmap (2020)
+   - Temperature: Minimum, Average, Maximum
+      <img width="1516" height="849" alt="image" src="https://github.com/user-attachments/assets/6b114b2b-08cb-45c2-ba1e-a290b57881a1" />
+      <img width="1516" height="853" alt="image" src="https://github.com/user-attachments/assets/993d54d1-acd8-4d27-8451-45bac79ed2fe" />
+      <img width="1516" height="850" alt="image" src="https://github.com/user-attachments/assets/be6fb473-d468-46f1-9559-37136580f44f" />
+   - Rain: Maximum
+     <img width="1508" height="846" alt="image" src="https://github.com/user-attachments/assets/06258f69-78d4-4e60-af2b-af88bca92e1f" />
+   - Wind: Maximum
+     <img width="1515" height="849" alt="image" src="https://github.com/user-attachments/assets/2aab8ed2-67fc-4d2a-b817-a3df71d20384" />
+- Temporal Heatmap (2024)
+  - Montpellier
+    <img width="1231" height="693" alt="image" src="https://github.com/user-attachments/assets/934ee424-b85e-4d7f-9c8a-2be19e5351b2" />
+  - Quimper
+    <img width="1230" height="690" alt="image" src="https://github.com/user-attachments/assets/092c8a96-251c-4ceb-b351-c9a050d85ca5" />
+  - Paris
+    <img width="1230" height="693" alt="image" src="https://github.com/user-attachments/assets/cd9e70f9-421d-4771-a312-0dc3f3580116" />
 
 # Evolution Paths (#MVP)
 
