@@ -77,6 +77,9 @@ https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537d
   - `QueryResult` parses DB results and exposes geolocated rows with convenient field value access.
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537de8c3a481852644277aa/Assets/Scripts/OLAP/Engine/QueryResult.cs#L55-L61
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537de8c3a481852644277aa/Assets/Scripts/OLAP/Engine/Row.cs#L10-L12
+  - `Query Services` converts customer requests into an executable query request
+  https://github.com/jorismaillet/foenn-atlas-prototype/blob/6aca1a77aec7824ec40e7a6bb95eb9cc61cd4f71/Assets/Scripts/Services/WeatherQueryService.cs#L81-L102
+
 - **Map Rendering**
   - For each geolocated result, the selected measure is collected and positioned on the world map through a tile-to-UI converter.
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Helpers/GeoHelper.cs#L37-L47
