@@ -5,38 +5,45 @@ This is a prototype of **Foenn**, a geospatial analytics platform.
 
 # Objective
 
-The goal of this prototype is to work on a project I had in mind for a while, challenge myself with new technical topics, and document findings and outcomes.
+The goal of this prototype is for me to work on a project I had in mind for a while, challenge myself with new technical topics, and document findings and outcomes.
 
-This first step is a **proof of concept** for a end-to-end pipeline, from ingesting raw geospatial data to displaying aggregated data on a map, while also exploring a few potential customer use cases.
+This first step is a **proof of concept** focusing on an end-to-end pipeline, from ingesting raw geospatial data to displaying aggregated data on a map, while also exploring a few potential customer use cases.
 
-Building a first all-in-one software package was a deliberate choice to minimize the time required to complete a small usable prototype, focusing on technical discovery and intentionally setting aside any larger-scale implementation concerns.
+Building a first all-in-one software was a deliberate choice to minimize the time required to complete this experiment, focusing on technical discovery and intentionally setting aside any larger-scale implementation concerns.
 
-Publishing the codebase is also a way to set a clear milestone for the project, helping me focus on a first iteration and write down ideas for the next steps.
+Publishing this repository is also a way to set a clear milestone, helping me to determine the scope of it and write down ideas for the next steps.
 
 # Scope
 
-1. Build an **ETL** pipeline that loads weather history files (in CSV) into a database (SQLite for the prototype) using an analytics-ready **Star Schema**.  
-   File download automation and delta loading were intentionally excluded, considering all files used in this prototype were already complete and immutable.
+1. Build an **ETL** pipeline that loads weather history files (in CSV) into a database (SQLite for the prototype) using an analytics-ready **Star Schema**.
+   File download automation and delta loading were intentionally excluded, I considered all files used in this prototype are complete and immutable.
 
 2. Create a **Query Execution Engine** that produces geolocated results.
    [SqlKata](https://sqlkata.com/) was reused for SQL generation.
 
-4. Display results on an **Interactive Map**, using the [OpenStreetMap API](https://www.openstreetmap.org/) to download tiles and generate **Heatmaps** with a CPU-based algorithm.  
+4. Display results on an **Interactive Map**, using the [OpenStreetMap API](https://www.openstreetmap.org/) to download tiles, and generate **Heatmaps** with a CPU-based algorithm.
    Geolocated measures are displayed with Unity through prefabs generation and camera movement handlers.
 
 5. Explore a few customer use cases to see how higher-level models could be built on top of a geo engine, such as:
-   1. A **Weather Day Report** for a specified location
+   1. A **Weather Day Report** for a given location
    2. A **Temporal Heatmap** for a location, to visualize the overall climate over a year
-   3. A generic **Statistics Overview** of weather history, with heatmaps and aggregation locations, including a few aggregations, metrics, and an example using dry hours
-   4. An **Outdoor Activity Selection** feature, indicating the number of hours during which an activity can be performed. The activity is defined as a wrapper around customizable weather conditions.
-   5. An **Activity Planner**, to determine the best activity for a location and when to do it
+   3. A generic **Statistics Overview** of weather history, with heatmaps and aggregation locations, including a few aggregations, metrics, and an example with "dry locations".
+   4. An **Outdoor Activity Selection** feature, indicating the number of hours during which an activity can be performed. The activity is defined as a wrapper of customizable weather conditions.
+   5. An **Activity Planner**, to determine the best activity for a location and when to do it.
 
 # Technical Deep Dive
 
 ## Development Platform
 
-I decided to take Unity as a development platform. My goal was to move quickly, focus on product and technical discovery, and produce concrete outcomes rather than invest in long-term code reusability. Given my experience int building interactive applications in C# with Unity, and because the prototype required background processing, rendering, and navigation, Unity was the most efficient way to validate the core ideas under those constraints.
-<img width="1364" height="589" alt="Capture d&#39;écran 2026-04-10 100945" src="https://github.com/user-attachments/assets/12f25e7e-4b18-4833-8ba4-dcdb7e778a95" />
+I decided to go for a Desktop application and take Unity as a development platform. My goal was to move quickly, focus on product and technical discovery, and deliver concrete results rather than invest in long-term code reusability. Given my experience building interactive C# applications with Unity, and because the prototype required background processing, rendering, and navigation, Unity was the most efficient way to validate the core ideas within those constraints. In this context, Unity can be seen as an integrated development environment for interactive applications, much like Android Studio for Android or Xcode for Apple platforms. A natural next step for the software would be to evolve it into a SaaS product.
+  - Unity Editor
+<img width="600" height="392" alt="image" src="https://github.com/user-attachments/assets/d85c56be-28c0-46db-9a7d-6953244dac9b" />
+
+  - Android Studio Layout Editor
+<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/fb7411b8-6553-42b4-b2f5-e2d659702a36" />
+
+  - XCode Interface Builder
+<img width="600" height="356" alt="image" src="https://github.com/user-attachments/assets/3181af03-c8db-495f-ae19-158c65ecd40d" />
 
 ## Architecture
  - **Application Flow Diagram**
