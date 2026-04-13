@@ -193,6 +193,6 @@ For a multi-tenant production version, the software would likely be rewritten us
 ## Automation
 
 - History and prediction files can evolve over time, so we will have to handle:
-  - Download CRON jobs
+  - CRON jobs for file downloads
   - Asynchronous ETL pipeline, including initial and delta load
-  - Background jobs for derived tables, triggered according to their level (for example: hour, day, month, year)
+  - Background jobs for derived tables, triggered according to their level (for example: day, month, year)
