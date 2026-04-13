@@ -155,49 +155,51 @@ GROUP BY "location_dimension"."id", "location_dimension"."lon", "location_dimens
 # Evolution Paths (#MVP)
 
 ## Stack
-
-- Python
-- ReactJS
-- PostgreSQL
-- PostGIS
+In order to use this software as a multi tenant Saas Product, we will rewrite it with in the following stack:
+- PostgreSQL for the database with PostGIS for spatial query execution
+- Python for the data pipeline
+- Ruby on Rails for the customer account management
+- ReactJS for the frontend
 
 ## Performance
 
 ### ETL
-
-- Reduce ETL time (load raw files directly in a staging table with DuckDB for example, or load Parquet instead)
-- Pre-aggregate more facts depending on time levels and location levels.  
+- The current ETL suffers from a single-threaded per-line buffer for staging data. We should reduce its time with potential solutions:
+   - CSV files should be loaded as is, in a staging table (with DuckDB for example), and the transformations should be delegated to the dabase before the merge operation.
+   - We should investigate other source file types to reduce read time (OpenData providing Parquet files for example)
+- We should investigate adding more pre-aggregated facts, as the statistics should be available in more time levels and location levels:
+   - On top of hour and year, having daily and monthly aggregated data
+   - On top of posts, having per department, region, or radius aggregation for zoom culling
 
 ### Query Engine
 
-- Delegate spatial querying to PostGIS
-- Add sampling based on the displayed area
-- Chose dyanmical the data depending on level of zoom
-- Chose dynamically the aggregated fact table depending on the time aggregation and navigation
+- Spatial querying wil be delegated PostGIS, allowing data querying on any GPS coordination, as well as server-side CPU heatmap data processing
+- Query data only on what is visible on the camera, with
+   - location filtering based on pan
+   - aggregation level based on zoom
+   - pre-aggregation fact table selection based on the required time and location level
 
 ### Rendering
 
-- GPU rendering for layers such as heatmaps
-- Derive aggregates for each time level (day, month, year) and location dimension (department)
+- Explore GPU rendering for computed layers such as heatmaps
+- Apply masks for better result look
 - Move more transformations to the database layer
-- Apply zoom and pan culling for display
+- Add pan culling for display
+- Smarter zoom culling for post results: currently the zoom culling will chose a post without any product rule. This can lead to display results with local minimums and prevents to display the most represented value of the surroundings.
 
 ## Features
 
-- Geospatial interpolation for any request instead of relying only on fixed observation locations
-- Better customer quality of life, customization, and product features
-- Common OLAP operations, like decomposition, drill-down, etc.
+- Reuse Geospatial interpolation for any location-based request like weather observation, temporal heatmap, activites, planning, etc.
+- Add more analytics operations, like decompose, drill-down, etc.
   
 ### Data Sources
 
-- Multiple datasets (historical + forecast)
-- Customer datasets and data blending
+- The weather history dataset is just an example, Whereas Foenn project is more about any data that can be placed on a map. So we should quickly add more information available as open data, such as environmental data, demographics, economics, etc.
+- Customer should also be able to add their data in the application, and blend it with the data we prepared. This should be the core feature of Foenn, which will allow the customer to undestand correlations between their business and global observation history and predictions.
 
 ## Automation
 
-- Downloader service
-- Delta jobs
-- Cron jobs for derived tables (hour, day, month, year)
-
-## Production readiness
-Scalability, multi-tenancy, reliability, sercurity... All standards to provide a real Saas product.
+- History and Prediction files can evolve over time, so we will have to handler:
+   - Automatic download
+   - Asynchronous data pipeline with Initial and Delta jobs
+   - Cron jobs for derived tables, triggering according to their level (ex: hour, day, month, year)
