@@ -39,12 +39,6 @@ I decided to go for a Desktop application and take Unity as a development platfo
   - Unity Editor
 <img width="600" height="392" alt="image" src="https://github.com/user-attachments/assets/d85c56be-28c0-46db-9a7d-6953244dac9b" />
 
-  - Android Studio Layout Editor
-<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/fb7411b8-6553-42b4-b2f5-e2d659702a36" />
-
-  - XCode Interface Builder
-<img width="600" height="356" alt="image" src="https://github.com/user-attachments/assets/3181af03-c8db-495f-ae19-158c65ecd40d" />
-
 ## Architecture
  - **Application Flow Diagram**
  <img width="3282" height="812" alt="Foenn POCArchitecture drawio" src="https://github.com/user-attachments/assets/866c811e-52d9-4810-85b7-ae54a013b1a8" />
@@ -81,6 +75,7 @@ https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537d
 
 - **Query Engine**
   - A [Query Request](https://github.com/jorismaillet/foenn-atlas-prototype/blob/main/Assets/Scripts/OLAP/Engine/QueryRequest.cs) is built with SQLKata **Query Builder**, accepts field elements and returns a [Query Result](https://github.com/jorismaillet/foenn-atlas-prototype/blob/main/Assets/Scripts/OLAP/Engine/QueryResult.cs).
+  https://github.com/jorismaillet/foenn-atlas-prototype/blob/68aa883aa2fcb06f3f84943fefc3c85c6b4209fe/Assets/Scripts/OLAP/Engine/QueryRequest.cs#L122-L145
   - `QueryResult` parses DB results and exposes geolocated rows with convenient field value access.
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537de8c3a481852644277aa/Assets/Scripts/OLAP/Engine/QueryResult.cs#L55-L61
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537de8c3a481852644277aa/Assets/Scripts/OLAP/Engine/Row.cs#L10-L12
@@ -92,19 +87,19 @@ https://github.com/jorismaillet/foenn-atlas-prototype/blob/5e54ec9b95d1dcafc537d
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Helpers/GeoHelper.cs#L37-L47
 
 - **Heatmap Generation**
-  - [Compressed Sparsed Row](https://en.wikipedia.org/wiki/Sparse_matrix) is used for spatial indexing and [Inverse Distance Weighting](https://en.wikipedia.org/wiki/Inverse_distance_weighting) for spatial interpolation. This CPU-based algorithm computes the data on a low-resolution grid, then upscales it into a map layer with custom color gradent, based on the displayed metric field. 
+  - [Compressed Sparsed Row](https://en.wikipedia.org/wiki/Sparse_matrix) is used for spatial indexing and [Inverse Distance Weighting](https://en.wikipedia.org/wiki/Inverse_distance_weighting) for spatial interpolation. This CPU-based algorithm computes the data on a low-resolution grid, then upscales it into a layer with custom color gradient, based on the processed metric field. 
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Interface/Visualisations/Heatmap/HeatmapGenerator.cs#L55-L61
    - The color gradient can be fixed, like temperature (blue = cold, red = hot), or relative, and depends on a query result (ex: displaying the number of hours available of an activity, red = 0, green = maximum observation value)
 
 - **UI Orchestration**
-  - Each scenario has its own component, requires different input fields, and relies on the `WeatherQueryService` for execution.
+  - Each scenario has its own case component, requires different input fields, and relies on the `WeatherQueryService` for execution.
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Interface/Components/Views/Cases/ActivityStatistics.cs#L20-L25
   - The background map layer is generated through the **OpenStreetMap API** and cached locally.
   https://github.com/jorismaillet/foenn-atlas-prototype/blob/8219e0a8717d04b9ffe4269730cd1d807eba180e/Assets/Scripts/Interface/Components/Layers/OpenStreetMapGridRenderer.cs#L67-L74
 
 # Limitations
 
-- This is a prototype, so I deliberately excluded important reliability and production-readiness standards in order to focus on research and discovery. As a result, light test coverage, bugs, dead code, and rough edges are expected.
+- This is a prototype, so I deliberately excluded important reliability and production-readiness standards in order to focus on research and discovery. As a result, light test coverage, bugs, dead code, and edge cases are expected.
 - The technologies used, compared to the amount of data processed, make this prototype unpleasant to use in practice. This was intentional: I wanted to push the basic foundations to their limits in order to clearly identify future improvement paths.
 
 # Usage
@@ -113,7 +108,7 @@ This prototype is not intended to be reused as-is. The following steps simply de
 
 1. Download Open Data files for **Hourly Weather Records**:  
    https://meteo.data.gouv.fr/datasets/6569b4473bedf2e7abad3b72
-2. Set basic seed data in a seed file
+2. Set basic seed data in the [Seeds File](https://github.com/jorismaillet/foenn-atlas-prototype/blob/main/Assets/Scripts/Models/Seeds.cs)
 3. Run the application and wait for files to be loaded into the database
 4. Explore the scenarios
 
@@ -123,7 +118,7 @@ The interface is organized as follows:
 2. Scenario parameters are configured in a top banner with a **Go** button
 3. Depending on the scenario, the main view displays either fixed information, scrollable content, or a navigable map with drag-and-drop and mouse wheel controls
 
-# Results
+# Result examples
 - Heatmap (2020)
    - Temperature: Minimum, Average, Maximum
       <img width="1516" height="849" alt="image" src="https://github.com/user-attachments/assets/6b114b2b-08cb-45c2-ba1e-a290b57881a1" />
