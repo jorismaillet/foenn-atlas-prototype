@@ -13,6 +13,8 @@ namespace Assets.Scripts.OLAP.Schema.Tables
             this.dimensions = dimensions;
         }
 
-        public virtual void BuildDerivedFact(SqliteConnection connection, Dictionary<Dimension, DimensionCache> caches) { }
+        public virtual void BuildDerivedFact(SqliteConnection connection, Dictionary<Dimension, DimensionCache> caches)
+        {
+        }
     }
 }

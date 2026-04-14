@@ -9,10 +9,15 @@ namespace Assets.Scripts.Helpers
         public struct TileCenterData
         {
             public double centerTileXf;
+
             public double centerTileYf;
+
             public int centerTileX;
+
             public int centerTileY;
+
             public float fracX;
+
             public float fracY;
         }
 

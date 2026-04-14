@@ -16,7 +16,6 @@
             Mutable<T> result = new Mutable<T>(value);
             return result;
         }
-
         public T Value
         {
             get { return value; }

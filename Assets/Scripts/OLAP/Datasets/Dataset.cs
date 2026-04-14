@@ -11,6 +11,7 @@ namespace Assets.Scripts.OLAP.Datasets
         public abstract List<Dimension> Dimensions { get; }
 
         public abstract List<Fact> Facts { get; }
+
         public abstract List<Fact> DerivedFacts { get; }
 
         public Dataset(string name)

@@ -1,5 +1,4 @@
 ﻿using System;
-using Assets.Scripts.Interface.Visualisations.Heatmap;
 using UnityEngine;
 using RenderSettings = Assets.Scripts.Interface.Visualisations.Heatmap.Render.RenderSettings;
 

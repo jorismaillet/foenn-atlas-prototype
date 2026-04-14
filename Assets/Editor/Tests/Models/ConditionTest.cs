@@ -2,7 +2,6 @@
 using Assets.Scripts.Models.Condition;
 using Assets.Scripts.Models.Condition.Definitions;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
-using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Engine;
 using NUnit.Framework;
 

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Assets.Scripts.Interface.Components.Commons;
 using Assets.Scripts.Interface.Visualisations.Planning;
 using Assets.Scripts.Models;
@@ -10,15 +7,17 @@ using Assets.Scripts.Models.Activities;
 using Assets.Scripts.Models.Plannings;
 using Assets.Scripts.Services;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Assets.Scripts.Interface.Components.Views.Selectors
 {
     public class PlanningSelector : MonoBehaviour
     {
         public TMPro.TMP_Dropdown year, month, day;
+
         public TMPro.TMP_Dropdown post, planning;
+
         public PrefabsContainer reportContainer;
+
         public TMPro.TMP_Text reportTitle;
 
         private List<Planning> plannings = new List<Planning>() { Seeds.sportsPlanning, Seeds.outsideActivities };

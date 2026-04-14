@@ -16,6 +16,7 @@ namespace Assets.Scripts.Components
     public class ETLWorker : MonoBehaviour
     {
         private CancellationTokenSource ct;
+
         private Task task;
 
         private void Start()

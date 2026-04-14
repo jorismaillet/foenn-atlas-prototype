@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using Assets.Scripts.OLAP.Schema.Fields;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
 
 namespace Assets.Scripts.Interface.Visualisations
 {
     public class CustomGradient
     {
         public static CustomGradient CumulativeYearHours = new CustomGradient(CreateCumulativeYearHoursGradient(), "Hours", "h", 0f, 365f * 3f, 1);
-        
+
         private static Dictionary<Field, Func<Gradient>> Gradients = new Dictionary<Field, Func<Gradient>>()
         {
             { WeatherHistoryDataset.Instance.coreFact.temperature, CreateTemperatureGradient },
@@ -19,9 +18,13 @@ namespace Assets.Scripts.Interface.Visualisations
         };
 
         private Gradient gradient;
+
         public float minValue;
+
         public float maxValue;
+
         public string title;
+
         public string format;
 
         public CustomGradient(Field field, float multiplier = 1)
@@ -115,7 +118,7 @@ namespace Assets.Scripts.Interface.Visualisations
             return result;
         }
 
-        private static Gradient CreateCumulativeYearHoursGradient()
+        public static Gradient CreateCumulativeYearHoursGradient()
         {
             var result = new Gradient();
             result.SetKeys(

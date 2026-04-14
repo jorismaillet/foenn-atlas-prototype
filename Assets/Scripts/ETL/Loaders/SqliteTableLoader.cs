@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Scripts.Helpers;
+﻿using Assets.Scripts.Helpers;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
+using System;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.ETL.Loaders
 {
@@ -51,7 +51,7 @@ namespace Assets.Scripts.ETL.Loaders
             }
             return;
 
-            stage:
+        stage:
             var resolvers = _resolverArray;
             for (int i = 0; i < resolvers.Length; i++)
             {

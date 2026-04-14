@@ -13,9 +13,10 @@ namespace Assets.Scripts.OLAP.Datasets.Metadata
     public class MetadataTable : Table
     {
         private Field fileName;
-		public override IEnumerable<Field> Columns { get; }
 
-		public MetadataTable(string datasetName) : base(MakeTableName(datasetName))
+        public override IEnumerable<Field> Columns { get; }
+
+        public MetadataTable(string datasetName) : base(MakeTableName(datasetName))
         {
             fileName = Field.TextAttribute(Name, "File", "");
             Indexes.Add(new IndexDefinition(true, fileName));

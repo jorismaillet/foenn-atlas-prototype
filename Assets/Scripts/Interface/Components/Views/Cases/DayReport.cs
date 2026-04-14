@@ -7,8 +7,11 @@ namespace Assets.Scripts.Interface.Components.Views.Cases
     public class DayReport : MonoBehaviour
     {
         public TMPro.TMP_Dropdown year, month, day;
+
         public TMPro.TMP_Dropdown post;
+
         public PrefabsContainer reportContainer;
+
         public TMPro.TMP_Text reportTitle;
 
         public void OnCaseSelected()

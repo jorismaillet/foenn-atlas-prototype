@@ -4,8 +4,6 @@ using Assets.Scripts.Models.Geo;
 using Assets.Scripts.Models.Locations;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions;
 using Assets.Scripts.OLAP.Schema.Fields;
-using Assets.Scripts.OLAP.Schema.Tables;
-using Codice.CM.Common;
 
 namespace Assets.Scripts.OLAP.Engine
 {

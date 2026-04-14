@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Assets.Scripts.OLAP.Datasets.WeatherHistory;
 using Assets.Scripts.OLAP.Engine;
-using Assets.Scripts.OLAP.Schema.Fields;
 
 namespace Assets.Scripts.Services
 {

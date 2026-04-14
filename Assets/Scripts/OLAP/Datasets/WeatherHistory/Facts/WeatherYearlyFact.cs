@@ -18,13 +18,14 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
             humidityMin, humidityAvg, humidityMax,
             rainMin, rainAvg, rainMax,
             windSpeedMin, windSpeedAvg, windSpeedMax;
+
         private WeatherCoreFact derivedFromFact;
 
         public WeatherYearlyFact(WeatherCoreFact coreFact, LocationDimension location) : base("weather_yearly_facts", new List<Dimension>() { location })
         {
             this.derivedFromFact = coreFact;
 
-            year  = Field.IntAttribute(Name, "year",  "Year");
+            year = Field.IntAttribute(Name, "year", "Year");
             locationRef = Field.Ref(this, location, "location_id");
 
             temperatureMin = Field.FloatMetric(Name, "temperature_min", "Temperature Min", "°C");
@@ -100,10 +101,10 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Facts
                 yield return PrimaryKey;
                 yield return year;
                 yield return temperatureMin; yield return temperatureAvg; yield return temperatureMax;
-                yield return dewPointMin;    yield return dewPointAvg;    yield return dewPointMax;
-                yield return humidityMin;    yield return humidityAvg;    yield return humidityMax;
-                yield return rainMin;        yield return rainAvg;        yield return rainMax;
-                yield return windSpeedMin;   yield return windSpeedAvg;   yield return windSpeedMax;
+                yield return dewPointMin; yield return dewPointAvg; yield return dewPointMax;
+                yield return humidityMin; yield return humidityAvg; yield return humidityMax;
+                yield return rainMin; yield return rainAvg; yield return rainMax;
+                yield return windSpeedMin; yield return windSpeedAvg; yield return windSpeedMax;
                 yield return locationRef;
             }
         }

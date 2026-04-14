@@ -29,7 +29,7 @@ namespace Assets.Scripts.Interface.Components.Views.Selectors
             "June",
             "July",
             "August",
-            "September", 
+            "September",
             "October",
             "November",
             "December"

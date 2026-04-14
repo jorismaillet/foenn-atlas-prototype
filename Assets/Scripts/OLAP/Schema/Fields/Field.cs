@@ -7,7 +7,9 @@ namespace Assets.Scripts.OLAP.Schema.Fields
     public class Field
     {
         public string fieldName;
+
         public string displayName;
+
         public DbType dbType { get; }
 
         public AnalyticsType analyticsType;
@@ -67,7 +69,7 @@ namespace Assets.Scripts.OLAP.Schema.Fields
 
         public string Value(Row row)
         {
-            return $"{ row.values[this] } {format}";
+            return $"{row.values[this]} {format}";
         }
     }
 }

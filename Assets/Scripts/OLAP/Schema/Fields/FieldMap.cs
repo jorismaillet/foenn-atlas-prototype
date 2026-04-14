@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Assets.Scripts.Helpers;
 
 namespace Assets.Scripts.OLAP.Schema.Fields
@@ -8,7 +7,9 @@ namespace Assets.Scripts.OLAP.Schema.Fields
     public class FieldMap
     {
         public List<SourceField> sourceFields;
+
         public Field targetField;
+
         public Func<string, string> transform;
 
         public FieldMap(SourceField sourceField, Field targetField, Func<string, string> transform = null)
@@ -17,6 +18,7 @@ namespace Assets.Scripts.OLAP.Schema.Fields
             this.sourceFields = new List<SourceField>() { sourceField };
             this.transform = transform;
         }
+
         public FieldMap(Field targetField, params SourceField[] sourceFields)
         {
             this.targetField = targetField;

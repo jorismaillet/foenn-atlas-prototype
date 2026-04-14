@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Scripts.OLAP.Datasets.WeatherHistory;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Interface.Visualisations.TemporalHeatmap

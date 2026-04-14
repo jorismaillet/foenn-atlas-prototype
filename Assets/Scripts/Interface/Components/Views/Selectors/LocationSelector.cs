@@ -11,9 +11,11 @@ namespace Assets.Scripts.Interface.Components.Views.Selectors
     public class LocationSelector : MonoBehaviour
     {
         public TMPro.TMP_InputField departmentInput;
+
         public TMPro.TMP_Dropdown postDropdown;
 
         private LocationDimension location;
+
         private Dictionary<int, Row> posts;
 
         private void Start()

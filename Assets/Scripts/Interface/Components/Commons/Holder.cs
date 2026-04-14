@@ -6,6 +6,7 @@ namespace Assets.Scripts.Interface.Components.Commons
     public class Holder<Element> : MonoBehaviour, IElementInitializer<Element>
     {
         public Element element;
+
         public UnityEvent onInitialize;
 
         public virtual void Initialize(Element element)

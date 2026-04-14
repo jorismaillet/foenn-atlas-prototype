@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Assets.Scripts.Models;
 using Assets.Scripts.Models.Activities;
 using UnityEngine;

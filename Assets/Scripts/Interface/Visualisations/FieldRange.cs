@@ -15,6 +15,7 @@ namespace Assets.Scripts.Interface.Visualisations
             };
 
         public float minValue;
+
         public float maxValue;
 
         public FieldRange(Field field, float multiplier)

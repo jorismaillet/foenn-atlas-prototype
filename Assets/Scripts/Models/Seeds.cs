@@ -38,8 +38,9 @@ namespace Assets.Scripts.Models
             new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.rain, 0, 0),
             new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.windSpeed, 0, 2));
 
-        public static Activity gardening = new Activity("Jardin", new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.temperature, 16, 30),
-            new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.rain, 0, 0),
+        public static Activity gardening = new Activity("Gardening", new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.temperature, 6, 25),
+            new IntRangeCondition(WeatherHistoryDataset.Instance.time.hour, 9, 19),
+            new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.rain, 0, 1),
             new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.windSpeed, 0, 2));
 
         public static Activity tennis = new Activity("Tennis", new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.temperature, 5, 27),
@@ -53,6 +54,7 @@ namespace Assets.Scripts.Models
         public static Activity hiking = new Activity("Randonnée", new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.temperature, 10, 24),
             new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.rain, 0, 0),
             new FloatRangeCondition(WeatherHistoryDataset.Instance.coreFact.windSpeed, 0, 1));
+
 
         public static Activity dinner = new Activity("Diner en extérieur", niceWeather, new IntRangeCondition(WeatherHistoryDataset.Instance.time.hour, 18, 22));
 

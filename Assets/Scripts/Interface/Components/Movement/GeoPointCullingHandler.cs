@@ -26,8 +26,11 @@ namespace Assets.Scripts.Interface.Components.Movement
         [SerializeField] private float minPointDistancePx = 60f;
 
         private readonly List<Holder<GeoPoint>> allHolders = new List<Holder<GeoPoint>>();
+
         private readonly List<Holder<GeoPoint>> tooCloseToNeighbour = new List<Holder<GeoPoint>>();
+
         private readonly List<Holder<GeoPoint>> visible = new List<Holder<GeoPoint>>();
+
         private readonly List<Vector3> visibleScreenPositions = new List<Vector3>();
 
         private float cameraZoom;

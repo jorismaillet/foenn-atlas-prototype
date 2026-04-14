@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Assets.Scripts.Helpers;
-using Assets.Scripts.Interface.Visualisations.Heatmap.Drawer;
+using Assets.Scripts.Interface.Components.Logger;
+using Assets.Scripts.Interface.Visualisations;
 using Assets.Scripts.Interface.Visualisations.Heatmap;
+using Assets.Scripts.Interface.Visualisations.Heatmap.Drawer;
 using Assets.Scripts.Interface.Visualisations.Heatmap.Render;
 using Assets.Scripts.Models.Geo;
 using UnityEngine;
-using Assets.Scripts.Interface.Visualisations;
-using Assets.Scripts.Interface.Components.Logger;
 
 namespace Assets.Scripts.Interface.Components.Layers
 {

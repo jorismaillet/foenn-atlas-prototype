@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using Assets.Scripts.OLAP.Schema.Fields;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;

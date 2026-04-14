@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using Assets.Scripts.OLAP.Schema.Tables;
 using Mono.Data.Sqlite;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.ETL.Loaders
 {

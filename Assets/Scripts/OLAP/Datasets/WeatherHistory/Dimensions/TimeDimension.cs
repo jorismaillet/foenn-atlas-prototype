@@ -45,5 +45,5 @@ namespace Assets.Scripts.OLAP.Datasets.WeatherHistory.Dimensions
             Mappings.Add(new FieldMap(LookupSourceAttribute, hour, s => s.Substring(8, 2)));
             Mappings.Add(new FieldMap(LookupSourceAttribute, duration, s => "1"));
         }
-     }
+    }
 }

@@ -9,10 +9,13 @@ namespace Assets.Scripts.Interface.Components.Layers
     public class DisplayGradient : MonoBehaviour
     {
         public PrefabsContainer container;
+
         public TMPro.TMP_Text title;
+
         public int nbValues = 7;
 
-        public void Initialize(CustomGradient gradient) {
+        public void Initialize(CustomGradient gradient)
+        {
             var step = (gradient.maxValue - gradient.minValue) / (nbValues - 1);
             title.text = gradient.title;
             container.Initialize(Enumerable.Range(0, nbValues)

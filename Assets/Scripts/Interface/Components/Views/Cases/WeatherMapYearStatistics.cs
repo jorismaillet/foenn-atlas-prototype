@@ -14,15 +14,21 @@ namespace Assets.Scripts.Interface.Components.Views.Cases
     public class WeatherMapYearStatistics : MonoBehaviour
     {
         public PrefabsContainer pointmapContainer;
+
         public HeatmapWorldOverlay heatmapContainer;
 
         public TMPro.TMP_Dropdown subCaseDropDown;
+
         public TMPro.TMP_Dropdown yearDropdown;
+
         public TMPro.TMP_Dropdown metricDropdown;
+
         public TMPro.TMP_Dropdown statTypeDropdown;
+
         public DisplayGradient displayGradient;
 
         private const string hourRainSubcaseText = "Hours without rain";
+
         private const string metricStatsSubcaseText = "Metric statistics";
 
         public void OnCaseSelected()
@@ -78,10 +84,11 @@ namespace Assets.Scripts.Interface.Components.Views.Cases
             statTypeDropdown.AddOptions(new List<string> { "Minimum", "Maximum", "Average" }.ToList());
             subCaseDropDown.onValueChanged.AddListener((_) =>
             {
-                if(subCaseDropDown.captionText.text.Equals(hourRainSubcaseText))
+                if (subCaseDropDown.captionText.text.Equals(hourRainSubcaseText))
                 {
                     Main.selectedView.Set(ViewKey.HOUR_NO_RAIN);
-                } else
+                }
+                else
                 {
                     Main.selectedView.Set(ViewKey.FIELD_STATS);
                 }
