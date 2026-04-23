@@ -1,12 +1,14 @@
 # Foenn Atlas Prototype
+
 <img width="324" height="158" alt="Light mode (1)" src="https://github.com/user-attachments/assets/185a1790-7487-408f-bec7-5ebf311dcdd1" />
 
 This is a prototype of **Foenn**, a geospatial analytics platform.
 
 ## Project Snapshot
-**Technologies**: C#, Unity, SQLite, SQLKata, OpenStreetMap API  
-**Core mechanisms**: ETL pipeline with CSV streaming extraction, field-level transformation mapping, staged bulk loading with merge and derivation (`ETLProcessor.cs`), Star Schema modeling (`WeatherHistoryDataset.cs`), SQL query builder integration (`QueryRequest.cs`), geolocated result parsing (`QueryResult.cs`), CPU-based heatmap generation with Compressed Sparse Row indexing and Inverse Distance Weighting (`HeatmapGenerator.cs`), OSM tile rendering with local cache, geospatial projection (`GeoHelper.cs`)  
-**Scope decisions**: Single-tenant desktop prototype intentionally scoped to validate the end-to-end pipeline before any production rewrite.
+
+- **Technologies**: C#, Unity, SQLite, SQLKata, OpenStreetMap API  
+- **Core mechanisms**: ETL pipeline with CSV streaming extraction, field-level transformation mapping, staged bulk loading with merge and derivation (`ETLProcessor.cs`), Star Schema modeling (`WeatherHistoryDataset.cs`), SQL query builder integration (`QueryRequest.cs`), geolocated result parsing (`QueryResult.cs`), CPU-based heatmap generation with Compressed Sparse Row indexing and Inverse Distance Weighting (`HeatmapGenerator.cs`), OSM tile rendering with local cache, geospatial projection (`GeoHelper.cs`)  
+- **Scope decisions**: Single-tenant desktop prototype intentionally scoped to validate the end-to-end pipeline before any production rewrite.
 
 ## Objective
 
@@ -18,12 +20,9 @@ The goal is to validate product and technical assumptions quickly in a single de
 
 1. Build an **ETL** pipeline that loads weather history files (in CSV format) into a database (SQLite for the prototype) using an analytics-ready **Star Schema**.
    File download automation and delta loading were intentionally excluded, as I assumed that all files used in this prototype are complete and immutable.
-
 2. Create a **Query Execution Engine** that produces geolocated results.
    [SqlKata](https://sqlkata.com/) was reused for SQL generation.
-
 3. Display results on an **Interactive Map**, using the [OpenStreetMap API](https://www.openstreetmap.org/) to download tiles and generate **Heatmaps** with a CPU-based algorithm. Geolocated measures are displayed in Unity through prefab generation and camera movement handlers.
-
 4. Explore a few customer use cases to see how higher-level models could be built on top of a geospatial engine, such as:
    1. A **Weather Day Report** for a given location
    2. A **Temporal Heatmap** for a location, to visualize the overall climate over a year
@@ -40,6 +39,7 @@ I decided to go for a desktop application and use Unity as a development platfor
 In this context, Unity can be seen as an integrated development environment for interactive applications, much like Android Studio for Android or Xcode for Apple. A natural next step for this software would be to make it a Web application.
 
 - **Unity Editor**
+
 <img width="600" height="392" alt="image" src="https://github.com/user-attachments/assets/d85c56be-28c0-46db-9a7d-6953244dac9b" />
 
 ### Architecture
@@ -96,26 +96,26 @@ In this context, Unity can be seen as an integrated development environment for 
 ## Result Examples
 
 - **Heatmap (2020)**
-  - Temperature: Minimum, Average, Maximum
-  <img width="1516" height="849" alt="image" src="https://github.com/user-attachments/assets/6b114b2b-08cb-45c2-ba1e-a290b57881a1" />
-  <img width="1516" height="853" alt="image" src="https://github.com/user-attachments/assets/993d54d1-acd8-4d27-8451-45bac79ed2fe" />
-  <img width="1516" height="850" alt="image" src="https://github.com/user-attachments/assets/be6fb473-d468-46f1-9559-37136580f44f" />
-  - Rain: Maximum
-  <img width="1508" height="846" alt="image" src="https://github.com/user-attachments/assets/06258f69-78d4-4e60-af2b-af88bca92e1f" />
-  - Wind: Maximum
-  <img width="1515" height="849" alt="image" src="https://github.com/user-attachments/assets/2aab8ed2-67fc-4d2a-b817-a3df71d20384" />
-  - Dry vs. Wet Regions (sum of daytime hours without rain)
-  <img width="1563" height="877" alt="image" src="https://github.com/user-attachments/assets/50a28dc5-6870-432a-b3ce-b5056d2b14f6" />
-    - Example of zoom culling for posts with local climates
-    <img width="1488" height="630" alt="image" src="https://github.com/user-attachments/assets/8096abbf-52ae-4456-afd2-58f151883246" />
+   - Temperature: Minimum, Average, Maximum
+   <img width="1516" height="849" alt="image" src="https://github.com/user-attachments/assets/6b114b2b-08cb-45c2-ba1e-a290b57881a1" />
+   <img width="1516" height="853" alt="image" src="https://github.com/user-attachments/assets/993d54d1-acd8-4d27-8451-45bac79ed2fe" />
+   <img width="1516" height="850" alt="image" src="https://github.com/user-attachments/assets/be6fb473-d468-46f1-9559-37136580f44f" />
+   - Rain: Maximum
+   <img width="1508" height="846" alt="image" src="https://github.com/user-attachments/assets/06258f69-78d4-4e60-af2b-af88bca92e1f" />
+   - Wind: Maximum
+   <img width="1515" height="849" alt="image" src="https://github.com/user-attachments/assets/2aab8ed2-67fc-4d2a-b817-a3df71d20384" />
+   - Dry vs. Wet Regions (sum of daytime hours without rain)
+   <img width="1563" height="877" alt="image" src="https://github.com/user-attachments/assets/50a28dc5-6870-432a-b3ce-b5056d2b14f6" />
+      - Example of zoom culling for posts with local climates
+      <img width="1488" height="630" alt="image" src="https://github.com/user-attachments/assets/8096abbf-52ae-4456-afd2-58f151883246" />
 
 - **Temporal Heatmap (2024)** – X-axis: hour (0–24), Y-axis: day of year (1–365)
-  - Montpellier
-  <img width="1231" height="693" alt="image" src="https://github.com/user-attachments/assets/934ee424-b85e-4d7f-9c8a-2be19e5351b2" />
-  - Quimper
-  <img width="1230" height="690" alt="image" src="https://github.com/user-attachments/assets/092c8a96-251c-4ceb-b351-c9a050d85ca5" />
-  - Paris
-  <img width="1230" height="693" alt="image" src="https://github.com/user-attachments/assets/cd9e70f9-421d-4771-a312-0dc3f3580116" />
+   - Montpellier
+   <img width="1231" height="693" alt="image" src="https://github.com/user-attachments/assets/934ee424-b85e-4d7f-9c8a-2be19e5351b2" />
+   - Quimper
+   <img width="1230" height="690" alt="image" src="https://github.com/user-attachments/assets/092c8a96-251c-4ceb-b351-c9a050d85ca5" />
+   - Paris
+   <img width="1230" height="693" alt="image" src="https://github.com/user-attachments/assets/cd9e70f9-421d-4771-a312-0dc3f3580116" />
 
 - **Activity Heatmap**
   - This example uses deliberately arbitrary conditions, selected to validate the querying layer:
