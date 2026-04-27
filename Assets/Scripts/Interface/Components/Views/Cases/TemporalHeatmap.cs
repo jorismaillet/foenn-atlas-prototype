@@ -20,7 +20,8 @@ namespace Assets.Scripts.Interface.Components.Views.Cases
 
         public void OnCasesSelected()
         {
-            var gradient = new CustomGradient(WeatherHistoryDataset.Instance.coreFact.temperature, 1);
+            var gradient = new CustomPalette(WeatherHistoryDataset.Instance.coreFact.temperature);
+
             gradientDisplay.Initialize(gradient);
             var temps = WeatherQueryService.HoursTempForYear(post.captionText.text, int.Parse(year.captionText.text));
             if (temps.Count % 24 != 0)

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Interface.Visualisations
 {
-    public class CustomGradient
+    public class CustomGradient : ColorPicker
     {
         public static CustomGradient CumulativeYearHours = new CustomGradient(CreateCumulativeYearHoursGradient(), "Hours", "h", 0f, 365f * 3f, 1);
 
@@ -23,30 +23,22 @@ namespace Assets.Scripts.Interface.Visualisations
 
         public float maxValue;
 
-        public string title;
-
-        public string format;
-
-        public CustomGradient(Field field, float multiplier = 1)
+        public CustomGradient(Field field, float multiplier = 1) : base(field.displayName, field.format)
         {
-            this.title = field.displayName;
-            this.format = field.format;
             var range = new FieldRange(field, multiplier);
             this.minValue = range.minValue;
             this.maxValue = range.maxValue;
             this.gradient = Gradients[field].Invoke();
         }
 
-        public CustomGradient(Gradient gradient, string title, string format, float minValue, float maxValue, float multiplier)
+        public CustomGradient(Gradient gradient, string title, string format, float minValue, float maxValue, float multiplier) : base(title, format)
         {
-            this.title = title;
-            this.format = format;
             this.minValue = minValue * multiplier;
             this.maxValue = maxValue * multiplier;
             this.gradient = gradient;
         }
 
-        public Color GetColor(float value, float alpha)
+        public override Color GetColor(float value)
         {
             if (gradient == null)
                 return Color.white;

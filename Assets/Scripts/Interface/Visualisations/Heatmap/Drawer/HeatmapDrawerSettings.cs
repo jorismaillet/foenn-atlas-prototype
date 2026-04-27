@@ -15,7 +15,7 @@ namespace Assets.Scripts.Interface.Visualisations.Heatmap.Drawer
 
         public Color32 GetColor(float temp)
         {
-            return gradient.GetColor(temp, alpha);
+            return gradient.GetColor(temp);
         }
     }
 }

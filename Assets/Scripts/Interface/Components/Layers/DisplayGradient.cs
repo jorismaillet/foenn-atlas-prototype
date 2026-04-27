@@ -22,9 +22,15 @@ namespace Assets.Scripts.Interface.Components.Layers
                 .Select(i =>
                 {
                     var value = gradient.minValue + step * i;
-                    var color = gradient.GetColor(value, 1);
+                    var color = gradient.GetColor(value);
                     return new GradientValue(color, gradient.format, value);
                 }).ToList());
+        }
+        public void Initialize(CustomPalette palette)
+        {
+            container
+                .Initialize(palette.palette.Select(kv => new GradientValue(kv.Value, palette.format, kv.Key))
+                .ToList());
         }
     }
 }
