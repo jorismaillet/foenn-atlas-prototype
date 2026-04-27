@@ -111,11 +111,11 @@ In this context, Unity can be seen as an integrated development environment for 
 
 - **Temporal Heatmap (2024)** – X-axis: hour (0–24), Y-axis: day of year (1–365)
    - Montpellier
-   <img width="1231" height="693" alt="image" src="https://github.com/user-attachments/assets/934ee424-b85e-4d7f-9c8a-2be19e5351b2" />
+   <img width="1536" height="860" alt="Capture d&#39;écran 2026-04-27 102451" src="https://github.com/user-attachments/assets/4918c3ce-b94f-49bc-819b-35d60a6c4757" />
    - Quimper
-   <img width="1230" height="690" alt="image" src="https://github.com/user-attachments/assets/092c8a96-251c-4ceb-b351-c9a050d85ca5" />
+   <img width="1535" height="863" alt="Capture d&#39;écran 2026-04-27 102513" src="https://github.com/user-attachments/assets/759cce3d-2bb3-42fa-b2f3-4089cd4169ee" />
    - Paris
-   <img width="1230" height="693" alt="image" src="https://github.com/user-attachments/assets/cd9e70f9-421d-4771-a312-0dc3f3580116" />
+   <img width="1536" height="866" alt="Capture d&#39;écran 2026-04-27 102545" src="https://github.com/user-attachments/assets/a13f2086-028e-4ee5-8d25-349001895ac0" />
 
 - **Activity Heatmap**
   - This example uses deliberately arbitrary conditions, selected to validate the querying layer:
